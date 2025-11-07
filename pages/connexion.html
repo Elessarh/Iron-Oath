@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Iron Oath</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components/connexion.css">
+</head>
+<body>
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <span id="username"></span>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="connexion.html" class="nav-link connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <div class="auth-container">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <h1 class="auth-title">Iron Oath</h1>
+                    <p class="auth-subtitle">Rejoignez l'aventure dans Aincrad</p>
+                
+                <!-- Formulaire de connexion -->
+                <div id="login-form" class="auth-form">
+                    <h2>Connexion</h2>
+                    <form>
+                        <div class="input-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="login-password">Mot de passe</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="auth-btn">Se connecter</button>
+                    </form>
+                    <p class="auth-switch">
+                        Pas encore de compte ? 
+                        <a href="#" id="show-register">Créer un compte</a>
+                    </p>
+                </div>
+                
+                <!-- Formulaire d'inscription -->
+                <div id="register-form" class="auth-form" style="display: none;">
+                    <h2>Inscription</h2>
+                    <form>
+                        <div class="input-group">
+                            <label for="register-username">Pseudo joueur</label>
+                            <input type="text" id="register-username" placeholder="Votre pseudo dans le jeu" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-password">Mot de passe</label>
+                            <input type="password" id="register-password" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-confirm">Confirmer le mot de passe</label>
+                            <input type="password" id="register-confirm" required>
+                        </div>
+                        <button type="submit" class="auth-btn">Créer le compte</button>
+                    </form>
+                    <p class="auth-switch">
+                        Déjà un compte ? 
+                        <a href="#" id="show-login">Se connecter</a>
+                    </p>
+                </div>
+                
+                    <!-- Message d'erreur/succès -->
+                    <div id="auth-message" class="auth-message" style="display: none;"></div>
+                </div>
+                
+                <!-- Section guilde Iron Oath -->
+                <div class="guild-info">
+                    <h2 class="guild-title">Iron Oath</h2>
+                    <div class="guild-description">
+                        <p>Bienvenue dans <strong>Iron Oath</strong>, une guilde d'élite dédiée à l'exploration des mondes virtuels les plus dangereux et fascinants.</p>
+                        
+                        <p>Notre communauté rassemble des aventuriers passionnés qui partagent l'amour des MMORPGs, des défis épiques et de l'entraide mutuelle.</p>
+                        
+                        <p><strong>Ce que nous offrons :</strong></p>
+                        <ul style="margin: 1rem 0; padding-left: 1.5rem; color: rgba(255, 255, 255, 0.9);">
+                            <li>Une communauté active et bienveillante</li>
+                            <li>Des événements réguliers et des raids organisés</li>
+                            <li>Un système d'entraide pour tous les niveaux</li>
+                            <li>Des discussions stratégiques et des guides exclusifs</li>
+                        </ul>
+                        
+                        <p>Rejoignez-nous dès maintenant et forgez votre légende aux côtés des meilleurs !</p>
+                    </div>
+                    
+                    <a href="https://discord.gg/ZMFttfjfBJ" target="_blank" class="discord-link">
+                        <span>🎮</span>
+                        Rejoindre notre Discord
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Gestion du menu mobile
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+        
+        // Script anti-flash immédiat
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginLink = document.getElementById('login-link');
+            const userInfo = document.getElementById('user-info');
+            
+            // Masquer le bouton de connexion sur cette page
+            if (loginLink) {
+                loginLink.style.display = 'none';
+            }
+            
+            // Masquer les infos utilisateur par défaut
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+            }
+        });
+    </script>
+    
+    <!-- Système d'authentification Supabase -->
+    <script type="module" src="../js/auth-supabase.js"></script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+/* Mailbox.css - Styles pour le système de messagerie interne */
+
+.mailbox-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.mailbox-content {
+    background: linear-gradient(135deg, rgba(13, 21, 46, 0.95) 0%, rgba(27, 38, 79, 0.95) 100%);
+    border: 2px solid rgba(0, 168, 255, 0.5);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 1000px;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 50px rgba(0, 168, 255, 0.3);
+    overflow: hidden;
+}
+
+.mailbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: rgba(0, 168, 255, 0.1);
+    border-bottom: 2px solid rgba(0, 168, 255, 0.3);
+}
+
+.mailbox-header h2 {
+    color: var(--color-accent);
+    font-family: var(--font-title);
+    margin: 0;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
+}
+
+.mailbox-header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.refresh-mailbox {
+    background: rgba(0, 168, 255, 0.2);
+    border: 2px solid rgba(0, 168, 255, 0.5);
+    color: var(--color-accent);
+    border-radius: 8px;
+    padding: 0.8rem 1.2rem;
+    font-family: var(--font-text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.refresh-mailbox:hover {
+    background: rgba(0, 168, 255, 0.3);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.close-mailbox {
+    background: rgba(255, 0, 0, 0.2);
+    border: 2px solid rgba(255, 0, 0, 0.5);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.close-mailbox:hover {
+    background: rgba(255, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.mailbox-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid rgba(0, 168, 255, 0.3);
+}
+
+.mailbox-tab {
+    flex: 1;
+    padding: 1rem 2rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: var(--font-title);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.mailbox-tab:hover {
+    background: rgba(0, 168, 255, 0.1);
+    color: white;
+}
+
+.mailbox-tab.active {
+    background: rgba(0, 168, 255, 0.2);
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+    box-shadow: 0 0 20px rgba(0, 168, 255, 0.3);
+}
+
+.mailbox-panels {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.mailbox-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: none;
+}
+
+.mailbox-panel.active {
+    display: block;
+}
+
+.empty-mailbox {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.2rem;
+}
+
+.message-item {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(0, 168, 255, 0.3);
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.message-item:hover {
+    border-color: rgba(0, 168, 255, 0.6);
+    box-shadow: 0 0 20px rgba(0, 168, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.message-item.unread {
+    border-color: rgba(255, 215, 0, 0.6);
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(0, 168, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 168, 255, 0.3);
+}
+
+.message-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.message-user {
+    color: var(--color-accent);
+    font-weight: bold;
+}
+
+.message-time {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.trade-badge {
+    background: rgba(255, 215, 0, 0.2);
+    color: #FFD700;
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+}
+
+.unread-badge {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: 1px solid rgba(255, 0, 0, 0.5);
+    animation: pulse 2s infinite;
+}
+
+.message-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-small {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+}
+
+.reply-btn {
+    background: rgba(0, 168, 255, 0.2);
+    border: 1px solid rgba(0, 168, 255, 0.5);
+    color: var(--color-accent);
+}
+
+.reply-btn:hover {
+    background: rgba(0, 168, 255, 0.4);
+}
+
+.delete-btn {
+    background: rgba(255, 0, 0, 0.2);
+    border: 1px solid rgba(255, 0, 0, 0.5);
+    color: #ff6666;
+}
+
+.delete-btn:hover {
+    background: rgba(255, 0, 0, 0.4);
+}
+
+.message-content {
+    padding: 1.5rem;
+    color: white;
+}
+
+.message-content h4 {
+    color: var(--color-accent);
+    margin-bottom: 0.8rem;
+    font-family: var(--font-title);
+}
+
+.message-content p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    white-space: pre-line;
+}
+
+.order-info {
+    background: rgba(0, 168, 255, 0.1);
+    border: 1px solid rgba(0, 168, 255, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.compose-form {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.compose-form h3 {
+    color: var(--color-accent);
+    font-family: var(--font-title);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(0, 168, 255, 0.3);
+    border-radius: 10px;
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.3);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-title);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, rgba(0, 168, 255, 0.8) 0%, rgba(138, 43, 226, 0.8) 100%);
+    color: white;
+    border: 2px solid rgba(0, 168, 255, 0.5);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 168, 255, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(100, 100, 100, 0.3);
+    color: white;
+    border: 2px solid rgba(150, 150, 150, 0.5);
+}
+
+.btn-secondary:hover {
+    background: rgba(150, 150, 150, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Animation pulse pour les notifications */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Styles pour les notifications push */
+.push-notification {
+    font-family: var(--font-title);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notification-text {
+    flex: 1;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.3s ease;
+}
+
+.notification-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Autocomplétion des utilisateurs */
+.form-group {
+    position: relative;
+}
+
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(13, 21, 46, 0.95);
+    border: 2px solid rgba(0, 168, 255, 0.5);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.autocomplete-suggestion {
+    padding: 0.8rem 1rem;
+    color: var(--color-text);
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 168, 255, 0.2);
+    transition: all 0.3s ease;
+    font-family: var(--font-text);
+}
+
+.autocomplete-suggestion:hover,
+.autocomplete-suggestion.selected {
+    background: rgba(0, 168, 255, 0.2);
+    color: var(--color-accent);
+    text-shadow: 0 0 5px rgba(0, 168, 255, 0.5);
+}
+
+.autocomplete-suggestion:last-child {
+    border-bottom: none;
+}
+
+/* Animation pour les suggestions */
+.autocomplete-suggestions {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mailbox-content {
+        width: 95%;
+        height: 90%;
+    }
+    
+    .mailbox-header {
+        padding: 1rem;
+    }
+    
+    .mailbox-tab {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .message-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .message-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .compose-form {
+        padding: 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .autocomplete-suggestion {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}

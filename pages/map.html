@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte - Iron Oath</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css?v=2">
+    <link rel="stylesheet" href="../css/components/map.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        // Masquage immédiat des éléments de connexion pour éviter le flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginLink = document.getElementById('login-link');
+            const userInfo = document.getElementById('user-info');
+            
+            // Afficher le bouton de connexion par défaut
+            if (loginLink) {
+                loginLink.style.display = 'block';
+                loginLink.classList.add('show');
+                loginLink.classList.add('js-visible');
+            }
+            
+            // Masquer les infos utilisateur par défaut
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+            }
+        });
+    </script>
+        });
+    </script>
+    
+    <!-- Suppression du supabase-loader - géré par auth-supabase.js -->
+</head>
+<body>
+    <!-- Écran de chargement supprimé -->
+
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html">Accueil</a></li>
+                <li><a href="map.html" class="active">Carte</a></li>
+                <li><a href="bestiaire.html">Bestiaire</a></li>
+                <li><a href="items.html">Items</a></li>
+                <li><a href="hdv.html">HDV</a></li>
+                <li><a href="quetes.html">Quêtes</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <span id="username"></span>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="map-container">
+        <h1 style="text-align: center; margin-bottom: 2rem; color: var(--color-accent); font-family: var(--font-title);">Aincrad</h1>
+        
+        <!-- Contrôles de la carte (style filtres comme bestiaire) -->
+        <div class="filters">
+            <div class="filter-group">
+                <button id="toggle-coords" class="filter-button">📍 Coordonnées</button>
+                <button id="recenter-btn" class="filter-button">🔄 Recentrer</button>
+                <button id="place-mode-btn" class="filter-button admin-only" style="display: none;">✏️ Mode Édition</button>
+            </div>
+            
+            <!-- Sélecteur de zone -->
+            <div class="filter-group">
+                <label for="floor-select" class="filter-label"></label>
+                <select id="floor-select" class="floor-selector">
+                    <option value="1">Palier - 1</option>
+                    <option value="2" disabled>Palier - 2 (Bientôt)</option>
+                    <option value="3" disabled>Palier - 3 (Bientôt)</option>
+                    <option value="4" disabled>Palier - 4 (Bientôt)</option>
+                    <option value="5" disabled>Palier - 5 (Bientôt)</option>
+                </select>
+            </div>
+            
+            <!-- Affichage des coordonnées -->
+            <div id="coord-display" class="coord-display" style="display: none;">
+                <strong>Coordonnées:</strong> <span id="coord-text">--, --</span>
+            </div>
+            
+
+            
+            <!-- Panneau d'icônes (accessible uniquement avec Supabase) -->
+            <div id="icon-panel" class="icon-panel" style="display: none;">
+                <h3>Gestion des Waypoints</h3>
+                
+                <!-- Visibilité des icônes -->
+                <div class="icon-visibility">
+                    <h4>Affichage des icônes</h4>
+                    <div class="icon-controls">
+                        <div class="icon-item">
+                            <input type="checkbox" id="toggle-donjon" checked>
+                            <label for="toggle-donjon">
+                                <img src="../assets/map_assets/Donjon.png" alt="Donjon" class="icon-preview">
+                                Donjons
+                            </label>
+                        </div>
+                        <div class="icon-item">
+                            <input type="checkbox" id="toggle-marchand" checked>
+                            <label for="toggle-marchand">
+                                <img src="../assets/map_assets/Marchand.png" alt="Marchand" class="icon-preview">
+                                Marchands
+                            </label>
+                        </div>
+                        <div class="icon-item">
+                            <input type="checkbox" id="toggle-monstre" checked>
+                            <label for="toggle-monstre">
+                                <img src="../assets/map_assets/Monstre.png" alt="Monstre" class="icon-preview">
+                                Monstres
+                            </label>
+                        </div>
+                        <div class="icon-item">
+                            <input type="checkbox" id="toggle-quete" checked>
+                            <label for="toggle-quete">
+                                <img src="../assets/map_assets/Quête.png" alt="Quête" class="icon-preview">
+                                Quêtes
+                            </label>
+                        </div>
+                        <div class="icon-item">
+                            <input type="checkbox" id="toggle-ville" checked>
+                            <label for="toggle-ville">
+                                <img src="../assets/map_assets/Ville.png" alt="Ville" class="icon-preview">
+                                Villes
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Système de placement par coordonnées -->
+                <div class="waypoint-placer">
+                    <h4>Placer un Waypoint</h4>
+                    <div class="placement-form">
+                        <div class="coord-inputs">
+                            <label>
+                                X: <input type="number" id="waypoint-x" placeholder="Longitude" step="0.000001">
+                            </label>
+                            <label>
+                                Y: <input type="number" id="waypoint-y" placeholder="Latitude" step="0.000001">
+                            </label>
+                        </div>
+                        
+                        <div class="icon-selector">
+                            <label>Type d'icône:</label>
+                            <select id="waypoint-type">
+                                <option value="donjon">🏰 Donjon</option>
+                                <option value="marchand">🛒 Marchand</option>
+                                <option value="monstre">👹 Monstre</option>
+                                <option value="quete">❗ Quête</option>
+                                <option value="ville">🏘️ Ville</option>
+                            </select>
+                        </div>
+                        
+                        <div class="placement-actions">
+                            <button id="get-current-coords" class="filter-button">📍 Coordonnées actuelles</button>
+                            <button id="place-waypoint" class="filter-button waypoint-place-btn">✅ Placer Waypoint</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="placement-modes">
+                    <button id="place-mode-btn" class="filter-button">📍 Mode Placement Clic</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-wrapper">
+            <!-- Animation SAO Style -->
+            <div class="sao-effects">
+                <!-- Particules flottantes -->
+                <div class="particles">
+                    <div class="particle particle-1"></div>
+                    <div class="particle particle-2"></div>
+                    <div class="particle particle-3"></div>
+                    <div class="particle particle-4"></div>
+                    <div class="particle particle-5"></div>
+                    <div class="particle particle-6"></div>
+                    <div class="particle particle-7"></div>
+                    <div class="particle particle-8"></div>
+                </div>
+                
+                <!-- Hexagones -->
+                <div class="hexagons">
+                    <div class="hexagon hex-1"></div>
+                    <div class="hexagon hex-2"></div>
+                    <div class="hexagon hex-3"></div>
+                    <div class="hexagon hex-4"></div>
+                </div>
+                
+                <!-- Lignes de code/données -->
+                <div class="data-lines">
+                    <div class="data-line line-1"></div>
+                    <div class="data-line line-2"></div>
+                    <div class="data-line line-3"></div>
+                </div>
+                
+                <!-- Cercles lumineux -->
+                <div class="light-orbs">
+                    <div class="orb orb-1"></div>
+                    <div class="orb orb-2"></div>
+                    <div class="orb orb-3"></div>
+                </div>
+                
+                <!-- Lignes de scan horizontales -->
+                <div class="scan-lines">
+                    <div class="scan-line scan-1"></div>
+                    <div class="scan-line scan-2"></div>
+                    <div class="scan-line scan-3"></div>
+                </div>
+                
+                <!-- Interface holographique -->
+                <div class="hologram-ui">
+                    <div class="holo-corner corner-tl"></div>
+                    <div class="holo-corner corner-tr"></div>
+                    <div class="holo-corner corner-bl"></div>
+                    <div class="holo-corner corner-br"></div>
+                </div>
+                
+                <!-- Logo central flottant -->
+                <div class="central-logo">
+                    <div class="logo-glow"></div>
+                    <span class="logo-text">IRON OATH</span>
+                    <div class="logo-subtitle">SYSTEM ONLINE</div>
+                </div>
+            </div>
+            <div id="game-map"></div>
+        </div>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+    
+    <!-- Notre JavaScript -->
+    <script type="module" src="../js/auth-supabase.js"></script>
+    <script src="../js/map.js"></script>
+    
+    <script>
+        // Gestion du menu mobile
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Écran de chargement supprimé - plus de gestion nécessaire
+    </script>
+</body>
+</html>

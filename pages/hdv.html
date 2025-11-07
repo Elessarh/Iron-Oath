@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hôtel des Ventes - Iron Oath</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components/hdv.css">
+    <link rel="stylesheet" href="../css/components/item-selector.css">
+    <link rel="stylesheet" href="../css/components/mailbox.css">
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginLink = document.getElementById('login-link');
+            const userInfo = document.getElementById('user-info');
+            
+            // Afficher le bouton de connexion par défaut
+            if (loginLink) {
+                loginLink.style.display = 'block';
+                loginLink.classList.add('show');
+                loginLink.classList.add('js-visible');
+            }
+            
+            // Masquer les infos utilisateur par défaut
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link active">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <span id="username"></span>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="connexion.html" class="nav-link connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <!-- Section Hero -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">🏪 Hôtel des Ventes</h1>
+                <p class="hero-subtitle">Marché central d'Aincrad - Échangez vos trésors entre aventuriers</p>
+            </div>
+        </section>
+
+        <!-- Interface HDV -->
+        <section class="hdv-interface">
+            <div class="container">
+                <!-- Onglets -->
+                <div class="hdv-tabs">
+                    <button class="hdv-tab active" data-tab="marketplace">💰 Place du Marché</button>
+                    <button class="hdv-tab" data-tab="my-orders">📋 Mes Ordres</button>
+                    <button class="hdv-tab" data-tab="create-order">💎 Créer un Ordre</button>
+                    <button class="hdv-tab mailbox-tab" onclick="mailboxSystem.openMailbox()">
+                        📬 Boîte Mail
+                        <span id="unread-count" class="unread-counter" style="display: none;">0</span>
+                    </button>
+                </div>
+
+                <!-- Contenu des onglets -->
+                <div class="hdv-content">
+                    <!-- Place du Marché -->
+                    <div id="marketplace" class="hdv-panel active">
+                        <div class="hdv-filters">
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label>Type d'ordre :</label>
+                                    <select id="type-filter">
+                                        <option value="all">Tous les ordres</option>
+                                        <option value="sell">🔴 Ventes</option>
+                                        <option value="buy">🔵 Achats</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-group">
+                                    <label>Catégorie :</label>
+                                    <select id="category-filter">
+                                        <option value="all">Toutes catégories</option>
+                                        <option value="Armes">⚔️ Armes</option>
+                                        <option value="Accessoires">💍 Accessoires</option>
+                                        <option value="Consommables">🧪 Consommables</option>
+                                        <option value="Familiers">🐾 Familiers</option>
+                                        <option value="Montures">🐎 Montures</option>
+                                        <option value="Outils">🛠️ Outils</option>
+                                        <option value="Ressources">⛏️ Ressources</option>
+                                        <option value="Runes">🔮 Runes</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-group">
+                                    <label>Rareté :</label>
+                                    <select id="rarity-filter">
+                                        <option value="all">Toutes raretés</option>
+                                        <option value="common">⚪ Commun</option>
+                                        <option value="uncommon">🟢 Peu commun</option>
+                                        <option value="rare">🔵 Rare</option>
+                                        <option value="epic">🟣 Épique</option>
+                                        <option value="legendary">🟠 Légendaire</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-row">
+                                <div class="search-group">
+                                    <input type="text" id="search-input" placeholder="🔍 Rechercher un item...">
+                                    <button id="search-btn" class="search-btn">Rechercher</button>
+                                </div>
+                                
+                                <div class="action-group">
+                                    <button id="refresh-btn" class="refresh-btn">🔄 Actualiser</button>
+                                    <span id="orders-count" class="orders-count">0 ordres</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Liste des ordres -->
+                        <div id="orders-list" class="orders-list">
+                            <!-- Le contenu sera chargé dynamiquement -->
+                        </div>
+                    </div>
+
+                    <!-- Mes Ordres -->
+                    <div id="my-orders" class="hdv-panel">
+                        <div class="my-orders-header">
+                            <h3>📋 Mes Ordres Actifs</h3>
+                            <button class="refresh-btn">🔄 Actualiser</button>
+                        </div>
+                        
+                        <div id="my-orders-list" class="orders-list">
+                            <div class="empty-state">
+                                <p>🏷️ Vous n'avez aucun ordre actif</p>
+                                <p>Créez votre premier ordre pour commencer à échanger !</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Créer un Ordre -->
+                    <div id="create-order" class="hdv-panel">
+                        <div class="create-order-header">
+                            <h3>💎 Créer un Nouvel Ordre</h3>
+                            <p>Choisissez si vous voulez vendre un item ou en acheter un</p>
+                        </div>
+                        
+                        <div class="order-type-selection">
+                            <div class="order-type-card" data-type="sell">
+                                <div class="order-type-icon">💰</div>
+                                <h4>🔥 Vendre un Item</h4>
+                                <p>Vous possédez cet item et souhaitez le vendre</p>
+                            </div>
+                            
+                            <div class="order-type-card" data-type="buy">
+                                <div class="order-type-icon">🛒</div>
+                                <h4>💎 Acheter un Item</h4>
+                                <p>Vous cherchez cet item et proposez un prix</p>
+                            </div>
+                        </div>
+                        
+                        <form id="create-order-form" class="create-order-form" style="display: none;">
+                            <div class="order-type-display">
+                                <h4 id="order-type-label">Type d'ordre sélectionné</h4>
+                            </div>
+                            
+                            <div class="form-section">
+                                <h4>📦 Sélection de l'Item</h4>
+                                
+                                <div class="item-selection">
+                                    <button type="button" id="open-item-selector" class="item-selector-btn">
+                                        🎒 Sélectionner un Item
+                                    </button>
+                                </div>
+                                
+                                <div id="selected-item" style="display: none;">
+                                    <div class="selected-item-display">
+                                        <div class="selected-item-image">
+                                            <img id="selected-item-img" src="" alt="">
+                                        </div>
+                                        <div class="selected-item-info">
+                                            <h5 id="selected-item-name"></h5>
+                                            <button type="button" id="change-item" class="change-item-btn">🔄 Changer</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-section">
+                                <h4>💰 Détails de l'Ordre</h4>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="quantity">Quantité :</label>
+                                        <input type="number" name="quantity" id="quantity" min="1" max="999" value="1" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="price">Prix (cols) :</label>
+                                        <input type="number" name="price" id="price" min="1" max="999999" placeholder="1000" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="notes">Notes (optionnel) :</label>
+                                    <textarea name="notes" id="notes" placeholder="Informations supplémentaires..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="cancel-btn">❌ Annuler</button>
+                                <button type="submit" class="submit-btn">✅ Créer l'Ordre</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script type="module" src="../js/auth-supabase.js"></script>
+    <script src="../js/item-selector.js"></script>
+    <script src="../js/items-catalog.js"></script>
+    <script src="../js/hdv.js"></script>
+    <script src="../js/mailbox.js"></script>
+    
+    <script>
+        // Initialisation du système HDV
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔄 Chargement HDV...');
+            
+            // Attendre que tous les scripts soient chargés
+            setTimeout(() => {
+                if (typeof HDVSystem !== 'undefined') {
+                    console.log('🏪 Initialisation HDV System...');
+                    window.hdvSystem = new HDVSystem();
+                    
+                    // Initialiser aussi le système de boîte mail
+                    if (typeof MailboxSystem !== 'undefined') {
+                        console.log('📬 Initialisation Mailbox System...');
+                        window.mailboxSystem = new MailboxSystem();
+                    } else {
+                        console.warn('⚠️ MailboxSystem non disponible');
+                    }
+                    
+                    // Exposer les méthodes de debug
+                    window.hdvDebug = {
+                        checkAuth: () => window.hdvSystem.checkAuthStatus(),
+                        forceAccess: (username) => window.hdvSystem.forceAccess(username),
+                        // Fonction pour créer un ordre de test
+                        createTestOrder: () => {
+                            const testOrder = {
+                                id: Date.now(),
+                                creator: 'TestTrader',
+                                seller: 'TestTrader',
+                                type: 'sell',
+                                item: {
+                                    name: 'Épée de Test',
+                                    image: '../assets/items/Armes/sword_001.png'
+                                },
+                                price: 100,
+                                timestamp: new Date().toISOString()
+                            };
+                            window.hdvSystem.orders.push(testOrder);
+                            window.hdvSystem.displayOrders();
+                            console.log('🧪 Ordre de test créé:', testOrder);
+                            return testOrder;
+                        },
+                        // Fonction pour vérifier les messages
+                        checkMessages: () => {
+                            if (window.mailboxSystem) {
+                                console.log('📬 Messages dans la boîte mail:', window.mailboxSystem.messages);
+                                return window.mailboxSystem.messages;
+                            } else {
+                                console.log('❌ Système de boîte mail non disponible');
+                                return null;
+                            }
+                        }
+                    };
+                    
+                    console.log('🔧 Debug disponible: hdvDebug.checkAuth() et hdvDebug.forceAccess("nom")');
+                } else {
+                    console.error('❌ HDVSystem non trouvé');
+                    // Redirection vers la connexion si HDV non disponible
+                    setTimeout(() => {
+                        window.location.href = '../pages/connexion.html';
+                    }, 2000);
+                }
+                
+                // Initialiser le compteur de messages non lus
+                if (window.mailboxSystem) {
+                    updateUnreadCounter();
+                    // Mettre à jour toutes les 30 secondes
+                    setInterval(updateUnreadCounter, 30000);
+                }
+            }, 1000); // Augmenté le délai pour laisser le temps à l'auth de se charger
+        });
+        
+        // Fonction pour mettre à jour le compteur de messages non lus
+        function updateUnreadCounter() {
+            if (window.mailboxSystem) {
+                const unreadCount = mailboxSystem.getUnreadCount();
+                const counter = document.getElementById('unread-count');
+                
+                if (counter) {
+                    if (unreadCount > 0) {
+                        counter.textContent = unreadCount;
+                        counter.style.display = 'flex';
+                    } else {
+                        counter.style.display = 'none';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

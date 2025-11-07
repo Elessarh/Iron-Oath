@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quêtes - Iron Oath</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components/quetes.css">
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        // Masquage immédiat des éléments de connexion pour éviter le flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginLink = document.getElementById('login-link');
+            const userInfo = document.getElementById('user-info');
+            
+            // Afficher le bouton de connexion par défaut
+            if (loginLink) {
+                loginLink.style.display = 'block';
+                loginLink.classList.add('show');
+                loginLink.classList.add('js-visible');
+            }
+            
+            // Masquer les infos utilisateur par défaut
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Écran de chargement supprimé -->
+
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link active">Quêtes</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <span id="username"></span>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="connexion.html" class="nav-link connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="quetes-container">
+        <h1 style="text-align: center; margin-bottom: 2rem; color: var(--color-accent); font-family: var(--font-title);">Quêtes d'Aincrad</h1>
+        
+        <!-- Filtres -->
+        <div class="quest-filters">
+            <div class="quest-type-filters">
+                <button class="quest-filter-btn active" data-filter="all">Toutes les Quêtes</button>
+                <button class="quest-filter-btn" data-filter="principale">Quête Principale</button>
+                <button class="quest-filter-btn" data-filter="secondaire">Quêtes Secondaires</button>
+                <button class="quest-filter-btn" data-filter="boss">Boss</button>
+            </div>
+        </div>
+
+        <!-- Quête Principale du Palier 1 -->
+        <section class="quest-section" data-category="principale">
+            <h2>🏰 Quête Principale - Palier 1</h2>
+            <div class="quest-main-container">
+                
+                <!-- Étapes 1-7: Introduction -->
+                <div class="quest-step-group">
+                    <h3>🌟 Introduction - Premiers pas</h3>
+                    <div class="quest-step">
+                        <span class="step-number">1</span>
+                        <div class="step-content">
+                            <h4>Parler au Maître Épéiste</h4>
+                            <p><strong>Lieu:</strong> Au Spawn</p>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1839" data-y="4530">X:1839, Z:4530</span></p>
+                            <p>Commencez votre aventure en parlant au Maître Épéiste au point de spawn.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">2</span>
+                        <div class="step-content">
+                            <h4>Tuer 10 Sangliers</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1797" data-y="3633">X:1797, Z:3633</span></p>
+                            <p>Éliminez 10 sangliers dans la zone de chasse.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">3</span>
+                        <div class="step-content">
+                            <h4>Parler à Abraham</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1808" data-y="3649">X:1808, Z:3649</span></p>
+                            <p>Rendez-vous voir Abraham pour la suite de votre mission.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">4</span>
+                        <div class="step-content">
+                            <h4>Parler à la Vieille Mara</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1560" data-y="3411">X:1560, Z:3411</span></p>
+                            <p>La vieille Mara vous donnera des informations importantes.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">5</span>
+                        <div class="step-content">
+                            <h4>Prendre la Rune</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1421" data-y="3092">X:1421, Z:3092</span></p>
+                            <p>Récupérez la rune mystérieuse à cet emplacement.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">6</span>
+                        <div class="step-content">
+                            <h4>Parler au Maître Épéiste</h4>
+                            <p><strong>Lieu:</strong> En haut de la tour</p>
+                            <p>Montez en haut de la tour pour parler au Maître Épéiste.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">7</span>
+                        <div class="step-content">
+                            <h4>Retour au Maître Épéiste</h4>
+                            <p><strong>Lieu:</strong> Au Spawn</p>
+                            <p><strong>Prérequis:</strong> Niveau 4 minimum</p>
+                            <p>Vous devez recevoir 2 quêtes importantes après avoir atteint le niveau 4.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branche 8.1: Quête d'Elma -->
+                <div class="quest-step-group">
+                    <h3>🌸 Branche 8.1 - La quête d'Elma (Mizunari)</h3>
+                    <div class="quest-step">
+                        <span class="step-number">8.1</span>
+                        <div class="step-content">
+                            <h4>Parler à Elma</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3136" data-y="3667">X:3136, Z:3667 (Mizunari)</span></p>
+                            <p>Début de la première branche - parlez à Elma à Mizunari.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.2</span>
+                        <div class="step-content">
+                            <h4>Trouver Harrold</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3326" data-y="3787">X:3326, Z:3787</span></p>
+                            <p>Trouvez et parlez à Harrold.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.3</span>
+                        <div class="step-content">
+                            <h4>Tuer Nephantes</h4>
+                            <p><strong>Objectif:</strong> Farm 1 Spore Corrompu</p>
+                            <p>Éliminez des Nephantes pour obtenir 1 Spore Corrompu.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.4</span>
+                        <div class="step-content">
+                            <h4>Rapport à Harrold</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3326" data-y="3787">X:3326, Z:3787</span></p>
+                            <p>Retournez voir Harrold avec la Spore Corrompu.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.5</span>
+                        <div class="step-content">
+                            <h4>Parler au Maître Épéiste</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1812" data-y="4724">X:1812, Z:4724 (Cathédrale)</span></p>
+                            <p>Rendez-vous à la Cathédrale pour parler au Maître Épéiste.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.6</span>
+                        <div class="step-content">
+                            <h4>Trouver Velka</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="2844" data-y="2993">X:2844, Z:2993 (CastelBrume)</span></p>
+                            <p>Trouvez Velka à CastelBrume.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.7</span>
+                        <div class="step-content">
+                            <h4>Parler à Eric</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="2864" data-y="4491">X:2864, Z:4491 (Ruine Squelettique)</span></p>
+                            <p>Rendez-vous aux Ruines Squelettiques pour parler à Eric.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.8</span>
+                        <div class="step-content">
+                            <h4>Farm 15 Âmes des Ruines</h4>
+                            <p><strong>Objectif:</strong> Collecter 15 Âmes des Ruines</p>
+                            <p>Farmez dans les ruines pour obtenir 15 Âmes des Ruines.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.9</span>
+                        <div class="step-content">
+                            <h4>Prendre le Téléporteur</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="2752" data-y="4620">X:2752, Z:4620</span></p>
+                            <p>Utilisez le téléporteur à ces coordonnées.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.10</span>
+                        <div class="step-content">
+                            <h4>Parler au Spectre Archiviste</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="2940" data-y="4476">X:2940, Z:4476</span></p>
+                            <p><strong>Note:</strong> Saut requis pour atteindre le PNJ.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.11</span>
+                        <div class="step-content">
+                            <h4>Farm Matériaux Spéciaux</h4>
+                            <p><strong>Objectif:</strong> 10 Tissus Maudits & 1 Cœur Putrifié</p>
+                            <p>Collectez ces matériaux rares dans la zone.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.12</span>
+                        <div class="step-content">
+                            <h4>Rapport au Spectre Archiviste</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="2940" data-y="4476">X:2940, Z:4476</span></p>
+                            <p>Retournez voir le Spectre Archiviste avec les matériaux.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.1.13</span>
+                        <div class="step-content">
+                            <h4>🔥 Tuer Nasgul (Boss)</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="2821" data-y="4439">X:2821, Z:4439</span></p>
+                            <p><strong>Type:</strong> Boss de fin de branche</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branche 8.2: Mine de Geldorak -->
+                <div class="quest-step-group">
+                    <h3>⛏️ Branche 8.2 - Mine de Geldorak</h3>
+                    <div class="quest-step">
+                        <span class="step-number">8.2</span>
+                        <div class="step-content">
+                            <h4>Craft Clé de la Mine de Geldorak</h4>
+                            <p><strong>Objectif:</strong> Fabriquer la clé d'accès</p>
+                            <p>Craftez la clé pour accéder à la mine de Geldorak.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.2.2</span>
+                        <div class="step-content">
+                            <h4>Parler à Neko</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="4270" data-y="4082">X:4270, Z:4082</span></p>
+                            <p>Trouvez et parlez à Neko.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">8.2.3</span>
+                        <div class="step-content">
+                            <h4>🏰 Finir le Donjon (Mine)</h4>
+                            <p><strong>Objectif:</strong> Compléter la Mine de Geldorak</p>
+                            <p>Terminez entièrement le donjon de la mine.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suite Principale (Étapes 9-15) -->
+                <div class="quest-step-group">
+                    <h3>🎯 Suite Principale - Après les branches</h3>
+                    <div class="quest-step">
+                        <span class="step-number">9</span>
+                        <div class="step-content">
+                            <h4>Retour au Maître Épéiste</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1812" data-y="4724">X:1812, Z:4724 (Cathédrale)</span></p>
+                            <p>Suite après avoir terminé les deux branches.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">10</span>
+                        <div class="step-content">
+                            <h4>Parler aux 3 PNJs</h4>
+                            <p><strong>Lieu:</strong> Taverne (Ville de départ)</p>
+                            <p>Dialoguez avec les 3 PNJ dans la taverne.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">11</span>
+                        <div class="step-content">
+                            <h4>Parler au Maire</h4>
+                            <p><strong>Lieu:</strong> Valhatt</p>
+                            <p><strong>Prérequis:</strong> Nécessite la quête de Zebulgarath</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">12</span>
+                        <div class="step-content">
+                            <h4>🔥 Tuer Gorbel (Last Hit)</h4>
+                            <p><strong>Type:</strong> Mini-Boss</p>
+                            <p>Éliminez Gorbel - vous devez porter le coup final.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">13</span>
+                        <div class="step-content">
+                            <h4>Parler à l'Homme Cagoulé</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="325" data-y="3196">X:325, Z:3196</span></p>
+                            <p>Trouvez l'homme mystérieux cagoulé.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">14</span>
+                        <div class="step-content">
+                            <h4>Retour au Maître Épéiste</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1812" data-y="4724">X:1812, Z:4724 (Cathédrale)</span></p>
+                            <p>Retournez à la Cathédrale.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">15</span>
+                        <div class="step-content">
+                            <h4>Parler à Catherine</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="2380" data-y="2417">X:2380, Z:2417 (Labyrinthe)</span></p>
+                            <p>Parlez à Catherine pour préparer le donjon du Labyrinthe.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Archipel d'Ika (Étapes 16-19) -->
+                <div class="quest-step-group">
+                    <h3>🏝️ Archipel d'Ika - Le Sceau</h3>
+                    <div class="quest-step">
+                        <span class="step-number">16</span>
+                        <div class="step-content">
+                            <h4>Réparer le Sceau</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3249" data-y="4295">X:3249, Z:4295 (Archipel d'Ika)</span></p>
+                            <p>Objectif interactif sur l'Archipel d'Ika.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">17</span>
+                        <div class="step-content">
+                            <h4>Parler à l'Ombre Mystérieuse</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3188" data-y="4011">X:3188, Z:4011</span></p>
+                            <p>Dialoguez avec cette entité mystérieuse.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">18</span>
+                        <div class="step-content">
+                            <h4>Rapport à Catherine</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="2380" data-y="2417">X:2380, Z:2417</span></p>
+                            <p>Retournez faire votre rapport à Catherine.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">19</span>
+                        <div class="step-content">
+                            <h4>🏰 Finir le Labyrinthe des Déchus</h4>
+                            <p><strong>Type:</strong> Donjon majeur</p>
+                            <p>Terminez entièrement ce donjon important.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tolbana (Étapes 20-26) -->
+                <div class="quest-step-group">
+                    <h3>🌆 Tolbana - La Cité</h3>
+                    <div class="quest-step">
+                        <span class="step-number">20</span>
+                        <div class="step-content">
+                            <h4>Parler à Wali</h4>
+                            <p><strong>Lieu:</strong> Sortie du donjon</p>
+                            <p>Trouvez Wali à la sortie du Labyrinthe des Déchus.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">21</span>
+                        <div class="step-content">
+                            <h4>Parler à Mephisto</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3173" data-y="1648">X:3173, Z:1648 (Tolbana)</span></p>
+                            <p>Rendez-vous à Tolbana pour parler à Mephisto.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">22</span>
+                        <div class="step-content">
+                            <h4>Rapport à Wali</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3166" data-y="1689">X:3166, Z:1689</span></p>
+                            <p>Retournez voir Wali avec les informations.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">23</span>
+                        <div class="step-content">
+                            <h4>Parler à Emy</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3205" data-y="1677">X:3205, Z:1677</span></p>
+                            <p>Parlez à Emy et préparez-vous à livrer des ressources.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">24</span>
+                        <div class="step-content">
+                            <h4>Livrer les Ressources à Emy</h4>
+                            <p><strong>Objectif:</strong> 16 Peaux de Cerf & 10 Lingots de Fer</p>
+                            <p>Collectez et livrez ces ressources à Emy.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">25</span>
+                        <div class="step-content">
+                            <h4>Rapport à Wali</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3166" data-y="1689">X:3166, Z:1689</span></p>
+                            <p>Retournez voir Wali après avoir livré à Emy.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">26</span>
+                        <div class="step-content">
+                            <h4>Fin avec Mephisto</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3173" data-y="1648">X:3173, Z:1648 (Tolbana)</span></p>
+                            <p>Terminez cette partie de la quête avec Mephisto.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Virelune (Étapes 26.1-28) -->
+                <div class="quest-step-group">
+                    <h3>🌙 Virelune - Nouveau Chapitre</h3>
+                    <div class="quest-step">
+                        <span class="step-number">26.1</span>
+                        <div class="step-content">
+                            <h4>Parler à Ramoon</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1544" data-y="2178">X:1544, Z:2178 (Virelune)</span></p>
+                            <p>Nouveau chapitre commence avec Ramoon à Virelune.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">26.2</span>
+                        <div class="step-content">
+                            <h4>Parler à Malrik</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3297" data-y="1833">X:3297, Z:1833 (Tolbana)</span></p>
+                            <p>Retournez à Tolbana pour parler à Malrik.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">26.3</span>
+                        <div class="step-content">
+                            <h4>Tuer 10 Requins</h4>
+                            <p><strong>Objectif:</strong> Chasse maritime</p>
+                            <p>Éliminez 10 requins dans les zones aquatiques.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">26.4</span>
+                        <div class="step-content">
+                            <h4>Rapport à Malrik</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="3297" data-y="1833">X:3297, Z:1833 (Tolbana)</span></p>
+                            <p>Retournez voir Malrik après la chasse.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">27.1</span>
+                        <div class="step-content">
+                            <h4>Parler à Virel</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1511" data-y="2188">X:1511, Z:2188 (Virelune)</span></p>
+                            <p>Retournez à Virelune pour parler à Virel.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">27.2</span>
+                        <div class="step-content">
+                            <h4>🐉 Tuer le Léviathan (Boss Majeur)</h4>
+                            <p><strong>Type:</strong> Boss majeur aquatique</p>
+                            <p>Affrontez et éliminez le redoutable Léviathan.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">27.3</span>
+                        <div class="step-content">
+                            <h4>Rapport à Virel</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1511" data-y="2188">X:1511, Z:2188 (Virelune)</span></p>
+                            <p>Retournez voir Virel après avoir vaincu le Léviathan.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">28</span>
+                        <div class="step-content">
+                            <h4>Suite avec Ramoon</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="1544" data-y="2178">X:1544, Z:2178 (Virelune)</span></p>
+                            <p>Continuez l'aventure avec Ramoon après le boss.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Donjon Final (Étapes 29) -->
+                <div class="quest-step-group">
+                    <h3>🕷️ Xal'Zirith - Donjon Final</h3>
+                    <div class="quest-step">
+                        <span class="step-number">29.1</span>
+                        <div class="step-content">
+                            <h4>Parler à Silrix</h4>
+                            <p><strong>Coordonnées:</strong> <span class="coordinates" data-x="979" data-y="1372">X:979, Z:1372 (Donjon Araignée)</span></p>
+                            <p>Préparez-vous pour le dernier donjon avec Silrix.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quest-step">
+                        <span class="step-number">29.2</span>
+                        <div class="step-content">
+                            <h4>🏆 Finir le Donjon de Xal'Zirith</h4>
+                            <p><strong>Type:</strong> Donjon final du Palier 1</p>
+                            <p><strong>Récompense:</strong> Achèvement du Palier 1</p>
+                            <p>Terminez ce donjon pour compléter entièrement le Palier 1 !</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section placeholder pour les quêtes secondaires (sera ajoutée après) -->
+        <section class="quest-section" data-category="secondaire" style="display: none;">
+            <h2>⭐ Quêtes Secondaires - Palier 1</h2>
+            <div class="secondary-quests-container">
+                <p style="text-align: center; color: var(--color-text-secondary); font-style: italic;">
+                    🚧 Section en cours d'ajout - Les quêtes secondaires seront bientôt disponibles !
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        // Système de filtrage des quêtes
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.quest-filter-btn');
+            const questSections = document.querySelectorAll('.quest-section');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Mise à jour des boutons actifs
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Affichage des sections appropriées
+                    questSections.forEach(section => {
+                        const category = section.getAttribute('data-category');
+                        if (filter === 'all' || filter === category) {
+                            section.style.display = 'block';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Système de coordonnées cliquables
+            const coordinates = document.querySelectorAll('.coordinates');
+            coordinates.forEach(coord => {
+                coord.style.cursor = 'pointer';
+                coord.style.textDecoration = 'underline';
+                coord.style.color = 'var(--color-accent)';
+                
+                coord.addEventListener('click', function() {
+                    const x = this.getAttribute('data-x');
+                    const y = this.getAttribute('data-y');
+                    
+                    if (x && y) {
+                        // Ouvrir la carte avec les coordonnées
+                        const mapUrl = `map.html?x=${x}&y=${y}`;
+                        window.open(mapUrl, '_blank');
+                    }
+                });
+                
+                coord.addEventListener('mouseenter', function() {
+                    this.style.opacity = '0.8';
+                });
+                
+                coord.addEventListener('mouseleave', function() {
+                    this.style.opacity = '1';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

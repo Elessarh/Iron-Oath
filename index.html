@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron Oath - Guilde Minecraft & Carte Interactive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        // Masquage immédiat des éléments de connexion pour éviter le flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginLink = document.getElementById('login-link');
+            const userInfo = document.getElementById('user-info');
+            
+            // Afficher le bouton de connexion par défaut
+            if (loginLink) {
+                loginLink.style.display = 'block';
+                loginLink.classList.add('show');
+                loginLink.classList.add('js-visible');
+            }
+            
+            // Masquer les infos utilisateur par défaut
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+            }
+        });
+    </script>
+</head>
+<body class="home-page">
+    <!-- Écran de chargement supprimé -->
+
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <img src="assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="index.html" class="active">Accueil</a></li>
+                <li><a href="pages/map.html">Carte</a></li>
+                <li><a href="pages/bestiaire.html">Bestiaire</a></li>
+                <li><a href="pages/items.html">Items</a></li>
+                <li><a href="pages/hdv.html">HDV</a></li>
+                <li><a href="pages/quetes.html">Quêtes</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <span id="username"></span>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="pages/connexion.html" class="connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Section Héros -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Iron Oath</h1>
+            <p class="hero-subtitle">Explorez, Combattez, Triomphez</p>
+            <a href="pages/map.html" class="hero-button">Découvrir notre monde</a>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script type="module" src="js/auth-supabase.js"></script>
+    <script>
+        // Écran de chargement supprimé - plus de gestion nécessaire
+
+        // Gestion du menu mobile
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

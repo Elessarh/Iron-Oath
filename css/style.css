@@ -1,0 +1,587 @@
+/* Variables globales */
+:root {
+    --color-bg: #0a0a1a;
+    --color-accent: #00a8ff;
+    --color-white: #ffffff;
+    --color-purple: #8a2be2;
+    --color-cyan: #00ffff;
+    --font-title: 'Orbitron', sans-serif;
+    --font-text: 'Exo 2', sans-serif;
+}
+
+/* Reset et styles de base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-white);
+    font-family: var(--font-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Arrière-plan spécial pour la page d'accueil */
+body.home-page {
+    background-image: url('../assets/SAO-Font.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+body.home-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 26, 0.7);
+    z-index: -1;
+}
+
+/* Écran de chargement supprimé - CSS nettoyé */
+
+/* Éléments admin masqués par défaut */
+.admin-only {
+    display: none !important;
+}
+
+/* Styles globaux pour boutons et formulaires */
+button, 
+.btn,
+input[type="button"],
+input[type="submit"] {
+    font-family: var(--font-title);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(0, 168, 255, 0.8), rgba(138, 43, 226, 0.8));
+    color: var(--color-white);
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+button:hover,
+.btn:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 168, 255, 0.4);
+    border-color: rgba(0, 168, 255, 0.8);
+}
+
+button:focus,
+.btn:focus,
+input[type="button"]:focus,
+input[type="submit"]:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.6);
+}
+
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea {
+    font-family: var(--font-title);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(13, 25, 43, 0.6));
+    border: 2px solid rgba(0, 168, 255, 0.3);
+    border-radius: 8px;
+    color: var(--color-white);
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+select:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: rgba(0, 168, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.3);
+}
+
+select option {
+    background-color: var(--color-bg);
+    color: var(--color-white);
+}
+
+/* Correction Header HDV */
+body .header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 100 !important;
+    background: linear-gradient(to bottom, rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.7)) !important;
+    backdrop-filter: blur(10px) !important;
+    padding: 1rem 0 !important;
+}
+
+body .nav-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: relative !important;
+}
+
+/* Navigation globale - forcer style uniforme */
+body .nav-menu {
+    display: flex !important;
+    gap: 2rem !important;
+    list-style: none !important;
+    font-family: var(--font-title) !important;
+}
+
+body .nav-menu li {
+    margin: 0 !important;
+}
+
+body .nav-menu a {
+    color: var(--color-white) !important;
+    text-decoration: none !important;
+    font-family: var(--font-title) !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    position: relative !important;
+    padding: 0.5rem 0 !important;
+    transition: all 0.3s ease !important;
+}
+
+body .nav-menu a::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 0 !important;
+    height: 2px !important;
+    background: var(--color-accent) !important;
+    transition: width 0.3s ease !important;
+}
+
+body .nav-menu a:hover::after,
+body .nav-menu a.active::after {
+    width: 100% !important;
+}
+
+body .nav-menu a:hover {
+    color: var(--color-accent) !important;
+}
+
+body .nav-menu a.active {
+    color: var(--color-accent) !important;
+}
+
+/* Logo et bouton connexion - positionnement uniforme */
+body .nav-logo-container {
+    position: absolute !important;
+    left: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+body .nav-logo-safe {
+    height: 40px !important;
+    width: auto !important;
+    max-height: 40px !important;
+    object-fit: contain !important;
+}
+
+body .nav-connexion {
+    position: absolute !important;
+    right: 4rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+body .nav-connexion .connexion-link,
+body .nav-connexion .nav-link {
+    padding: 0.5rem 1rem !important;
+    background: rgba(0, 168, 255, 0.1) !important;
+    border: 1px solid var(--color-accent) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    color: var(--color-white) !important;
+    text-decoration: none !important;
+    font-family: var(--font-title) !important;
+}
+
+/* Prévention du flash du bouton connexion - système renforcé */
+body .nav-connexion .connexion-link,
+body .nav-connexion .nav-link.connexion-link {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease !important;
+    /* Suppression du display: none pour permettre l'affichage par JavaScript */
+}
+
+body .nav-connexion .connexion-link.show,
+body .nav-connexion .nav-link.connexion-link.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
+/* Style pour forcer l'affichage quand activé par JavaScript */
+body .nav-connexion .connexion-link.js-visible,
+body .nav-connexion .nav-link.connexion-link.js-visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
+/* Info utilisateur masquée par défaut - système renforcé */
+body .nav-connexion .user-info {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease !important;
+    display: none !important; /* Masquage initial absolu */
+}
+
+body .nav-connexion .user-info.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+}
+
+body .nav-connexion .connexion-link:hover,
+body .nav-connexion .nav-link:hover {
+    background: var(--color-accent) !important;
+    color: var(--color-white) !important;
+}
+
+/* Menu hamburger pour HDV */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: var(--color-white);
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+/* Header et Navigation */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.7));
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.nav-logo {
+    height: 40px;
+    width: auto;
+}
+
+.nav-logo-safe {
+    height: 40px !important;
+    width: auto !important;
+    max-height: 40px !important;
+    max-width: 200px !important;
+    position: absolute !important;
+    left: 2rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    animation: none !important;
+    z-index: 2 !important;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+
+
+.nav-link {
+    color: var(--color-white);
+    text-decoration: none;
+    font-family: var(--font-title);
+    font-size: 1rem;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-accent);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Section Héros */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 60px;
+}
+
+.hero-content {
+    text-align: center;
+    z-index: 1;
+}
+
+.hero-title {
+    font-family: var(--font-title);
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--color-white), var(--color-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--color-cyan);
+}
+
+.hero-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: transparent;
+    border: 2px solid var(--color-accent);
+    color: var(--color-accent);
+    text-decoration: none;
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-button:hover {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    box-shadow: 0 0 20px var(--color-accent);
+}
+
+
+
+
+
+/* ===== MEDIA QUERIES - RESPONSIVE DESIGN ===== */
+
+/* Tablettes et écrans moyens */
+@media (max-width: 1024px) {
+    .nav-container {
+        padding: 0 1rem;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+    }
+    
+    .hero-content {
+        padding: 0 1rem;
+    }
+}
+
+/* Tablettes en mode portrait */
+@media (max-width: 768px) {
+    .header {
+        padding: 0.5rem 0;
+    }
+    
+    .nav-container {
+        padding: 0 1rem;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .hero-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(10, 10, 26, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 168, 255, 0.3);
+        border-top: 1px solid var(--color-accent);
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+        background: rgba(0, 168, 255, 0.2);
+        box-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
+    }
+
+    .hamburger {
+        display: block;
+    }
+}
+
+/* Smartphones */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-button {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+        width: 100%;
+        max-width: 250px;
+        text-align: center;
+    }
+    
+    .nav-logo {
+        height: 35px;
+    }
+    
+    .nav-container {
+        padding: 0 0.5rem;
+    }
+    
+    .header {
+        padding: 0.3rem 0;
+    }
+}
+
+/* Très petits écrans */
+@media (max-width: 320px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .nav-logo {
+        height: 30px;
+    }
+}
+
+/* Styles d'authentification dans la navigation */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--color-white);
+    font-size: 0.9rem;
+}
+
+.logout-btn {
+    background: rgba(244, 67, 54, 0.2);
+    border: 1px solid rgba(244, 67, 54, 0.5);
+    color: #F44336;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    font-family: var(--font-text);
+}
+
+.logout-btn:hover {
+    background: rgba(244, 67, 54, 0.3);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .user-info {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .logout-btn {
+        padding: 0.3rem 0.6rem;
+    }
+}

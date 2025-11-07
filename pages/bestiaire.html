@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestiaire - Iron Oath</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components/bestiaire.css">
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        // Masquage immédiat des éléments de connexion pour éviter le flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginLink = document.getElementById('login-link');
+            const userInfo = document.getElementById('user-info');
+            
+            // Afficher le bouton de connexion par défaut
+            if (loginLink) {
+                loginLink.style.display = 'block';
+                loginLink.classList.add('show');
+                loginLink.classList.add('js-visible');
+            }
+            
+            // Masquer les infos utilisateur par défaut
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Écran de chargement supprimé -->
+
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link active">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <span id="username"></span>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="connexion.html" class="nav-link connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="bestiaire-container">
+        <h1 style="text-align: center; margin-bottom: 2rem; color: var(--color-accent);">Bestiaire</h1>
+        
+        <div class="filters">
+            <input type="text" id="search" placeholder="Rechercher une créature...">
+            <div class="filter-group">
+                <select id="palier-filter">
+                    <option value="">Tous les paliers</option>
+                    <option value="1">Palier 1</option>
+                    <option value="2">Palier 2</option>
+                    <option value="3">Palier 3</option>
+                </select>
+                <select id="category-filter">
+                    <option value="">Toutes les catégories</option>
+                    <option value="boss">Boss</option>
+                    <option value="elite">Elite</option>
+                    <option value="creature">Créature</option>
+                </select>
+                <select id="level-filter">
+                    <option value="">Niveau</option>
+                    <option value="1-10">1-10</option>
+                    <option value="11-20">11-20</option>
+                    <option value="21-30">21-30</option>
+                    <option value="31-40">31-40</option>
+                    <option value="41-50">41-50</option>
+                </select>
+                <select id="type-filter">
+                    <option value="">Type</option>
+                    <option value="humanoide">Humanoïde</option>
+                    <option value="bête">Bête</option>
+                    <option value="créature">Créature</option>
+                    <option value="mort-vivant">Mort-vivant</option>
+                    <option value="plante">Plante</option>
+                    <option value="démon">Démon</option>
+                    <option value="élémentaire">Élémentaire</option>
+                    <option value="dragon">Dragon</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="creatures-grid" id="creatures-grid">
+            <!-- Les créatures seront chargées dynamiquement par JavaScript -->
+        </div>
+    </main>
+
+    <!-- Script du bestiaire -->
+    <script type="module" src="../js/auth-supabase.js"></script>
+    <script src="../js/bestiaire.js"></script>
+    
+    <script>
+        // Gestion du menu mobile
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Écran de chargement supprimé - plus de gestion nécessaire
+    </script>
+
+</body>
+</html>
