@@ -450,20 +450,36 @@ class HDVSystem {
         `;
     }
 
-    deleteOrder(orderId) {
+    async deleteOrder(orderId) {
         if (!confirm('❓ Êtes-vous sûr de vouloir supprimer cet ordre ?')) return;
 
-        // Supprimer de toutes les listes
-        this.orders = this.orders.filter(order => order.id !== orderId);
-        this.myOrders = this.myOrders.filter(order => order.id !== orderId);
+        try {
+            // Supprimer de Supabase
+            if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
+                console.log('🗑️ Suppression ordre de Supabase...');
+                const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
+                if (!success) {
+                    throw new Error('Échec de la suppression dans Supabase');
+                }
+                console.log('✅ Ordre supprimé de Supabase');
+            }
 
-        // Sauvegarder
-        this.saveOrdersToStorage();
+            // Supprimer des listes locales
+            this.orders = this.orders.filter(order => order.id !== orderId);
+            this.myOrders = this.myOrders.filter(order => order.id !== orderId);
 
-        // Recharger l'affichage
-        this.loadMyOrders();
-        
-        this.showNotification('✅ Ordre supprimé avec succès', 'success');
+            // Sauvegarder en local en fallback
+            localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
+            localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
+
+            // Recharger l'affichage
+            this.loadMyOrders();
+            
+            this.showNotification('✅ Ordre supprimé avec succès', 'success');
+        } catch (error) {
+            console.error('❌ Erreur lors de la suppression:', error);
+            this.showNotification('❌ Erreur lors de la suppression: ' + error.message, 'error');
+        }
     }
 
     // Vérifier si un ordre appartient à l'utilisateur connecté
@@ -473,20 +489,36 @@ class HDVSystem {
     }
 
     // Supprimer un ordre depuis le marketplace
-    deleteOrderFromMarketplace(orderId) {
+    async deleteOrderFromMarketplace(orderId) {
         if (!confirm('❓ Êtes-vous sûr de vouloir supprimer cet ordre ?')) return;
 
-        // Supprimer de toutes les listes
-        this.orders = this.orders.filter(order => order.id !== orderId);
-        this.myOrders = this.myOrders.filter(order => order.id !== orderId);
+        try {
+            // Supprimer de Supabase
+            if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
+                console.log('🗑️ Suppression ordre de Supabase...');
+                const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
+                if (!success) {
+                    throw new Error('Échec de la suppression dans Supabase');
+                }
+                console.log('✅ Ordre supprimé de Supabase');
+            }
 
-        // Sauvegarder
-        this.saveOrdersToStorage();
+            // Supprimer des listes locales
+            this.orders = this.orders.filter(order => order.id !== orderId);
+            this.myOrders = this.myOrders.filter(order => order.id !== orderId);
 
-        // Recharger l'affichage du marketplace
-        this.loadMarketplace();
-        
-        this.showNotification('✅ Ordre supprimé avec succès', 'success');
+            // Sauvegarder en local en fallback
+            localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
+            localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
+
+            // Recharger l'affichage du marketplace
+            this.loadMarketplace();
+            
+            this.showNotification('✅ Ordre supprimé avec succès', 'success');
+        } catch (error) {
+            console.error('❌ Erreur lors de la suppression:', error);
+            this.showNotification('❌ Erreur lors de la suppression: ' + error.message, 'error');
+        }
     }
 
     displayOrders(orders) {
@@ -656,7 +688,7 @@ class HDVSystem {
         // Notification supprimée pour éviter le spam
     }
 
-    createOrder() {
+    async createOrder() {
         // Vérification obligatoire de l'authentification
         const userInfo = this.getCurrentUserInfo();
         if (!userInfo) {
@@ -695,40 +727,81 @@ class HDVSystem {
             item: this.selectedItem,
             quantity: quantity,
             price: price,
+            total: quantity * price,
             seller: this.orderType === 'sell' ? userInfo.username : null,
             buyer: this.orderType === 'buy' ? userInfo.username : null,
             sellerId: this.orderType === 'sell' ? userInfo.id : null,
             buyerId: this.orderType === 'buy' ? userInfo.id : null,
             timestamp: new Date(),
             creator: userInfo.username,
-            creatorId: userInfo.id
+            creatorId: userInfo.id,
+            username: userInfo.username
         };
 
-        // Ajout à la liste des ordres
-        this.orders.push(newOrder);
-        this.myOrders.push(newOrder);
+        try {
+            // Sauvegarder dans Supabase
+            if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
+                console.log('💾 Sauvegarde ordre dans Supabase...');
+                const savedOrder = await window.hdvSupabaseManager.saveOrderToSupabase(newOrder);
+                newOrder.id = savedOrder.id; // Utiliser l'ID généré par Supabase
+                console.log('✅ Ordre sauvegardé dans Supabase avec ID:', savedOrder.id);
+            } else {
+                console.warn('⚠️ Supabase non disponible, sauvegarde locale uniquement');
+                // Fallback vers localStorage
+                this.orders.push(newOrder);
+                this.myOrders.push(newOrder);
+                localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
+                localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
+            }
 
-        // Sauvegarde locale
-        this.saveOrdersToStorage();
-
-        this.showNotification('✅ Ordre créé avec succès !', 'success');
-        this.resetCreateOrderForm();
-        
-        // Retour à l'onglet marketplace pour voir l'ordre créé
-        this.switchTab('marketplace');
-        
-        // Forcer le rechargement du marketplace pour s'assurer que l'ordre apparaît
-        setTimeout(() => {
-            this.loadMarketplace();
-        }, 100);
+            this.showNotification('✅ Ordre créé avec succès !', 'success');
+            this.resetCreateOrderForm();
+            
+            // Retour à l'onglet marketplace pour voir l'ordre créé
+            this.switchTab('marketplace');
+            
+            // Recharger les données depuis Supabase pour inclure le nouvel ordre
+            setTimeout(async () => {
+                await this.loadOrdersFromStorage();
+                this.loadMarketplace();
+            }, 500);
+            
+        } catch (error) {
+            console.error('❌ Erreur lors de la création de l\'ordre:', error);
+            this.showNotification('❌ Erreur lors de la création de l\'ordre: ' + error.message, 'error');
+        }
     }
 
-    saveOrdersToStorage() {
-        localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
-        localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
+    async saveOrdersToStorage() {
+        // Nouvelle version avec Supabase - ne fait plus rien en local
+        // Les ordres sont maintenant sauvegardés directement dans Supabase lors de leur création
+        console.log('ℹ️ saveOrdersToStorage: Les ordres sont maintenant gérés par Supabase');
     }
 
-    loadOrdersFromStorage() {
+    async loadOrdersFromStorage() {
+        try {
+            console.log('📥 Chargement des ordres depuis Supabase...');
+            
+            if (!window.hdvSupabaseManager || !window.hdvSupabaseManager.isSupabaseAvailable()) {
+                console.error('❌ HDV Supabase Manager non disponible');
+                // Fallback vers localStorage en cas de problème
+                this.loadOrdersFromLocalStorage();
+                return;
+            }
+
+            const { orders, myOrders } = await window.hdvSupabaseManager.loadOrdersFromSupabase();
+            this.orders = orders;
+            this.myOrders = myOrders;
+            
+            console.log(`✅ Chargés depuis Supabase: ${orders.length} ordres, ${myOrders.length} mes ordres`);
+        } catch (error) {
+            console.error('❌ Erreur chargement Supabase, fallback localStorage:', error);
+            this.loadOrdersFromLocalStorage();
+        }
+    }
+
+    // Fonction de fallback pour localStorage
+    loadOrdersFromLocalStorage() {
         const savedOrders = localStorage.getItem('hdv_orders');
         const savedMyOrders = localStorage.getItem('hdv_my_orders');
         
@@ -739,6 +812,8 @@ class HDVSystem {
         if (savedMyOrders) {
             this.myOrders = JSON.parse(savedMyOrders);
         }
+        
+        console.log('📦 Données chargées depuis localStorage (fallback)');
     }
 
     resetCreateOrderForm() {
