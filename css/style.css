@@ -254,7 +254,8 @@ body .nav-connexion .user-info {
     display: none !important; /* Masquage initial absolu */
 }
 
-body .nav-connexion .user-info.show {
+body .nav-connexion .user-info.show,
+body .nav-connexion .user-info.js-visible {
     opacity: 1 !important;
     visibility: visible !important;
     display: flex !important;

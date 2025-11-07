@@ -24,9 +24,11 @@ function checkAuthState() {
     console.log('🔍 Vérification état auth Supabase:', currentUser ? `Connecté: ${userProfile?.username || currentUser.email}` : 'Non connecté');
     
     if (currentUser) {
-        // Utilisateur connecté (avec ou sans profil complet)
+        // Utilisateur connecté - Masquer le bouton connexion et afficher les infos user
         if (userInfo) {
+            userInfo.style.display = 'flex';
             userInfo.classList.add('show');
+            userInfo.classList.add('js-visible');
             if (usernameSpan) {
                 // Toujours prioriser le pseudo joueur au lieu de l'email
                 let displayName = 'Joueur';
@@ -40,15 +42,21 @@ function checkAuthState() {
             }
         }
         if (loginLink) {
+            loginLink.style.display = 'none';
             loginLink.classList.remove('show');
+            loginLink.classList.remove('js-visible');
         }
     } else {
-        // Utilisateur non connecté
+        // Utilisateur non connecté - Afficher le bouton connexion et masquer les infos user
         if (userInfo) {
+            userInfo.style.display = 'none';
             userInfo.classList.remove('show');
+            userInfo.classList.remove('js-visible');
         }
         if (loginLink) {
+            loginLink.style.display = 'block';
             loginLink.classList.add('show');
+            loginLink.classList.add('js-visible');
         }
     }
 }
