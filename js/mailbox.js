@@ -722,7 +722,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
                         </div>
                     </div>
                     <div class="message-actions">
-                        ${type === 'received' ? `<button class="btn-small reply-btn" data-message-id="${message.id}" data-sender="${this.escapeHtml(message.sender_username)}" data-subject="${this.escapeHtml(message.subject)}">↩️ Répondre</button>` : ''}
+                        ${type === 'received' ? `<button class="btn-small reply-btn" data-message-id="${message.id}" data-sender="${this.escapeAttribute(message.sender_username)}" data-subject="${this.escapeAttribute(message.subject)}">↩️ Répondre</button>` : ''}
                         ${isUnread ? `<button class="btn-small mark-read-btn" data-message-id="${message.id}">✓ Lu</button>` : ''}
                         <button class="btn-small delete-btn" data-message-id="${message.id}">🗑️</button>
                     </div>
@@ -756,9 +756,22 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
     // Échapper le HTML pour éviter les injections
     escapeHtml(text) {
+        if (!text) return '';
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // Échapper spécifiquement pour les attributs HTML
+    escapeAttribute(text) {
+        if (!text) return '';
+        return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Décoder les attributs HTML échappés
+    unescapeAttribute(text) {
+        if (!text) return '';
+        return text.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
     }
 
     // Afficher le formulaire de composition (méthode héritée - redirige vers le panneau)
@@ -897,8 +910,9 @@ ${this.currentUser.username || 'Un aventurier'}`;
             userValidation.innerHTML = '<div class="validation-success">✅ Utilisateur trouvé</div>';
             return true;
         } else {
-            userValidation.innerHTML = '<div class="validation-error">❌ Utilisateur non trouvé</div>';
-            return false;
+            // Mode tolérant : accepter les utilisateurs non trouvés avec un avertissement
+            userValidation.innerHTML = '<div class="validation-warning">⚠️ Utilisateur non vérifié (envoi possible)</div>';
+            return true; // Permettre l'envoi même si l'utilisateur n'est pas dans la liste
         }
     }
 
@@ -1069,6 +1083,10 @@ ${this.currentUser.username || 'Un aventurier'}`;
         try {
             const success = await this.supabaseManager.deleteMessage(messageId);
             if (success) {
+                // Supprimer des données en mémoire
+                this.receivedMessages = this.receivedMessages.filter(msg => msg.id !== messageId);
+                this.sentMessages = this.sentMessages.filter(msg => msg.id !== messageId);
+                
                 // Retirer l'élément de l'affichage
                 const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
                 if (messageElement) {
@@ -1275,8 +1293,8 @@ ${this.currentUser.username || 'Un aventurier'}`;
                 e.preventDefault();
                 console.log('🔄 Clic sur bouton répondre détecté');
                 const messageId = e.target.getAttribute('data-message-id');
-                const sender = e.target.getAttribute('data-sender');
-                const subject = e.target.getAttribute('data-subject');
+                const sender = this.unescapeAttribute(e.target.getAttribute('data-sender'));
+                const subject = this.unescapeAttribute(e.target.getAttribute('data-subject'));
                 console.log('📧 Données récupérées:', { messageId, sender, subject });
                 this.replyToMessage(messageId, sender, subject);
             }

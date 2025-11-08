@@ -553,6 +553,105 @@ class HDVSystem {
         }
     }
 
+    // Finaliser une transaction (vente terminée)
+    async finalizeTransaction(orderId, itemName, orderType) {
+        const actionText = orderType === 'sell' ? 'vente' : 'achat';
+        if (!confirm(`✅ Êtes-vous sûr que cette ${actionText} de "${itemName}" est terminée ?\n\nL'ordre sera supprimé automatiquement dans 1 minute.`)) {
+            return;
+        }
+
+        try {
+            // Marquer l'ordre comme finalisé avec un état temporaire
+            const orderElement = document.querySelector(`[data-order-id="${orderId}"]`);
+            if (orderElement) {
+                // Ajouter un indicateur visuel
+                const actions = orderElement.querySelector('.order-actions');
+                actions.innerHTML = `
+                    <div class="transaction-finalized">
+                        <span class="finalized-text">✅ Transaction finalisée</span>
+                        <span class="countdown-text">Suppression dans <span id="countdown-${orderId}">60</span>s</span>
+                        <button class="btn btn-small btn-secondary" onclick="hdvSystem.cancelFinalization('${orderId}')">
+                            ↩️ Annuler
+                        </button>
+                    </div>
+                `;
+                
+                // Ajouter une classe pour le style
+                orderElement.classList.add('order-finalized');
+            }
+
+            this.showNotification(`✅ ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisée ! Suppression automatique dans 1 minute.`, 'success');
+
+            // Démarrer le compte à rebours
+            this.startDeletionCountdown(orderId, itemName, orderType);
+
+        } catch (error) {
+            console.error('❌ Erreur lors de la finalisation:', error);
+            this.showNotification('❌ Erreur lors de la finalisation', 'error');
+        }
+    }
+
+    // Démarrer le compte à rebours de suppression
+    startDeletionCountdown(orderId, itemName, orderType) {
+        let timeLeft = 60; // 60 secondes
+        const countdownElement = document.getElementById(`countdown-${orderId}`);
+        
+        const countdownInterval = setInterval(() => {
+            timeLeft--;
+            
+            if (countdownElement) {
+                countdownElement.textContent = timeLeft;
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                this.executeAutoDeletion(orderId, itemName, orderType);
+            }
+        }, 1000);
+        
+        // Stocker l'interval pour pouvoir l'annuler
+        if (!this.deletionTimers) this.deletionTimers = new Map();
+        this.deletionTimers.set(orderId, countdownInterval);
+    }
+
+    // Annuler la finalisation
+    cancelFinalization(orderId) {
+        // Arrêter le timer
+        if (this.deletionTimers && this.deletionTimers.has(orderId)) {
+            clearInterval(this.deletionTimers.get(orderId));
+            this.deletionTimers.delete(orderId);
+        }
+
+        // Restaurer l'affichage normal
+        const orderElement = document.querySelector(`[data-order-id="${orderId}"]`);
+        if (orderElement) {
+            orderElement.classList.remove('order-finalized');
+            // Recharger l'affichage du marketplace pour restaurer les boutons
+            this.loadMarketplace();
+        }
+
+        this.showNotification('↩️ Finalisation annulée', 'info');
+    }
+
+    // Exécuter la suppression automatique
+    async executeAutoDeletion(orderId, itemName, orderType) {
+        const actionText = orderType === 'sell' ? 'vente' : 'achat';
+        
+        try {
+            // Supprimer l'ordre
+            await this.deleteOrderFromMarketplace(orderId);
+            this.showNotification(`🗑️ ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" automatiquement supprimée`, 'info');
+            
+            // Nettoyer le timer
+            if (this.deletionTimers) {
+                this.deletionTimers.delete(orderId);
+            }
+        } catch (error) {
+            console.error('❌ Erreur suppression auto:', error);
+            this.showNotification('❌ Erreur lors de la suppression automatique', 'error');
+        }
+    }
+
     displayOrders(orders) {
         const ordersList = document.getElementById('orders-list');
         if (!ordersList) return;
@@ -584,7 +683,7 @@ class HDVSystem {
             </div>
             <div class="orders-grid">
                 ${orders.map(order => `
-                    <div class="order-card ${order.type}">
+                    <div class="order-card ${order.type}" data-order-id="${order.id}">
                         <div class="order-header">
                             <span class="order-type ${order.type}">
                                 ${order.type === 'sell' ? '🔴 VENTE' : '🔵 ACHAT'}
@@ -619,6 +718,9 @@ class HDVSystem {
                         💬 Contacter
                     </button>
                     ${this.isMyOrder(order) ? `
+                        <button class="btn btn-success" onclick="hdvSystem.finalizeTransaction('${order.id}', '${order.item.name}', '${order.type}')" title="Marquer la transaction comme terminée">
+                            ✅ Finaliser
+                        </button>
                         <button class="btn btn-danger" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
                             🗑️ Supprimer
                         </button>

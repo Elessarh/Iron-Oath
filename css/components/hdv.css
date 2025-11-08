@@ -1049,3 +1049,56 @@
     flex-direction: column;
     gap: 15px;
 }
+
+/* === STYLES TRANSACTION FINALISÉE === */
+.order-finalized {
+    background: linear-gradient(135deg, rgba(34, 139, 34, 0.1) 0%, rgba(0, 100, 0, 0.05) 100%);
+    border: 2px solid rgba(34, 139, 34, 0.5);
+}
+
+.transaction-finalized {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(34, 139, 34, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(34, 139, 34, 0.3);
+}
+
+.finalized-text {
+    color: #4CAF50;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.countdown-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.countdown-text span {
+    color: #FFB366;
+    font-weight: 600;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.btn-small {
+    padding: 4px 8px;
+    font-size: 12px;
+}
