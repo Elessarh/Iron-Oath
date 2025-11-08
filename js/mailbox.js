@@ -29,8 +29,12 @@ class MailboxSystem {
         // Actualiser toutes les 15 secondes
         this.refreshInterval = setInterval(async () => {
             console.log('📬 Auto-actualisation boîte mail...');
+            const previousMessageCount = this.messages.length;
             await this.loadMessages();
             await this.updateUnreadCount();
+            
+            // Vérifier les nouveaux messages pour notifications HDV
+            this.checkForNewItemMessages(previousMessageCount);
         }, 15000);
         
         // Nettoyer l'intervalle si on quitte la page
@@ -39,6 +43,140 @@ class MailboxSystem {
                 clearInterval(this.refreshInterval);
             }
         });
+    }
+    
+    // Vérifier les nouveaux messages liés aux items et afficher des notifications
+    checkForNewItemMessages(previousCount) {
+        if (this.messages.length > previousCount) {
+            const newMessages = this.messages.slice(0, this.messages.length - previousCount);
+            
+            newMessages.forEach(message => {
+                // Vérifier si c'est un message reçu (pas envoyé) et lié à un item
+                if (message.recipient_id === this.currentUser?.id && 
+                    (message.subject?.includes('🔴') || message.subject?.includes('🔵'))) {
+                    this.showItemContactNotification(message);
+                }
+            });
+        }
+    }
+    
+    // Afficher une notification visuelle pour un contact d'item
+    showItemContactNotification(message) {
+        // Créer une notification flottante
+        const notification = document.createElement('div');
+        notification.className = 'item-contact-notification';
+        notification.innerHTML = `
+            <div class="notification-header">
+                <span class="notification-icon">💬</span>
+                <span class="notification-title">Contact pour item!</span>
+                <button class="notification-close">&times;</button>
+            </div>
+            <div class="notification-content">
+                <strong>De:</strong> ${message.sender_username || 'Joueur'}<br>
+                <strong>Sujet:</strong> ${message.subject || 'Message HDV'}
+            </div>
+            <div class="notification-actions">
+                <button class="notification-btn view-message" onclick="window.mailboxSystem?.openMessage?.('${message.id}')">
+                    📖 Voir message
+                </button>
+                <button class="notification-btn dismiss" onclick="this.closest('.item-contact-notification').remove()">
+                    ✖️ Ignorer
+                </button>
+            </div>
+        `;
+        
+        // Styles CSS inline pour la notification
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 300px;
+            animation: slideIn 0.3s ease-out;
+            border: 2px solid #00a8ff;
+        `;
+        
+        // Ajouter l'animation CSS
+        if (!document.getElementById('notification-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'notification-styles';
+            styles.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                .item-contact-notification {
+                    font-family: 'Exo 2', sans-serif;
+                }
+                .notification-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 10px;
+                    font-weight: 600;
+                }
+                .notification-close {
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 18px;
+                    cursor: pointer;
+                    padding: 0;
+                    width: 20px;
+                    height: 20px;
+                }
+                .notification-content {
+                    font-size: 14px;
+                    margin-bottom: 10px;
+                    line-height: 1.4;
+                }
+                .notification-actions {
+                    display: flex;
+                    gap: 10px;
+                }
+                .notification-btn {
+                    padding: 5px 10px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    font-weight: 500;
+                }
+                .notification-btn.view-message {
+                    background: #2ed573;
+                    color: white;
+                }
+                .notification-btn.dismiss {
+                    background: #ff4757;
+                    color: white;
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        // Ajouter la notification au DOM
+        document.body.appendChild(notification);
+        
+        // Jouer le son de notification
+        this.playNotificationSound();
+        
+        // Bouton fermer
+        const closeBtn = notification.querySelector('.notification-close');
+        closeBtn.addEventListener('click', () => {
+            notification.remove();
+        });
+        
+        // Auto-suppression après 10 secondes
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 10000);
     }
 
     // Actualisation manuelle
@@ -306,12 +444,31 @@ ${this.currentUser.username || 'Un aventurier'}`;
     // Jouer son de notification
     playNotificationSound() {
         try {
-            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+L0vGUYBDuN1/LKdCYFJHbE7+CUQQsOWrnn769XFAo+n+X0vGUYBjyN1/LJciYFJHfE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyM1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo=');
-            audio.volume = 0.1; // Volume très bas pour un son plus doux
+            // Son de notification doux et agréable - petite mélodie subtile
+            const audio = new Audio('data:audio/wav;base64,UklGRlYMAABXQVZFZm10IBAAAAABAAEAgLcAAGGuAQACABAAZGF0YTIMAABNhJaRhJOOhZCJgY+BgoyEhIaFhomCiYOHh4WJhoeJh4iGiYaJh4SJgoiGhYeEhoeChIZ/hYJ+hYB9hH19g3p9gnh9gXh9gHd8fnh7fXZ7fHR7end7eHd6d3Z6dXZ5c3d4cnh3cXd2cHZ1bnV0bHVybXJxbHFwa3BvZ29uZW5tY21rYGprXWlpWmlnV2hnVGVlUWRjTmJhS2FfSF9dRV1bQltYP1lWPFdUOVVSOVNRP1JOPlBMPE5KOU1IR0tFREpCQUhAPUY9O0Q6NkI3MkAvLz4sLDsqKTgnJjYjJTQhIjMeIDEdHTEbGS8ZGC0WFS0UEysSDioQECkODisJDysIDiwICi0ICS4KCi4KCi4LDC4ODy4QES8SFS8UFy8VGS8VGy8VHC8UHi8THi8SHi8RHy8QHy8OHy8LHy8IIC8FIC8CIC8AIC8AHy8AHi8AHS8AHC8AGy8AGS8AGC8AFy8AFi8AFi8AFy8AGC8AGy8AHC8AHy8AJC8AKC8ALi8ANS8AOy8AQi8ASS8AUC8AVC8AXS8AZC8AZi8AaS8AaS8AZi8AYi8AXS8AVi8ATy8ARy8APy8ANi8ALy8AKC8AIS8AGi8AFi8AFS8AFy8AHC8AIS8AKC8ALS8ANS8APS8ARS8ATi8AVi8AXy8AaC8Abi8AdC8Aei8Aey8Aei8Ady8Aci8AaS8AXi8AUS8AQy8ANS8AKC8AGy8AEC8AGy8AKC8ANS8AQy8AUS8AXi8AaS8Aci8Ady8Aei8Aey8Aei8AdC8Abi8AaC8AXy8AVi8ATi8ARS8APS8ANS8ALS8AKC8AIS8AHC8AFy8AFS8AFi8AGi8AIS8AKC8ALy8ANi8APy8ARy8ATy8AVi8AXS8AYi8AZi8AaS8AaS8AZi8AZC8AXS8AVC8AUC8ASS8AQi8AOy8ANS8ALi8AKC8AJC8AHy8AHC8AGy8AGS8AFy8AFi8AFi8AFy8AGC8AGy8AHC8AHy8AIC8AIC8AIC8AIC8AHy8AHi8AHS8AHC8AGy8AGS8AFy8AFi8AFi8AFy8AGC8AGy8AHC8AHS8AHi8AHy8AIC8AIC8AIC8AIC8A=');
+            audio.volume = 0.08; // Volume encore plus bas
             audio.play().catch(() => {}); // Ignorer les erreurs de lecture
         } catch (error) {
             // Ignorer les erreurs audio
         }
+    }
+
+    // Ouvrir un message spécifique (pour les notifications)
+    openMessage(messageId) {
+        console.log('📖 Ouverture du message:', messageId);
+        
+        // Si on est dans le HDV, basculer vers l'onglet boîte mail
+        if (window.hdvSystem && window.hdvSystem.switchTab) {
+            window.hdvSystem.switchTab('mailbox');
+        }
+        
+        // Attendre que l'interface soit chargée puis sélectionner le message
+        setTimeout(() => {
+            const message = this.messages.find(m => m.id === messageId);
+            if (message) {
+                this.selectMessage(message);
+            }
+        }, 100);
     }
 
     // Obtenir messages pour un utilisateur
@@ -605,10 +762,13 @@ ${this.currentUser.username || 'Un aventurier'}`;
         // Combiner utilisateurs connus et tous les utilisateurs
         const knownUsers = JSON.parse(localStorage.getItem('knownUsers') || '[]');
         
-        // Ajouter automatiquement les expéditeurs des messages reçus
+        // Ajouter automatiquement les expéditeurs des messages reçus et envoyés
+        // Vérification de sécurité pour éviter l'erreur 'undefined reading map'
+        const messages = this.messages || [];
+        
         const messagesSenders = [
-            ...this.receivedMessages.map(msg => msg.sender_username),
-            ...this.sentMessages.map(msg => msg.recipient_username)
+            ...messages.filter(msg => msg.sender_username).map(msg => msg.sender_username),
+            ...messages.filter(msg => msg.recipient_username).map(msg => msg.recipient_username)
         ].filter(Boolean);
         
         // Combiner toutes les sources d'utilisateurs

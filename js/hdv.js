@@ -38,16 +38,31 @@ class HDVSystem {
         this.startAutoRefresh();
     }
 
-    // Système d'auto-actualisation
+    // Système d'auto-actualisation optimisé
     startAutoRefresh() {
-        console.log('🔄 Démarrage auto-actualisation HDV (30s)');
+        console.log('🔄 Démarrage auto-actualisation HDV intelligente (60s)');
         
-        // Actualiser toutes les 30 secondes
+        // Variables pour l'optimisation
+        this.lastUpdateTime = Date.now();
+        this.isPageVisible = true;
+        
+        // Détecter si la page est visible
+        document.addEventListener('visibilitychange', () => {
+            this.isPageVisible = !document.hidden;
+            if (this.isPageVisible) {
+                console.log('�️ Page redevenue visible, actualisation immédiate');
+                this.performOptimizedRefresh();
+            }
+        });
+        
+        // Actualiser toutes les 60 secondes (au lieu de 30) seulement si la page est visible
         this.refreshInterval = setInterval(async () => {
-            console.log('🔄 Auto-actualisation HDV...');
-            await this.loadOrdersFromStorage();
-            await this.displayOrders(this.orders);
-        }, 30000);
+            if (this.isPageVisible) {
+                this.performOptimizedRefresh();
+            } else {
+                console.log('🔄 Actualisation ignorée (page non visible)');
+            }
+        }, 60000); // Intervalle augmenté à 60 secondes
         
         // Nettoyer l'intervalle si on quitte la page
         window.addEventListener('beforeunload', () => {
@@ -55,6 +70,35 @@ class HDVSystem {
                 clearInterval(this.refreshInterval);
             }
         });
+    }
+    
+    // Actualisation optimisée avec cache intelligent
+    async performOptimizedRefresh() {
+        const now = Date.now();
+        
+        // Éviter les actualisations trop fréquentes (min 30 secondes)
+        if (now - this.lastUpdateTime < 30000) {
+            console.log('🔄 Actualisation trop récente, ignorée');
+            return;
+        }
+        
+        console.log('🔄 Auto-actualisation HDV optimisée...');
+        this.lastUpdateTime = now;
+        
+        try {
+            const previousOrderCount = this.orders.length;
+            await this.loadOrdersFromStorage();
+            
+            // Actualiser l'affichage seulement si les données ont changé
+            if (this.orders.length !== previousOrderCount) {
+                console.log('📊 Données modifiées, mise à jour de l\'affichage');
+                await this.displayOrders(this.orders);
+            } else {
+                console.log('📊 Aucun changement détecté, affichage conservé');
+            }
+        } catch (error) {
+            console.error('❌ Erreur lors de l\'actualisation optimisée:', error);
+        }
     }
 
     // Rediriger vers la page de connexion si non connecté
@@ -1088,8 +1132,8 @@ class HDVSystem {
         }
 
         // Vérifier si le système de boîte mail est disponible
-        if (window.mailboxSystem && window.mailboxSystem.sendTradeMessage) {
-            console.log('📬 Utilisation du système de boîte mail');
+        if (window.mailboxSystem) {
+            console.log('📬 Ouverture interface de composition de message');
             
             // Trouver l'ordre correspondant pour obtenir plus d'infos
             const order = this.orders.find(o => 
@@ -1100,27 +1144,38 @@ class HDVSystem {
             console.log('🔍 Ordre trouvé:', order);
             
             if (order) {
-                // Utiliser la méthode async correcte
-                mailboxSystem.sendTradeMessage(
-                    traderName,
-                    itemName, 
-                    order.type,
-                    order.price
-                ).then(success => {
-                    if (success) {
-                        this.showNotification(`✅ Message envoyé à ${traderName} via la boîte mail`, 'success');
-                        console.log('✅ Message envoyé avec succès');
+                // Ouvrir l'interface de composition avec un sujet pré-rempli mais contenu vide
+                const subject = `${order.type === 'sell' ? '🔴 Votre vente' : '🔵 Votre achat'} - ${itemName}`;
+                
+                // Rediriger vers la boîte mail avec les données pré-remplies
+                const mailboxUrl = `../pages/hdv.html#mailbox?to=${encodeURIComponent(traderName)}&subject=${encodeURIComponent(subject)}`;
+                
+                // Ouvrir la boîte mail dans le HDV
+                this.switchTab('mailbox');
+                
+                // Pré-remplir les champs si la boîte mail est déjà chargée
+                setTimeout(() => {
+                    const toInput = document.getElementById('compose-to');
+                    const subjectInput = document.getElementById('compose-subject');
+                    const contentTextarea = document.getElementById('compose-content');
+                    
+                    if (toInput) toInput.value = traderName;
+                    if (subjectInput) subjectInput.value = subject;
+                    if (contentTextarea) contentTextarea.focus(); // Focus sur le contenu pour que l'utilisateur puisse écrire
+                    
+                    if (window.mailboxSystem && window.mailboxSystem.validateForm) {
+                        window.mailboxSystem.validateForm();
                     }
-                }).catch(error => {
-                    console.error('❌ Erreur envoi message:', error);
-                    this.showNotification('❌ Erreur lors de l\'envoi du message', 'error');
-                });
+                }, 100);
+                
+                this.showNotification(`📝 Interface de message ouverte pour contacter ${traderName}`, 'info');
+                
             } else {
                 console.warn('❌ Ordre non trouvé pour le contact');
                 this.showNotification('❌ Impossible de trouver les détails de l\'ordre', 'error');
             }
         } else {
-            console.warn('❌ Système de boîte mail non disponible ou méthode manquante');
+            console.warn('❌ Système de boîte mail non disponible');
             this.showNotification('❌ Système de messagerie non disponible', 'error');
             
             // Fallback vers l'ancien système

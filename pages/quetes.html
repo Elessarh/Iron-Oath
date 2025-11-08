@@ -1080,9 +1080,8 @@
                     const y = this.getAttribute('data-y');
                     
                     if (x && y) {
-                        // Ouvrir la carte avec les coordonnées
-                        const mapUrl = `map.html?x=${x}&y=${y}`;
-                        window.open(mapUrl, '_blank');
+                        // Naviguer vers la carte avec les coordonnées dans le même onglet
+                        window.location.href = `map.html?x=${x}&y=${y}`;
                     }
                 });
                 
