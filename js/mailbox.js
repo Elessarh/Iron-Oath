@@ -722,7 +722,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
                         </div>
                     </div>
                     <div class="message-actions">
-                        ${type === 'received' ? `<button class="btn-small reply-btn" data-message-id="${message.id}" data-sender="${message.sender_username}" data-subject="${message.subject}">↩️ Répondre</button>` : ''}
+                        ${type === 'received' ? `<button class="btn-small reply-btn" data-message-id="${message.id}" data-sender="${this.escapeHtml(message.sender_username)}" data-subject="${this.escapeHtml(message.subject)}">↩️ Répondre</button>` : ''}
                         ${isUnread ? `<button class="btn-small mark-read-btn" data-message-id="${message.id}">✓ Lu</button>` : ''}
                         <button class="btn-small delete-btn" data-message-id="${message.id}">🗑️</button>
                     </div>
@@ -1097,8 +1097,13 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
     // Répondre à un message
     async replyToMessage(messageId, originalSender, originalSubject) {
+        console.log('📧 replyToMessage appelée avec:', { messageId, originalSender, originalSubject });
+        
         const modal = document.querySelector('.mailbox-modal');
-        if (!modal) return;
+        if (!modal) {
+            console.error('❌ Modal mailbox non trouvée');
+            return;
+        }
 
         // Basculer vers l'onglet composition
         await this.showTab('compose', modal);
@@ -1268,15 +1273,18 @@ ${this.currentUser.username || 'Un aventurier'}`;
             // Gestionnaire pour boutons de réponse
             if (e.target.matches('.reply-btn')) {
                 e.preventDefault();
+                console.log('🔄 Clic sur bouton répondre détecté');
                 const messageId = e.target.getAttribute('data-message-id');
                 const sender = e.target.getAttribute('data-sender');
                 const subject = e.target.getAttribute('data-subject');
+                console.log('📧 Données récupérées:', { messageId, sender, subject });
                 this.replyToMessage(messageId, sender, subject);
             }
             
             // Gestionnaire pour boutons marquer comme lu
             if (e.target.matches('.mark-read-btn')) {
                 e.preventDefault();
+                console.log('✅ Clic sur bouton marquer comme lu');
                 const messageId = e.target.getAttribute('data-message-id');
                 this.markAsRead(messageId);
             }
