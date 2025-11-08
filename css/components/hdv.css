@@ -615,6 +615,37 @@
         flex-direction: column;
         text-align: center;
     }
+    
+    /* Amélioration responsive pour les boutons */
+    .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+        justify-content: stretch;
+    }
+    
+    .submit-btn,
+    .cancel-btn {
+        padding: 1.2rem;
+        font-size: 1rem;
+        width: 100%;
+        min-height: 50px;
+        font-weight: 600;
+    }
+}
+
+@media (max-width: 480px) {
+    .submit-btn,
+    .cancel-btn {
+        padding: 1rem;
+        font-size: 0.9rem;
+        min-height: 45px;
+    }
+    
+    .form-actions {
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+    }
 }
 
 /* Système de chat intégré */

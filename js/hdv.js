@@ -759,6 +759,11 @@ class HDVSystem {
                         <div class="order-trader">
                             <span>${order.type === 'sell' ? 'Vendeur' : 'Acheteur'}: <strong>${order.creator || order.seller || order.buyer || 'Aventurier Anonyme'}</strong></span>
                         </div>
+                        ${order.notes ? `
+                        <div class="order-notes">
+                            <span>📝 Notes: <em>${order.notes}</em></span>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
                 
@@ -895,6 +900,7 @@ class HDVSystem {
 
         const quantity = parseInt(document.getElementById('quantity').value);
         const price = parseInt(document.getElementById('price').value);
+        const notes = document.getElementById('notes').value.trim(); // Récupération des notes
 
         if (!quantity || quantity <= 0) {
             this.showNotification('❌ Quantité invalide', 'error');
@@ -914,6 +920,7 @@ class HDVSystem {
             quantity: quantity,
             price: price,
             total: quantity * price,
+            notes: notes || null, // Ajout des notes à l'ordre
             seller: this.orderType === 'sell' ? userInfo.username : null,
             buyer: this.orderType === 'buy' ? userInfo.username : null,
             sellerId: this.orderType === 'sell' ? userInfo.id : null,

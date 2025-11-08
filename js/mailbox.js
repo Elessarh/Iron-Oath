@@ -184,7 +184,7 @@ class MailboxSystem {
             this.saveUserForAutocomplete(to);
             
             this.showNotification(`✅ Message envoyé à ${to}`, 'success');
-            this.showContactNotification(this.currentUser?.username || 'Vous', to, subject, orderItem);
+            // this.showContactNotification(this.currentUser?.username || 'Vous', to, subject, orderItem); // Suppression des messages automatiques
             
             return true;
             
@@ -307,7 +307,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
     playNotificationSound() {
         try {
             const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+L0vGUYBDuN1/LKdCYFJHbE7+CUQQsOWrnn769XFAo+n+X0vGUYBjyN1/LJciYFJHfE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyM1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo+n+X0vWUYBjyN1/LJciYFJHbE7+CUQQsOWrnn769XFAo=');
-            audio.volume = 0.3;
+            audio.volume = 0.1; // Volume très bas pour un son plus doux
             audio.play().catch(() => {}); // Ignorer les erreurs de lecture
         } catch (error) {
             // Ignorer les erreurs audio
