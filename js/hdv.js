@@ -455,19 +455,29 @@ class HDVSystem {
         if (!confirm('❓ Êtes-vous sûr de vouloir supprimer cet ordre ?')) return;
 
         try {
-            // Supprimer de Supabase
+            let orderDeleted = false;
+            
+            // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
-                console.log('🗑️ Suppression ordre de Supabase...');
-                const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
-                if (!success) {
-                    throw new Error('Échec de la suppression dans Supabase');
+                try {
+                    console.log('🗑️ Suppression ordre de Supabase...');
+                    const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
+                    if (success) {
+                        console.log('✅ Ordre supprimé de Supabase');
+                        orderDeleted = true;
+                    }
+                } catch (supabaseError) {
+                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
                 }
-                console.log('✅ Ordre supprimé de Supabase');
             }
 
-            // Supprimer des listes locales
+            // Supprimer des listes locales (toujours nécessaire)
             this.orders = this.orders.filter(order => order.id !== orderId);
             this.myOrders = this.myOrders.filter(order => order.id !== orderId);
+
+            // Sauvegarder les modifications en local
+            localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
+            localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
 
             // Sauvegarder en local en fallback
             localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
@@ -494,21 +504,27 @@ class HDVSystem {
         if (!confirm('❓ Êtes-vous sûr de vouloir supprimer cet ordre ?')) return;
 
         try {
-            // Supprimer de Supabase
+            let orderDeleted = false;
+            
+            // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
-                console.log('🗑️ Suppression ordre de Supabase...');
-                const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
-                if (!success) {
-                    throw new Error('Échec de la suppression dans Supabase');
+                try {
+                    console.log('🗑️ Suppression ordre de Supabase...');
+                    const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
+                    if (success) {
+                        console.log('✅ Ordre supprimé de Supabase');
+                        orderDeleted = true;
+                    }
+                } catch (supabaseError) {
+                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
                 }
-                console.log('✅ Ordre supprimé de Supabase');
             }
 
-            // Supprimer des listes locales
+            // Supprimer des listes locales (toujours nécessaire)
             this.orders = this.orders.filter(order => order.id !== orderId);
             this.myOrders = this.myOrders.filter(order => order.id !== orderId);
 
-            // Sauvegarder en local en fallback
+            // Sauvegarder en local
             localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
             localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
 
@@ -746,19 +762,29 @@ class HDVSystem {
         };
 
         try {
-            // Sauvegarder dans Supabase
+            let orderSaved = false;
+            
+            // Essayer de sauvegarder dans Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
-                console.log('💾 Sauvegarde ordre dans Supabase...');
-                const savedOrder = await window.hdvSupabaseManager.saveOrderToSupabase(newOrder);
-                newOrder.id = savedOrder.id; // Utiliser l'ID généré par Supabase
-                console.log('✅ Ordre sauvegardé dans Supabase avec ID:', savedOrder.id);
-            } else {
-                console.warn('⚠️ Supabase non disponible, sauvegarde locale uniquement');
-                // Fallback vers localStorage
+                try {
+                    console.log('💾 Sauvegarde ordre dans Supabase...');
+                    const savedOrder = await window.hdvSupabaseManager.saveOrderToSupabase(newOrder);
+                    newOrder.id = savedOrder.id; // Utiliser l'ID généré par Supabase
+                    console.log('✅ Ordre sauvegardé dans Supabase avec ID:', savedOrder.id);
+                    orderSaved = true;
+                } catch (supabaseError) {
+                    console.warn('⚠️ Échec sauvegarde Supabase, basculement vers localStorage:', supabaseError);
+                }
+            }
+            
+            // Fallback vers localStorage si Supabase a échoué ou n'est pas disponible
+            if (!orderSaved) {
+                console.log('💾 Sauvegarde locale dans localStorage...');
                 this.orders.push(newOrder);
                 this.myOrders.push(newOrder);
                 localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
                 localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
+                console.log('✅ Ordre sauvegardé localement');
             }
 
             this.showNotification('✅ Ordre créé avec succès !', 'success');
@@ -767,7 +793,7 @@ class HDVSystem {
             // Retour à l'onglet marketplace pour voir l'ordre créé
             await this.switchTab('marketplace');
             
-            // Recharger les données depuis Supabase pour inclure le nouvel ordre
+            // Recharger les données pour inclure le nouvel ordre
             setTimeout(async () => {
                 await this.loadOrdersFromStorage();
                 await this.loadMarketplace();

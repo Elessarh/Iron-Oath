@@ -245,9 +245,16 @@ class HDVSupabaseManager {
     }
 
     // Vérifier si Supabase est disponible
-    async isSupabaseAvailable() {
-        const ready = await this.ensureInitialized();
-        return ready && this.supabase !== null;
+    isSupabaseAvailable() {
+        try {
+            return this.initialized && 
+                   this.supabase !== null && 
+                   window.supabase !== null &&
+                   typeof this.supabase.from === 'function';
+        } catch (error) {
+            console.warn('⚠️ Vérification Supabase échouée:', error);
+            return false;
+        }
     }
 }
 

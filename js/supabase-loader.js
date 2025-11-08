@@ -3,12 +3,19 @@
 // Fonction pour charger Supabase seulement si nécessaire
 async function loadSupabaseConditionally() {
     try {
-        // Essayer de charger le module Supabase
-        const { createClient } = await import('https://cdn.skypack.dev/@supabase/supabase-js@2');
-        
         // Configuration Supabase - À configurer selon votre environnement
         const supabaseUrl = 'YOUR_SUPABASE_URL';
         const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+        
+        // Vérifier si la configuration est valide
+        if (supabaseUrl === 'YOUR_SUPABASE_URL' || supabaseKey === 'YOUR_SUPABASE_ANON_KEY') {
+            console.log('⚠️ Supabase non configuré - Mode localStorage uniquement');
+            window.supabase = null;
+            return false;
+        }
+        
+        // Essayer de charger le module Supabase
+        const { createClient } = await import('https://cdn.skypack.dev/@supabase/supabase-js@2');
         
         const supabase = createClient(supabaseUrl, supabaseKey);
         window.supabase = supabase;
@@ -16,7 +23,7 @@ async function loadSupabaseConditionally() {
         console.log('✅ Supabase chargé avec succès');
         return true;
     } catch (error) {
-        console.log('⚠️ Supabase non disponible - Mode hors ligne');
+        console.log('⚠️ Supabase non disponible - Mode localStorage uniquement');
         window.supabase = null;
         return false;
     }
