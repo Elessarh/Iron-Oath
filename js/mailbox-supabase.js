@@ -104,14 +104,40 @@ class MailboxSupabaseManager {
             }
 
             // Trouver le destinataire
-            const { data: recipientData, error: recipientError } = await this.supabase
+            console.log('🔍 Recherche destinataire:', recipientUsername);
+            let { data: recipientData, error: recipientError } = await this.supabase
                 .from('user_profiles')
                 .select('id, username')
                 .eq('username', recipientUsername)
                 .single();
 
+            console.log('👤 Résultat recherche destinataire:', { recipientData, recipientError });
+
             if (recipientError || !recipientData) {
-                throw new Error(`Destinataire "${recipientUsername}" non trouvé`);
+                // Essayer de créer automatiquement le profil utilisateur si non trouvé
+                console.log('⚠️ Destinataire non trouvé, tentative de création automatique...');
+                
+                try {
+                    const { data: newUser, error: createError } = await this.supabase
+                        .from('user_profiles')
+                        .insert([{
+                            username: recipientUsername,
+                            role: 'joueur'
+                        }])
+                        .select()
+                        .single();
+                        
+                    if (createError) {
+                        throw new Error(`Impossible de créer le profil pour "${recipientUsername}": ${createError.message}`);
+                    }
+                    
+                    console.log('✅ Profil créé automatiquement:', newUser);
+                    recipientData = newUser;
+                } catch (createErr) {
+                    throw new Error(`Destinataire "${recipientUsername}" non trouvé et création automatique échouée: ${createErr.message}`);
+                }
+            } else {
+                console.log('✅ Destinataire trouvé:', recipientData);
             }
 
             // Préparer les données du message

@@ -1102,3 +1102,15 @@
     padding: 4px 8px;
     font-size: 12px;
 }
+
+/* === ACTIONS MES ORDRES === */
+.order-actions-my {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.order-actions-my .btn {
+    font-size: 13px;
+    padding: 6px 12px;
+}

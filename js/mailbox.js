@@ -912,17 +912,13 @@ ${this.currentUser.username || 'Un aventurier'}`;
             return false;
         }
         
-        const userExists = availableUsers.some(user => 
-            user.toLowerCase() === username.toLowerCase()
-        );
-        
-        if (userExists) {
-            userValidation.innerHTML = '<div class="validation-success">✅ Utilisateur trouvé</div>';
+        // Mode ultra-tolérant : accepter tous les utilisateurs avec validation minimale
+        if (username.trim().length >= 2) {
+            userValidation.innerHTML = '<div class="validation-success">✅ Prêt à envoyer</div>';
             return true;
         } else {
-            // Mode tolérant : accepter les utilisateurs non trouvés avec un avertissement
-            userValidation.innerHTML = '<div class="validation-warning">⚠️ Utilisateur non vérifié (envoi possible)</div>';
-            return true; // Permettre l'envoi même si l'utilisateur n'est pas dans la liste
+            userValidation.innerHTML = '<div class="validation-error">❌ Nom d\'utilisateur trop court (min. 2 caractères)</div>';
+            return false;
         }
     }
 

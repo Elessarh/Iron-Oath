@@ -443,6 +443,11 @@ class HDVSystem {
                                 <div class="order-status">
                                     <span class="status-active">🟢 Actif</span>
                                 </div>
+                                <div class="order-actions-my">
+                                    <button class="btn btn-success btn-small" onclick="hdvSystem.finalizeTransactionInstant('${order.id}', '${order.item.name}', '${order.type}')" title="Transaction terminée - Supprimer immédiatement">
+                                        ✅ Vendu/Acheté
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -652,6 +657,50 @@ class HDVSystem {
         }
     }
 
+    // Finaliser une transaction instantanément (depuis Mes Ordres)
+    async finalizeTransactionInstant(orderId, itemName, orderType) {
+        const actionText = orderType === 'sell' ? 'vente' : 'achat';
+        
+        try {
+            console.log('⚡ Finalisation instantanée:', { orderId, itemName, orderType });
+            
+            // Supprimer immédiatement l'ordre
+            let orderDeleted = false;
+            
+            // Essayer de supprimer de Supabase d'abord
+            if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
+                try {
+                    console.log('🗑️ Suppression ordre de Supabase...');
+                    const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
+                    if (success) {
+                        console.log('✅ Ordre supprimé de Supabase');
+                        orderDeleted = true;
+                    }
+                } catch (supabaseError) {
+                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
+                }
+            }
+
+            // Supprimer des listes locales (toujours nécessaire)
+            this.orders = this.orders.filter(order => String(order.id) !== String(orderId));
+            this.myOrders = this.myOrders.filter(order => String(order.id) !== String(orderId));
+
+            // Sauvegarder en local
+            localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
+            localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
+
+            // Recharger les affichages
+            this.loadMyOrders();      // Recharger Mes Ordres
+            this.loadMarketplace();   // Recharger Marketplace
+
+            this.showNotification(`🎉 ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisée et supprimée !`, 'success');
+
+        } catch (error) {
+            console.error('❌ Erreur lors de la finalisation instantanée:', error);
+            this.showNotification('❌ Erreur lors de la finalisation', 'error');
+        }
+    }
+
     displayOrders(orders) {
         const ordersList = document.getElementById('orders-list');
         if (!ordersList) return;
@@ -718,9 +767,6 @@ class HDVSystem {
                         💬 Contacter
                     </button>
                     ${this.isMyOrder(order) ? `
-                        <button class="btn btn-success" onclick="hdvSystem.finalizeTransaction('${order.id}', '${order.item.name}', '${order.type}')" title="Marquer la transaction comme terminée">
-                            ✅ Finaliser
-                        </button>
                         <button class="btn btn-danger" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
                             🗑️ Supprimer
                         </button>
