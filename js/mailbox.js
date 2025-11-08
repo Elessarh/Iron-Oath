@@ -1305,19 +1305,48 @@ ${this.currentUser.username || 'Un aventurier'}`;
             if (success) {
                 console.log('✅ Suppression Supabase réussie, mise à jour interface...');
                 
+                // Initialiser le cache s'il n'existe pas
+                if (!this.deletedMessageIds) {
+                    this.deletedMessageIds = new Set();
+                    console.log('🔧 Cache des messages supprimés initialisé');
+                }
+                
                 // Ajouter au cache des messages supprimés pour éviter qu'il réapparaisse
                 this.deletedMessageIds.add(messageId);
                 console.log('🚫 Message ajouté au cache des supprimés:', messageId);
                 
                 // Supprimer des données en mémoire (avec vérification d'existence)
-                if (this.receivedMessages && Array.isArray(this.receivedMessages)) {
-                    this.receivedMessages = this.receivedMessages.filter(msg => msg.id !== messageId);
-                }
-                if (this.sentMessages && Array.isArray(this.sentMessages)) {
-                    this.sentMessages = this.sentMessages.filter(msg => msg.id !== messageId);
-                }
-                if (this.messages && Array.isArray(this.messages)) {
-                    this.messages = this.messages.filter(msg => msg.id !== messageId);
+                try {
+                    if (this.receivedMessages && Array.isArray(this.receivedMessages)) {
+                        this.receivedMessages = this.receivedMessages.filter(msg => msg.id !== messageId);
+                        console.log('✅ Supprimé des messages reçus');
+                    } else {
+                        console.warn('⚠️ receivedMessages non initialisé ou pas un tableau');
+                        this.receivedMessages = [];
+                    }
+                    
+                    if (this.sentMessages && Array.isArray(this.sentMessages)) {
+                        this.sentMessages = this.sentMessages.filter(msg => msg.id !== messageId);
+                        console.log('✅ Supprimé des messages envoyés');
+                    } else {
+                        console.warn('⚠️ sentMessages non initialisé ou pas un tableau');
+                        this.sentMessages = [];
+                    }
+                    
+                    if (this.messages && Array.isArray(this.messages)) {
+                        this.messages = this.messages.filter(msg => msg.id !== messageId);
+                        console.log('✅ Supprimé des messages généraux');
+                    } else {
+                        console.warn('⚠️ messages non initialisé ou pas un tableau');
+                        this.messages = [];
+                    }
+                    
+                } catch (filterError) {
+                    console.error('❌ Erreur lors du filtrage des tableaux:', filterError);
+                    // Réinitialiser les tableaux en cas d'erreur
+                    this.receivedMessages = [];
+                    this.sentMessages = [];
+                    this.messages = [];
                 }
                 
                 // Retirer l'élément de l'affichage
