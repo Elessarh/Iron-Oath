@@ -330,7 +330,7 @@ class MailboxSupabaseManager {
 
             console.log('✅ Autorisation de suppression confirmée pour:', messageToDelete);
 
-            const { error } = await this.supabase
+            const { data: deleteResult, error } = await this.supabase
                 .from('messages')
                 .delete()
                 .eq('id', messageId);
@@ -340,7 +340,23 @@ class MailboxSupabaseManager {
                 return false;
             }
 
+            console.log('🔍 Résultat suppression Supabase:', { deleteResult, error });
             console.log('✅ Message supprimé avec succès de Supabase:', messageId);
+            
+            // Vérification supplémentaire - chercher le message pour s'assurer qu'il est supprimé
+            const { data: checkMessage, error: checkError } = await this.supabase
+                .from('messages')
+                .select('id')
+                .eq('id', messageId)
+                .maybeSingle();
+                
+            if (checkMessage) {
+                console.error('❌ PROBLÈME: Le message existe encore après suppression!', checkMessage);
+                return false;
+            } else {
+                console.log('✅ Vérification: Message bien supprimé de la base');
+            }
+            
             return true;
 
         } catch (error) {
