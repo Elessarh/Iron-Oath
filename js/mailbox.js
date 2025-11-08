@@ -2,6 +2,9 @@
 class MailboxSystem {
     constructor() {
         this.messages = [];
+        this.receivedMessages = [];
+        this.sentMessages = [];
+        this.deletedMessageIds = new Set(); // Cache des messages supprimés
         this.currentUser = null;
         this.supabaseManager = null;
         this.initializeSupabase();
@@ -30,11 +33,27 @@ class MailboxSystem {
         this.refreshInterval = setInterval(async () => {
             console.log('📬 Auto-actualisation boîte mail...');
             const previousMessageCount = this.messages.length;
+            
+            // Sauvegarder les IDs des messages actuellement supprimés localement
+            const currentMessageIds = new Set(this.messages.map(msg => msg.id));
+            
             await this.loadMessages();
+            
+            // Après le rechargement, vérifier si de nouveaux messages sont apparus
+            const newMessageCount = this.messages.length;
+            if (newMessageCount !== previousMessageCount) {
+                console.log(`📊 Messages: ${previousMessageCount} → ${newMessageCount}`);
+            }
+            
             await this.updateUnreadCount();
             
             // Vérifier les nouveaux messages pour notifications HDV
             this.checkForNewItemMessages(previousMessageCount);
+            
+            // Nettoyer le cache périodiquement (toutes les 10 actualisation = ~2.5 min)
+            if (Math.random() < 0.1) {
+                this.cleanDeletedMessagesCache();
+            }
         }, 15000);
         
         // Nettoyer l'intervalle si on quitte la page
@@ -233,15 +252,32 @@ class MailboxSystem {
                 this.supabaseManager.loadSentMessages()
             ]);
             
+            // Filtrer les messages supprimés localement
+            const filteredReceived = receivedMessages.filter(msg => !this.deletedMessageIds.has(msg.id));
+            const filteredSent = sentMessages.filter(msg => !this.deletedMessageIds.has(msg.id));
+            
+            // Mettre à jour TOUS les tableaux pour maintenir la cohérence
+            this.receivedMessages = filteredReceived;
+            this.sentMessages = filteredSent;
+            
             // Combiner et trier par date
-            this.messages = [...receivedMessages, ...sentMessages]
+            this.messages = [...filteredReceived, ...filteredSent]
                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             
-            console.log(`✅ ${this.messages.length} messages chargés depuis Supabase`);
+            const totalFromDb = receivedMessages.length + sentMessages.length;
+            const totalFiltered = this.messages.length;
+            
+            if (this.deletedMessageIds.size > 0) {
+                console.log(`✅ ${totalFiltered} messages chargés depuis Supabase (${totalFromDb} total, ${this.deletedMessageIds.size} filtrés)`);
+            } else {
+                console.log(`✅ ${totalFiltered} messages chargés depuis Supabase (${filteredReceived.length} reçus, ${filteredSent.length} envoyés)`);
+            }
             
         } catch (error) {
             console.error('❌ Erreur chargement messages:', error);
             this.messages = [];
+            this.receivedMessages = [];
+            this.sentMessages = [];
         }
     }
 
@@ -660,6 +696,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
         try {
             const messages = await this.supabaseManager.loadReceivedMessages();
+            this.receivedMessages = messages; // Sauvegarder en mémoire
             
             if (messages.length > 0) {
                 messagesList.innerHTML = messages.map(msg => this.renderMessage(msg, 'received')).join('');
@@ -720,6 +757,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
         try {
             const messages = await this.supabaseManager.loadSentMessages();
+            this.sentMessages = messages; // Sauvegarder en mémoire
             
             if (messages.length > 0) {
                 messagesList.innerHTML = messages.map(msg => this.renderMessage(msg, 'sent')).join('');
@@ -1261,11 +1299,26 @@ ${this.currentUser.username || 'Un aventurier'}`;
         }
 
         try {
+            console.log('🗑️ Demande suppression message:', messageId);
             const success = await this.supabaseManager.deleteMessage(messageId);
+            
             if (success) {
-                // Supprimer des données en mémoire
-                this.receivedMessages = this.receivedMessages.filter(msg => msg.id !== messageId);
-                this.sentMessages = this.sentMessages.filter(msg => msg.id !== messageId);
+                console.log('✅ Suppression Supabase réussie, mise à jour interface...');
+                
+                // Ajouter au cache des messages supprimés pour éviter qu'il réapparaisse
+                this.deletedMessageIds.add(messageId);
+                console.log('🚫 Message ajouté au cache des supprimés:', messageId);
+                
+                // Supprimer des données en mémoire (avec vérification d'existence)
+                if (this.receivedMessages && Array.isArray(this.receivedMessages)) {
+                    this.receivedMessages = this.receivedMessages.filter(msg => msg.id !== messageId);
+                }
+                if (this.sentMessages && Array.isArray(this.sentMessages)) {
+                    this.sentMessages = this.sentMessages.filter(msg => msg.id !== messageId);
+                }
+                if (this.messages && Array.isArray(this.messages)) {
+                    this.messages = this.messages.filter(msg => msg.id !== messageId);
+                }
                 
                 // Retirer l'élément de l'affichage
                 const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
@@ -1289,7 +1342,14 @@ ${this.currentUser.username || 'Un aventurier'}`;
                 
                 // Mettre à jour le compteur
                 await this.updateUnreadCount();
-                this.showNotification('✅ Message supprimé', 'success');
+                this.showNotification('✅ Message supprimé définitivement', 'success');
+                
+                // Ne pas recharger automatiquement - les données en mémoire sont déjà mises à jour
+                console.log('📝 Suppression terminée, données en mémoire mises à jour');
+                
+            } else {
+                console.error('❌ Échec suppression Supabase');
+                this.showNotification('❌ Impossible de supprimer le message de la base de données', 'error');
             }
         } catch (error) {
             console.error('❌ Erreur suppression message:', error);
@@ -1689,6 +1749,17 @@ ${this.currentUser.username || 'Un aventurier'}`;
             this.showNotification('❌ Erreur lors de la création des messages de test', 'error');
         }
     }
+
+    // Nettoyer le cache des messages supprimés (appelé périodiquement)
+    cleanDeletedMessagesCache() {
+        // Garder seulement les 100 derniers IDs supprimés pour éviter une accumulation excessive
+        if (this.deletedMessageIds.size > 100) {
+            const idsArray = Array.from(this.deletedMessageIds);
+            const recentIds = idsArray.slice(-50); // Garder les 50 plus récents
+            this.deletedMessageIds = new Set(recentIds);
+            console.log('🧹 Cache des messages supprimés nettoyé, gardé:', recentIds.length);
+        }
+    }
 }
 
 // Initialiser le système de messagerie
@@ -1702,6 +1773,19 @@ window.testMailbox = async () => {
         return await window.mailboxSystem.testMailboxSystem();
     } else {
         console.error('❌ Mailbox System non initialisé');
+        return false;
+    }
+};
+
+window.testDeleteMessage = async (messageId) => {
+    if (window.mailboxSupabaseManager) {
+        console.log('🧪 Test suppression message:', messageId);
+        await window.mailboxSupabaseManager.testDeletePermissions(messageId);
+        const result = await window.mailboxSupabaseManager.deleteMessage(messageId);
+        console.log('🧪 Résultat suppression:', result);
+        return result;
+    } else {
+        console.error('❌ Mailbox Supabase Manager non initialisé');
         return false;
     }
 };
@@ -1722,6 +1806,18 @@ window.sendTestMessage = async (toUsername, subject = 'Message de test', content
     } else {
         console.error('❌ Mailbox System non initialisé');
         return false;
+    }
+};
+
+// Fonction pour voir l'état du cache de suppression
+window.checkDeletedCache = () => {
+    if (window.mailboxSystem) {
+        console.log('🗑️ Messages supprimés en cache:', Array.from(window.mailboxSystem.deletedMessageIds));
+        console.log('📊 Nombre total en cache:', window.mailboxSystem.deletedMessageIds.size);
+        return Array.from(window.mailboxSystem.deletedMessageIds);
+    } else {
+        console.error('❌ Mailbox System non initialisé');
+        return [];
     }
 };
 

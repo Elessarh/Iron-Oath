@@ -292,7 +292,43 @@ class MailboxSupabaseManager {
     async deleteMessage(messageId) {
         try {
             const ready = await this.ensureInitialized();
-            if (!ready) return false;
+            if (!ready) {
+                console.error('❌ Supabase non initialisé pour suppression');
+                return false;
+            }
+
+            const user = await this.getCurrentUser();
+            if (!user) {
+                console.error('❌ Utilisateur non connecté pour suppression');
+                return false;
+            }
+
+            console.log('🗑️ Tentative suppression message:', messageId, 'par utilisateur:', user.id);
+
+            // Vérifier que l'utilisateur a le droit de supprimer ce message
+            const { data: messageToDelete, error: fetchError } = await this.supabase
+                .from('messages')
+                .select('*')
+                .eq('id', messageId)
+                .single();
+
+            if (fetchError) {
+                console.error('❌ Erreur récupération message à supprimer:', fetchError);
+                return false;
+            }
+
+            if (!messageToDelete) {
+                console.error('❌ Message non trouvé:', messageId);
+                return false;
+            }
+
+            // Vérifier que l'utilisateur est soit l'expéditeur soit le destinataire
+            if (messageToDelete.sender_id !== user.id && messageToDelete.recipient_id !== user.id) {
+                console.error('❌ Utilisateur non autorisé à supprimer ce message');
+                return false;
+            }
+
+            console.log('✅ Autorisation de suppression confirmée pour:', messageToDelete);
 
             const { error } = await this.supabase
                 .from('messages')
@@ -300,15 +336,15 @@ class MailboxSupabaseManager {
                 .eq('id', messageId);
 
             if (error) {
-                console.error('❌ Erreur suppression message:', error);
+                console.error('❌ Erreur suppression message Supabase:', error);
                 return false;
             }
 
-            console.log('✅ Message supprimé:', messageId);
+            console.log('✅ Message supprimé avec succès de Supabase:', messageId);
             return true;
 
         } catch (error) {
-            console.error('❌ Erreur suppression message:', error);
+            console.error('❌ Exception lors suppression message:', error);
             return false;
         }
     }
@@ -410,6 +446,39 @@ class MailboxSupabaseManager {
 
         } catch (error) {
             console.error('❌ Échec test de connectivité:', error);
+            return false;
+        }
+    }
+
+    // Tester les permissions de suppression (debug)
+    async testDeletePermissions(messageId) {
+        try {
+            const ready = await this.ensureInitialized();
+            if (!ready) return false;
+
+            const user = await this.getCurrentUser();
+            console.log('🔍 Test permissions pour utilisateur:', user?.id);
+
+            // Essayer de récupérer le message
+            const { data: message, error: fetchError } = await this.supabase
+                .from('messages')
+                .select('*')
+                .eq('id', messageId)
+                .single();
+
+            console.log('📧 Message trouvé:', message);
+            console.log('❌ Erreur fetch:', fetchError);
+
+            if (message) {
+                console.log('👤 Expéditeur:', message.sender_id);
+                console.log('📥 Destinataire:', message.recipient_id);
+                console.log('🔐 User peut supprimer:', 
+                    message.sender_id === user?.id || message.recipient_id === user?.id);
+            }
+
+            return true;
+        } catch (error) {
+            console.error('❌ Erreur test permissions:', error);
             return false;
         }
     }
