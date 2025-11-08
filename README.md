@@ -1,52 +1,30 @@
-# Iron Oath - Sword Art Online Fan Site# Iron Oath - Système de Carte Interactive
+# Iron Oath - Sword Art Online Fan Site
 
+Un site web interactif dédié à l'univers de Sword Art Online, offrant une expérience immersive d'Aincrad.
 
+## 🚀 Démarrage Rapide
 
-Un site web interactif dédié à l'univers de Sword Art Online, offrant une expérience immersive d'Aincrad.## 🚀 Démarrage Rapide
+### Test en local
 
+1. **Démarrer le serveur web :**
+```bash
+python -m http.server 8080
+```
 
+2. **Ouvrir la carte :** http://localhost:8080/pages/map.html
 
-## 🌟 Fonctionnalités### Test en local
+### Déploiement sur GitHub Pages
 
+Voir le guide complet : **[DEPLOY.md](DEPLOY.md)**
 
-
-### 🗺️ Carte Interactive1. **Démarrer le serveur web :**
-
-- Carte détaillée d'Aincrad avec navigation fluide```bash
-
-- Affichage des coordonnées en temps réelpython -m http.server 8080
-
-- Interface responsive et optimisée```
-
-
-
-### 👹 Bestiaire2. **Ouvrir la carte :** http://localhost:8080/pages/map.html
-
-- Catalogue complet des créatures d'Aincrad
-
-- Système de filtrage avancé par palier et type### Déploiement sur GitHub Pages
-
-- Informations détaillées sur chaque monstre
-
-Voir le guide complet : **[DEPLOY-SIMPLE.md](DEPLOY-SIMPLE.md)**
-
-### 🎒 Catalogue d'Items
-
-- Base de données complète des objetsEn résumé :
-
-- Filtrage par catégorie (armes, armures, consommables, etc.)1. Créer un repository public sur GitHub
-
-- Affichage détaillé des statistiques2. Uploader tous vos fichiers
-
+En résumé :
+1. Créer un repository public sur GitHub
+2. Uploader tous vos fichiers
 3. Activer GitHub Pages dans Settings > Pages
 
-### 🏪 Hôtel des Ventes (HDV)
+## ✨ Fonctionnalités
 
-- Système de marché entre joueurs## ✨ Fonctionnalités
-
-- Gestion des enchères et ventes
-
-- Boîte mail intégrée### 🗺️ Carte Interactive
+### 🗺️ Carte Interactive
 
 - **Carte sphérique 5000x5000** avec votre carte personnalisée
 

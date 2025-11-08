@@ -2,7 +2,7 @@
 class HDVSystem {
     constructor() {
         // Attendre un peu que le système d'auth soit chargé
-        setTimeout(() => {
+        setTimeout(async () => {
             // Vérification de l'authentification
             const userInfo = this.getCurrentUserInfo();
             if (!userInfo) {
@@ -12,12 +12,12 @@ class HDVSystem {
             }
             
             console.log('✅ Utilisateur connecté:', userInfo.username);
-            this.initializeHDV();
+            await this.initializeHDV();
         }, 500);
     }
 
     // Initialiser le système HDV
-    initializeHDV() {
+    async initializeHDV() {
         this.currentTab = 'marketplace';
         this.selectedItem = null;
         this.orderType = null;
@@ -28,11 +28,11 @@ class HDVSystem {
         this.orders = [];
         this.myOrders = [];
         
-        // Charger les données sauvegardées
-        this.loadOrdersFromStorage();
+        // Charger les données sauvegardées (asynchrone)
+        await this.loadOrdersFromStorage();
         
         this.initializeEventListeners();
-        this.loadMarketplace();
+        await this.loadMarketplace();
         
         // Démarrer l'auto-actualisation
         this.startAutoRefresh();
@@ -43,10 +43,10 @@ class HDVSystem {
         console.log('🔄 Démarrage auto-actualisation HDV (30s)');
         
         // Actualiser toutes les 30 secondes
-        this.refreshInterval = setInterval(() => {
+        this.refreshInterval = setInterval(async () => {
             console.log('🔄 Auto-actualisation HDV...');
-            this.loadOrdersFromStorage();
-            this.displayOrders();
+            await this.loadOrdersFromStorage();
+            await this.displayOrders(this.orders);
         }, 30000);
         
         // Nettoyer l'intervalle si on quitte la page
@@ -299,8 +299,8 @@ class HDVSystem {
         // Bouton refresh du marketplace
         const refreshBtn = document.getElementById('refresh-btn');
         if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => {
-                this.loadMarketplace();
+            refreshBtn.addEventListener('click', async () => {
+                await this.loadMarketplace();
                 this.showNotification('🔄 Marché actualisé', 'info');
             });
         }
@@ -317,7 +317,7 @@ class HDVSystem {
         });
     }
 
-    switchTab(tabName) {
+    async switchTab(tabName) {
         // Mise à jour des onglets
         document.querySelectorAll('.hdv-tab').forEach(tab => {
             tab.classList.remove('active');
@@ -340,13 +340,13 @@ class HDVSystem {
 
         this.currentTab = tabName;
 
-        // Chargement spécifique selon l'onglet
+        // Chargement spécifique selon l'onglet (maintenant asynchrone)
         switch (tabName) {
             case 'marketplace':
-                this.loadMarketplace();
+                await this.loadMarketplace();
                 break;
             case 'my-orders':
-                this.loadMyOrders();
+                await this.loadMyOrders();
                 break;
             case 'create-order':
                 this.resetCreateOrderForm();
@@ -354,12 +354,12 @@ class HDVSystem {
         }
     }
 
-    loadMarketplace() {
+    async loadMarketplace() {
         const ordersList = document.getElementById('orders-list');
         if (!ordersList) return;
 
-        // Charger les ordres depuis le stockage local
-        this.loadOrdersFromStorage();
+        // Charger les ordres depuis le stockage (maintenant asynchrone)
+        await this.loadOrdersFromStorage();
         
         // Mettre à jour le compteur d'ordres
         this.updateOrdersCount(this.orders.length);
@@ -376,12 +376,12 @@ class HDVSystem {
         }
     }
 
-    loadMyOrders() {
+    async loadMyOrders() {
         const myOrdersList = document.getElementById('my-orders-list');
         if (!myOrdersList) return;
 
-        // Charger les ordres depuis le stockage local
-        this.loadOrdersFromStorage();
+        // Charger les ordres depuis le stockage (maintenant asynchrone)
+        await this.loadOrdersFromStorage();
 
         const userInfo = this.getCurrentUserInfo();
 
@@ -524,6 +524,12 @@ class HDVSystem {
     displayOrders(orders) {
         const ordersList = document.getElementById('orders-list');
         if (!ordersList) return;
+
+        // Vérifier que orders est défini et est un tableau
+        if (!orders || !Array.isArray(orders)) {
+            console.warn('⚠️ displayOrders: orders non défini ou pas un tableau:', orders);
+            orders = [];
+        }
 
         if (orders.length === 0) {
             ordersList.innerHTML = `
@@ -758,12 +764,12 @@ class HDVSystem {
             this.resetCreateOrderForm();
             
             // Retour à l'onglet marketplace pour voir l'ordre créé
-            this.switchTab('marketplace');
+            await this.switchTab('marketplace');
             
             // Recharger les données depuis Supabase pour inclure le nouvel ordre
             setTimeout(async () => {
                 await this.loadOrdersFromStorage();
-                this.loadMarketplace();
+                await this.loadMarketplace();
             }, 500);
             
         } catch (error) {

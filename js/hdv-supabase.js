@@ -3,16 +3,46 @@
 
 class HDVSupabaseManager {
     constructor() {
-        // Import du client Supabase depuis auth-supabase.js
-        this.supabase = window.supabase || null;
-        if (!this.supabase) {
-            console.error('❌ Client Supabase non disponible. Assurez-vous que auth-supabase.js est chargé.');
+        this.supabase = null;
+        this.initialized = false;
+        this.initPromise = this.waitForSupabase();
+    }
+
+    // Attendre que Supabase soit disponible
+    async waitForSupabase() {
+        console.log('⏳ Attente de Supabase...');
+        
+        for (let i = 0; i < 50; i++) { // Max 5 secondes d'attente
+            if (window.supabase) {
+                this.supabase = window.supabase;
+                this.initialized = true;
+                console.log('✅ Supabase connecté au HDV Manager');
+                return true;
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
+        
+        console.error('❌ Timeout: Supabase non disponible après 5 secondes');
+        return false;
+    }
+
+    // S'assurer que Supabase est initialisé
+    async ensureInitialized() {
+        if (!this.initialized) {
+            await this.initPromise;
+        }
+        return this.initialized;
     }
 
     // Sauvegarder un ordre dans Supabase
     async saveOrderToSupabase(order) {
         try {
+            // S'assurer que Supabase est initialisé
+            const ready = await this.ensureInitialized();
+            if (!ready) {
+                throw new Error('Supabase non disponible');
+            }
+
             console.log('💾 Sauvegarde ordre vers Supabase:', order);
             
             // Obtenir l'utilisateur actuel
@@ -36,6 +66,8 @@ class HDVSupabaseManager {
                 status: 'active'
             };
 
+            console.log('📤 Données envoyées à Supabase:', orderData);
+
             const { data, error } = await this.supabase
                 .from('market_orders')
                 .insert([orderData])
@@ -57,6 +89,12 @@ class HDVSupabaseManager {
     // Charger tous les ordres actifs depuis Supabase
     async loadOrdersFromSupabase() {
         try {
+            // S'assurer que Supabase est initialisé
+            const ready = await this.ensureInitialized();
+            if (!ready) {
+                throw new Error('Supabase non disponible');
+            }
+
             console.log('📥 Chargement ordres depuis Supabase...');
 
             const { data, error } = await this.supabase
@@ -204,8 +242,9 @@ class HDVSupabaseManager {
     }
 
     // Vérifier si Supabase est disponible
-    isSupabaseAvailable() {
-        return this.supabase !== null;
+    async isSupabaseAvailable() {
+        const ready = await this.ensureInitialized();
+        return ready && this.supabase !== null;
     }
 }
 

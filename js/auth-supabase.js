@@ -23,6 +23,12 @@ function checkAuthState() {
     
     console.log('🔍 Vérification état auth Supabase:', currentUser ? `Connecté: ${userProfile?.username || currentUser.email}` : 'Non connecté');
     
+    // Mettre à jour les variables globales
+    if (typeof window !== 'undefined') {
+        window.currentUser = currentUser;
+        window.userProfile = userProfile;
+    }
+    
     if (currentUser) {
         // Utilisateur connecté - Masquer le bouton connexion et afficher les infos user
         if (userInfo) {
@@ -595,9 +601,17 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('📊 Utilisateur actuel:', currentUser ? userProfile?.username || currentUser.email : 'Aucun');
 });
 
-// Rendre les fonctions accessibles globalement
+// Rendre les fonctions et variables accessibles globalement
 window.getCurrentUser = getCurrentUser;
 window.getUserProfile = getUserProfile;
 window.isLoggedIn = isLoggedIn;
 window.isAdmin = isAdmin;
 window.supabase = supabase;
+window.currentUser = currentUser;
+window.userProfile = userProfile;
+
+// Fonction pour exposer les variables mises à jour
+window.updateGlobalAuthVars = function() {
+    window.currentUser = currentUser;
+    window.userProfile = userProfile;
+};

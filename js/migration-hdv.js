@@ -1,13 +1,32 @@
 // migration-hdv.js - Script pour migrer les données HDV de localStorage vers Supabase
 class HDVMigration {
     constructor() {
-        this.supabase = window.supabase;
+        // Attendre que Supabase soit disponible
+        this.waitForSupabase();
+    }
+
+    async waitForSupabase() {
+        for (let i = 0; i < 50; i++) { // Max 5 secondes d'attente
+            if (window.supabase) {
+                this.supabase = window.supabase;
+                return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        console.error('❌ Migration HDV: Supabase non disponible');
     }
 
     async migrateLocalDataToSupabase() {
         console.log('🔄 Début de la migration HDV localStorage → Supabase');
         
         try {
+            // Attendre que Supabase soit prêt
+            await this.waitForSupabase();
+            if (!this.supabase) {
+                console.log('❌ Supabase non disponible pour la migration');
+                return false;
+            }
+
             // Vérifier si l'utilisateur est connecté
             const { data: { user } } = await this.supabase.auth.getUser();
             if (!user) {
@@ -112,6 +131,12 @@ class HDVMigration {
             return;
         }
 
+        // Attendre que Supabase soit prêt
+        await this.waitForSupabase();
+        if (!this.supabase) {
+            return;
+        }
+
         const { data: { user } } = await this.supabase.auth.getUser();
         if (!user) {
             return;
@@ -141,8 +166,12 @@ class HDVMigration {
 window.hdvMigration = new HDVMigration();
 
 // Auto-vérification au chargement (avec délai pour laisser l'auth se charger)
-setTimeout(() => {
-    if (window.hdvMigration && window.supabase) {
-        window.hdvMigration.checkAndOfferMigration();
+setTimeout(async () => {
+    if (window.hdvMigration) {
+        try {
+            await window.hdvMigration.checkAndOfferMigration();
+        } catch (error) {
+            console.log('ℹ️ Migration HDV: Pas de données à migrer ou utilisateur non connecté');
+        }
     }
-}, 2000);
+}, 3000);
