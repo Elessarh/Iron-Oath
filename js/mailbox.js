@@ -722,9 +722,9 @@ ${this.currentUser.username || 'Un aventurier'}`;
                         </div>
                     </div>
                     <div class="message-actions">
-                        ${type === 'received' ? `<button class="btn-small reply-btn" onclick="mailboxSystem.replyToMessage(${message.id}, '${message.sender_username}', '${message.subject.replace(/'/g, "\\'")}')">↩️ Répondre</button>` : ''}
-                        ${isUnread ? `<button class="btn-small reply-btn" onclick="mailboxSystem.markAsRead(${message.id})">✓ Lu</button>` : ''}
-                        <button class="btn-small delete-btn" onclick="mailboxSystem.deleteMessage(${message.id})">🗑️</button>
+                        ${type === 'received' ? `<button class="btn-small reply-btn" data-message-id="${message.id}" data-sender="${message.sender_username}" data-subject="${message.subject}">↩️ Répondre</button>` : ''}
+                        ${isUnread ? `<button class="btn-small mark-read-btn" data-message-id="${message.id}">✓ Lu</button>` : ''}
+                        <button class="btn-small delete-btn" data-message-id="${message.id}">🗑️</button>
                     </div>
                 </div>
                 <div class="message-subject">
@@ -1263,6 +1263,29 @@ ${this.currentUser.username || 'Un aventurier'}`;
             if (e.target.matches('.mail-icon, .mailbox-btn')) {
                 e.preventDefault();
                 this.openMailbox();
+            }
+            
+            // Gestionnaire pour boutons de réponse
+            if (e.target.matches('.reply-btn')) {
+                e.preventDefault();
+                const messageId = e.target.getAttribute('data-message-id');
+                const sender = e.target.getAttribute('data-sender');
+                const subject = e.target.getAttribute('data-subject');
+                this.replyToMessage(messageId, sender, subject);
+            }
+            
+            // Gestionnaire pour boutons marquer comme lu
+            if (e.target.matches('.mark-read-btn')) {
+                e.preventDefault();
+                const messageId = e.target.getAttribute('data-message-id');
+                this.markAsRead(messageId);
+            }
+            
+            // Gestionnaire pour boutons de suppression
+            if (e.target.matches('.delete-btn')) {
+                e.preventDefault();
+                const messageId = e.target.getAttribute('data-message-id');
+                this.deleteMessage(messageId);
             }
         });
         
