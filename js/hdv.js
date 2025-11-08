@@ -472,8 +472,8 @@ class HDVSystem {
             }
 
             // Supprimer des listes locales (toujours nécessaire)
-            this.orders = this.orders.filter(order => order.id !== orderId);
-            this.myOrders = this.myOrders.filter(order => order.id !== orderId);
+            this.orders = this.orders.filter(order => String(order.id) !== String(orderId));
+            this.myOrders = this.myOrders.filter(order => String(order.id) !== String(orderId));
 
             // Sauvegarder les modifications en local
             localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
@@ -496,15 +496,29 @@ class HDVSystem {
     // Vérifier si un ordre appartient à l'utilisateur connecté
     isMyOrder(order) {
         const userInfo = this.getCurrentUserInfo();
-        return order.creator === userInfo.username || order.creatorId === userInfo.id;
+        const isOwner = userInfo && (order.creator === userInfo.username || order.creatorId === userInfo.id);
+        console.log('🔍 Vérification propriété ordre:', {
+            orderId: order.id,
+            orderCreator: order.creator,
+            orderCreatorId: order.creatorId,
+            currentUser: userInfo?.username,
+            currentUserId: userInfo?.id,
+            isOwner: isOwner
+        });
+        return isOwner;
     }
 
     // Supprimer un ordre depuis le marketplace
     async deleteOrderFromMarketplace(orderId) {
+        console.log('🗑️ Tentative de suppression ordre ID:', orderId, 'Type:', typeof orderId);
+        
         if (!confirm('❓ Êtes-vous sûr de vouloir supprimer cet ordre ?')) return;
 
         try {
             let orderDeleted = false;
+            
+            // Utiliser l'ID tel quel (UUID ou numérique)
+            console.log('🗑️ ID à supprimer:', orderId);
             
             // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
@@ -521,8 +535,9 @@ class HDVSystem {
             }
 
             // Supprimer des listes locales (toujours nécessaire)
-            this.orders = this.orders.filter(order => order.id !== orderId);
-            this.myOrders = this.myOrders.filter(order => order.id !== orderId);
+            // Comparer les IDs en tant que string pour compatibilité UUID/numérique
+            this.orders = this.orders.filter(order => String(order.id) !== String(orderId));
+            this.myOrders = this.myOrders.filter(order => String(order.id) !== String(orderId));
 
             // Sauvegarder en local
             localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
@@ -604,7 +619,7 @@ class HDVSystem {
                         💬 Contacter
                     </button>
                     ${this.isMyOrder(order) ? `
-                        <button class="btn btn-danger" onclick="hdvSystem.deleteOrderFromMarketplace(${order.id})">
+                        <button class="btn btn-danger" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
                             🗑️ Supprimer
                         </button>
                     ` : ''}
