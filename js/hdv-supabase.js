@@ -180,6 +180,9 @@ class HDVSupabaseManager {
                 price: order.price,
                 total: order.total_price,
                 username: order.username,
+                creator: order.username, // Ajout pour compatibilité
+                seller: order.type === 'sell' ? order.username : null,
+                buyer: order.type === 'buy' ? order.username : null,
                 timestamp: new Date(order.created_at).toLocaleString(),
                 created_at: order.created_at
             };

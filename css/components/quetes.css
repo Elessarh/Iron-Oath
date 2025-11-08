@@ -29,6 +29,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    align-items: center;
 }
 
 .quest-type-filters {
@@ -36,6 +37,53 @@
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+/* Sélecteur de palier */
+.quest-tier-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 8px;
+    padding: 12px 20px;
+    backdrop-filter: blur(10px);
+}
+
+.quest-tier-selector label {
+    color: #00ffff;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#tier-select {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(0, 255, 255, 0.6);
+    border-radius: 6px;
+    color: #00ffff;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#tier-select:hover, #tier-select:focus {
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    background: rgba(0, 255, 255, 0.1);
+}
+
+#tier-select option {
+    background: rgba(0, 0, 0, 0.9);
+    color: #00ffff;
+    padding: 8px;
 }
 
 .quest-filter-btn {
@@ -453,6 +501,115 @@
     border-radius: 15px;
     font-size: 0.85rem;
     border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+/* Styles pour les groupes de quêtes secondaires */
+.secondary-quest-group {
+    margin-bottom: 3rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 2px solid rgba(138, 43, 226, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.secondary-quest-group::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        rgba(138, 43, 226, 0.8) 0%, 
+        rgba(0, 255, 255, 0.8) 50%, 
+        rgba(138, 43, 226, 0.8) 100%);
+}
+
+.secondary-quest-group h3 {
+    color: #8a2be2;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+    border-bottom: 2px solid rgba(138, 43, 226, 0.4);
+    padding-bottom: 0.8rem;
+    position: relative;
+    z-index: 2;
+}
+
+.secondary-quest-group .quest-step {
+    background: rgba(138, 43, 226, 0.08);
+    border-left: 4px solid #8a2be2;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.secondary-quest-group .quest-step:hover {
+    background: rgba(138, 43, 226, 0.15);
+    transform: translateX(5px);
+    box-shadow: 0 5px 20px rgba(138, 43, 226, 0.3);
+}
+
+.secondary-quest-group .step-content h4 {
+    color: #ba55d3;
+    text-shadow: 0 0 10px rgba(186, 85, 211, 0.6);
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+}
+
+.secondary-quest-group .step-content p {
+    color: #e8e8e8;
+    line-height: 1.7;
+    margin-bottom: 0.6rem;
+}
+
+.secondary-quest-group .step-content p strong {
+    color: #8a2be2;
+    font-weight: 700;
+}
+
+/* Animation pour les groupes de quêtes secondaires */
+.secondary-quest-group {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styles pour le message de palier non disponible */
+#no-content-message {
+    background: linear-gradient(135deg, 
+        rgba(255, 193, 7, 0.1) 0%, 
+        rgba(255, 152, 0, 0.1) 100%);
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    color: #ffc107;
+}
+
+#no-content-message h3 {
+    color: #ffc107;
+    font-family: 'Orbitron', monospace;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.6);
+}
+
+#no-content-message p {
+    color: #ffe082;
+    margin-bottom: 0.5rem;
+}
+
+#no-content-message strong {
+    color: #00ffff;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
 }
 
 /* Responsive */

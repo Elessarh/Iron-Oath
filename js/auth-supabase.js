@@ -15,55 +15,80 @@ let userProfile = null;
 // Cache thread-safe pour stocker les pseudos par email
 const usernamePendingMap = new Map();
 
+// Variable pour éviter les appels multiples simultanés
+let isCheckingAuthState = false;
+let lastAuthStateCheck = 0;
+
 // ========== GESTION DE L'ÉTAT DE CONNEXION ==========
 function checkAuthState() {
-    const userInfo = document.getElementById('user-info');
-    const loginLink = document.getElementById('login-link');
-    const usernameSpan = document.getElementById('username');
-    
-    console.log('🔍 Vérification état auth Supabase:', currentUser ? `Connecté: ${userProfile?.username || currentUser.email}` : 'Non connecté');
-    
-    // Mettre à jour les variables globales
-    if (typeof window !== 'undefined') {
-        window.currentUser = currentUser;
-        window.userProfile = userProfile;
+    // Éviter les appels trop fréquents (moins de 100ms d'écart)
+    const now = Date.now();
+    if (now - lastAuthStateCheck < 100) {
+        console.log('🔍 Vérification auth ignorée (trop récente)');
+        return;
     }
+    lastAuthStateCheck = now;
     
-    if (currentUser) {
-        // Utilisateur connecté - Masquer le bouton connexion et afficher les infos user
-        if (userInfo) {
-            userInfo.style.display = 'flex';
-            userInfo.classList.add('show');
-            userInfo.classList.add('js-visible');
-            if (usernameSpan) {
-                // Toujours prioriser le pseudo joueur au lieu de l'email
-                let displayName = 'Joueur';
-                if (userProfile && userProfile.username) {
-                    displayName = userProfile.username;
-                } else if (currentUser.email) {
-                    // Créer un pseudo temporaire si pas de profil
-                    displayName = 'Joueur_' + currentUser.email.split('@')[0];
+    // Éviter les appels simultanés
+    if (isCheckingAuthState) {
+        console.log('🔍 Vérification auth en cours, ignorée');
+        return;
+    }
+    isCheckingAuthState = true;
+    
+    try {
+        const userInfo = document.getElementById('user-info');
+        const loginLink = document.getElementById('login-link');
+        const usernameSpan = document.getElementById('username');
+        
+        console.log('🔍 Vérification état auth Supabase:', currentUser ? `Connecté: ${userProfile?.username || currentUser.email}` : 'Non connecté');
+        
+        // Mettre à jour les variables globales
+        if (typeof window !== 'undefined') {
+            window.currentUser = currentUser;
+            window.userProfile = userProfile;
+        }
+        
+        if (currentUser) {
+            // Utilisateur connecté - Masquer le bouton connexion et afficher les infos user
+            if (userInfo) {
+                userInfo.style.display = 'flex';
+                userInfo.classList.add('show');
+                userInfo.classList.add('js-visible');
+                if (usernameSpan) {
+                    // Toujours prioriser le pseudo joueur au lieu de l'email
+                    let displayName = 'Joueur';
+                    if (userProfile && userProfile.username) {
+                        displayName = userProfile.username;
+                    } else if (currentUser.email) {
+                        // Créer un pseudo temporaire si pas de profil
+                        displayName = 'Joueur_' + currentUser.email.split('@')[0];
+                    }
+                    usernameSpan.textContent = displayName;
                 }
-                usernameSpan.textContent = displayName;
+            }
+            if (loginLink) {
+                loginLink.style.display = 'none';
+                loginLink.classList.remove('show');
+                loginLink.classList.remove('js-visible');
+            }
+        } else {
+            // Utilisateur non connecté - Afficher le bouton connexion et masquer les infos user
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+                userInfo.classList.remove('js-visible');
+            }
+            if (loginLink) {
+                loginLink.style.display = 'block';
+                loginLink.classList.add('show');
+                loginLink.classList.add('js-visible');
             }
         }
-        if (loginLink) {
-            loginLink.style.display = 'none';
-            loginLink.classList.remove('show');
-            loginLink.classList.remove('js-visible');
-        }
-    } else {
-        // Utilisateur non connecté - Afficher le bouton connexion et masquer les infos user
-        if (userInfo) {
-            userInfo.style.display = 'none';
-            userInfo.classList.remove('show');
-            userInfo.classList.remove('js-visible');
-        }
-        if (loginLink) {
-            loginLink.style.display = 'block';
-            loginLink.classList.add('show');
-            loginLink.classList.add('js-visible');
-        }
+    } catch (error) {
+        console.error('❌ Erreur checkAuthState:', error);
+    } finally {
+        isCheckingAuthState = false;
     }
 }
 

@@ -416,6 +416,7 @@ class HDVSystem {
                         <div class="order-header">
                             <span class="order-type ${order.type}">
                                 ${order.type === 'sell' ? '🔴 VENTE' : '🔵 ACHAT'}
+                                <span class="order-date">${this.formatOrderDate(order)}</span>
                             </span>
                             <span class="order-time">${this.formatTime(order.timestamp)}</span>
                             <button class="delete-order-btn" onclick="hdvSystem.deleteOrder(${order.id})" title="Supprimer cet ordre">
@@ -556,8 +557,8 @@ class HDVSystem {
                         <div class="order-header">
                             <span class="order-type ${order.type}">
                                 ${order.type === 'sell' ? '🔴 VENTE' : '🔵 ACHAT'}
+                                <span class="order-date">${this.formatOrderDate(order)}</span>
                             </span>
-                            <span class="order-time">${this.formatTime(order.timestamp)}</span>
                         </div>
                 
                 <div class="order-content">
@@ -891,7 +892,7 @@ class HDVSystem {
         }
 
         // Vérifier si le système de boîte mail est disponible
-        if (window.mailboxSystem) {
+        if (window.mailboxSystem && window.mailboxSystem.sendTradeMessage) {
             console.log('📬 Utilisation du système de boîte mail');
             
             // Trouver l'ordre correspondant pour obtenir plus d'infos
@@ -903,27 +904,31 @@ class HDVSystem {
             console.log('🔍 Ordre trouvé:', order);
             
             if (order) {
-                try {
-                    mailboxSystem.sendTradeMessage(
-                        traderName,
-                        itemName, 
-                        order.type,
-                        order.price
-                    );
-                    
-                    this.showNotification(`✅ Message envoyé à ${traderName} via la boîte mail`, 'success');
-                    console.log('✅ Message envoyé avec succès');
-                } catch (error) {
+                // Utiliser la méthode async correcte
+                mailboxSystem.sendTradeMessage(
+                    traderName,
+                    itemName, 
+                    order.type,
+                    order.price
+                ).then(success => {
+                    if (success) {
+                        this.showNotification(`✅ Message envoyé à ${traderName} via la boîte mail`, 'success');
+                        console.log('✅ Message envoyé avec succès');
+                    }
+                }).catch(error => {
                     console.error('❌ Erreur envoi message:', error);
                     this.showNotification('❌ Erreur lors de l\'envoi du message', 'error');
-                }
+                });
             } else {
-                console.warn('⚠️ Ordre introuvable pour:', traderName, itemName);
-                this.showNotification('❌ Ordre introuvable', 'error');
+                console.warn('❌ Ordre non trouvé pour le contact');
+                this.showNotification('❌ Impossible de trouver les détails de l\'ordre', 'error');
             }
         } else {
-            console.log('💬 Utilisation du système de chat modal (fallback)');
+            console.warn('❌ Système de boîte mail non disponible ou méthode manquante');
+            this.showNotification('❌ Système de messagerie non disponible', 'error');
+            
             // Fallback vers l'ancien système
+            console.log('💬 Utilisation du système de chat modal (fallback)');
             this.openChatModal(traderName, itemName);
         }
     }
@@ -1085,6 +1090,43 @@ class HDVSystem {
         if (hours > 0) return `Il y a ${hours} heure${hours > 1 ? 's' : ''}`;
         if (minutes > 0) return `Il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
         return 'À l\'instant';
+    }
+
+    // Formater la date/heure complète de création d'un ordre
+    formatOrderDate(order) {
+        try {
+            let date;
+            
+            // Utiliser created_at de Supabase en priorité
+            if (order.created_at) {
+                date = new Date(order.created_at);
+            } else if (order.timestamp) {
+                date = new Date(order.timestamp);
+            } else {
+                return 'Date inconnue';
+            }
+
+            // Vérifier que la date est valide
+            if (isNaN(date.getTime())) {
+                return 'Date invalide';
+            }
+
+            // Format: "le 08/11/2025 à 14:30"
+            const options = {
+                day: '2-digit',
+                month: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            
+            const formatted = date.toLocaleDateString('fr-FR', options);
+            return `le ${formatted.replace(',', ' à')}`;
+            
+        } catch (error) {
+            console.error('❌ Erreur formatage date ordre:', error);
+            return 'Date inconnue';
+        }
     }
 }
 

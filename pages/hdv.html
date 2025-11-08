@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/components/hdv.css">
     <link rel="stylesheet" href="../css/components/item-selector.css">
     <link rel="stylesheet" href="../css/components/mailbox.css">
+    <link rel="stylesheet" href="../css/components/security.css">
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -74,9 +75,9 @@
                     <button class="hdv-tab active" data-tab="marketplace">💰 Place du Marché</button>
                     <button class="hdv-tab" data-tab="my-orders">📋 Mes Ordres</button>
                     <button class="hdv-tab" data-tab="create-order">💎 Créer un Ordre</button>
-                    <button class="hdv-tab mailbox-tab" onclick="mailboxSystem.openMailbox()">
+                    <button class="hdv-tab mailbox-tab" onclick="openMailboxSafe()">
                         📬 Boîte Mail
-                        <span id="unread-count" class="unread-counter" style="display: none;">0</span>
+                        <span id="unread-count" class="unread-count" style="display: none;"></span>
                     </button>
                 </div>
 
@@ -238,13 +239,15 @@
     </main>
 
     <!-- Scripts -->
+    <script src="../js/security.js"></script>
     <script type="module" src="../js/auth-supabase.js"></script>
     <script src="../js/hdv-supabase.js"></script>
+    <script src="../js/mailbox-supabase.js"></script>
+    <script src="../js/mailbox.js"></script>
     <script src="../js/migration-hdv.js"></script>
     <script src="../js/item-selector.js"></script>
     <script src="../js/items-catalog.js"></script>
     <script src="../js/hdv.js"></script>
-    <script src="../js/mailbox.js"></script>
     
     <script>
         // Initialisation du système HDV
@@ -264,6 +267,24 @@
                     } else {
                         console.warn('⚠️ MailboxSystem non disponible');
                     }
+                    
+                    // Fonction sécurisée pour ouvrir la boîte mail
+                    window.openMailboxSafe = async function() {
+                        try {
+                            console.log('📬 Tentative d\'ouverture de la boîte mail...');
+                            
+                            if (window.mailboxSystem && typeof window.mailboxSystem.openMailbox === 'function') {
+                                await window.mailboxSystem.openMailbox();
+                                console.log('✅ Boîte mail ouverte avec succès');
+                            } else {
+                                console.error('❌ Système de boîte mail non disponible');
+                                alert('❌ Système de messagerie non disponible. Veuillez recharger la page.');
+                            }
+                        } catch (error) {
+                            console.error('❌ Erreur ouverture boîte mail:', error);
+                            alert('❌ Erreur lors de l\'ouverture de la boîte mail');
+                        }
+                    };
                     
                     // Exposer les méthodes de debug
                     window.hdvDebug = {
