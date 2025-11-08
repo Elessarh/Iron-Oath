@@ -314,6 +314,56 @@
     margin: 0;
 }
 
+.empty-info {
+    background: rgba(0, 168, 255, 0.1);
+    border: 1px solid rgba(0, 168, 255, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: rgba(0, 168, 255, 0.9);
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.empty-actions .btn {
+    min-width: 150px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.empty-actions .btn-primary {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
+    border: 2px solid transparent;
+    color: white;
+}
+
+.empty-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 168, 255, 0.3);
+}
+
+.empty-actions .btn-secondary {
+    background: rgba(108, 117, 125, 0.1);
+    border: 2px solid rgba(108, 117, 125, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.empty-actions .btn-secondary:hover {
+    background: rgba(108, 117, 125, 0.2);
+    border-color: rgba(108, 117, 125, 0.5);
+    transform: translateY(-2px);
+}
+
 .error-state {
     display: flex;
     flex-direction: column;

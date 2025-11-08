@@ -670,11 +670,25 @@ ${this.currentUser.username || 'Un aventurier'}`;
                     receivedCount.textContent = messages.length;
                 }
             } else {
+                // Debug: afficher plus d'informations
+                const userInfo = await this.getCurrentUser();
                 messagesList.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">📭</div>
                         <h4>Aucun message reçu</h4>
                         <p>Votre boîte de réception est vide</p>
+                        <div class="empty-info">
+                            <small>Utilisateur connecté: ${userInfo?.username || 'Non identifié'}</small><br>
+                            <small>ID utilisateur: ${userInfo?.id || 'N/A'}</small>
+                        </div>
+                        <div class="empty-actions">
+                            <button class="btn btn-primary" onclick="mailboxSystem.openComposeTab(document.querySelector('.mailbox-modal'))">
+                                ✉️ Écrire un message
+                            </button>
+                            <button class="btn btn-secondary" onclick="mailboxSystem.createTestMessages()">
+                                🧪 Créer messages de test
+                            </button>
+                        </div>
                     </div>
                 `;
             }
@@ -1584,6 +1598,95 @@ ${this.currentUser.username || 'Un aventurier'}`;
             console.log('❌ === PROBLÈMES DÉTECTÉS ===');
             issues.forEach(issue => console.log(issue));
             return false;
+        }
+    }
+
+    // Ouvrir l'onglet de composition depuis l'état vide
+    openComposeTab(modal) {
+        if (modal) {
+            this.showTab('compose', modal);
+        }
+    }
+
+    // Créer des messages de test pour le debug
+    async createTestMessages() {
+        if (!this.supabaseManager) {
+            this.showNotification('❌ Système Supabase non disponible', 'error');
+            return;
+        }
+
+        try {
+            const currentUser = await this.getCurrentUser();
+            if (!currentUser) {
+                this.showNotification('❌ Vous devez être connecté pour créer des messages de test', 'error');
+                return;
+            }
+
+            // Créer quelques messages de test
+            const testMessages = [
+                {
+                    sender_id: 'test_user_1',
+                    sender_username: 'TestTrader1',
+                    recipient_id: currentUser.id,
+                    recipient_username: currentUser.username,
+                    subject: '🔴 Intéressé par votre vente - Épée de feu',
+                    content: 'Bonjour ! Je suis très intéressé par votre épée de feu. Votre prix me convient parfaitement. Pouvons-nous nous retrouver en jeu pour l\'échange ?',
+                    read: false
+                },
+                {
+                    sender_id: 'test_user_2',
+                    sender_username: 'MarchandNinja',
+                    recipient_id: currentUser.id,
+                    recipient_username: currentUser.username,
+                    subject: '🔵 Proposition pour votre achat - Cristal magique',
+                    content: 'Salut ! J\'ai vu que tu cherches des cristaux magiques. J\'en ai plusieurs disponibles. Nous pourrions négocier le prix si tu en prends plusieurs. Contacte-moi en jeu !',
+                    read: false
+                },
+                {
+                    sender_id: 'test_user_3',
+                    sender_username: 'GuildeLeader',
+                    recipient_id: currentUser.id,
+                    recipient_username: currentUser.username,
+                    subject: '🎯 Invitation guilde Iron Oath',
+                    content: 'Salut ! Nous avons remarqué tes compétences et aimerions t\'inviter à rejoindre notre guilde Iron Oath. Nous sommes une guilde active avec de nombreux avantages. Que dis-tu ?',
+                    read: false
+                }
+            ];
+
+            let successCount = 0;
+            for (const testMsg of testMessages) {
+                try {
+                    const success = await this.supabaseManager.sendMessage(
+                        testMsg.recipient_id,
+                        testMsg.subject,
+                        testMsg.content,
+                        testMsg.sender_id,
+                        testMsg.sender_username
+                    );
+                    if (success) successCount++;
+                } catch (error) {
+                    console.warn('❌ Erreur création message test:', error);
+                }
+            }
+
+            if (successCount > 0) {
+                this.showNotification(`✅ ${successCount} message(s) de test créé(s) !`, 'success');
+                
+                // Actualiser les messages
+                await this.loadMessages();
+                
+                // Recharger l'onglet reçu si la modal est ouverte
+                const modal = document.querySelector('.mailbox-modal');
+                if (modal) {
+                    await this.loadReceivedMessages(modal);
+                }
+            } else {
+                this.showNotification('❌ Échec création des messages de test', 'error');
+            }
+
+        } catch (error) {
+            console.error('❌ Erreur création messages de test:', error);
+            this.showNotification('❌ Erreur lors de la création des messages de test', 'error');
         }
     }
 }

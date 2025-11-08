@@ -43,7 +43,9 @@
     <header class="header">
         <nav class="nav-container">
             <div class="nav-logo-container">
-                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+                <a href="about.html">
+                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+                </a>
             </div>
             <ul class="nav-menu" id="nav-menu">
                 <li><a href="../index.html">Accueil</a></li>
@@ -75,8 +77,6 @@
         <!-- Contrôles de la carte (style filtres comme bestiaire) -->
         <div class="filters">
             <div class="filter-group">
-                <button id="toggle-coords" class="filter-button">📍 Coordonnées</button>
-                <button id="recenter-btn" class="filter-button">🔄 Recentrer</button>
                 <button id="place-mode-btn" class="filter-button admin-only" style="display: none;">✏️ Mode Édition</button>
             </div>
             
@@ -91,13 +91,6 @@
                     <option value="5" disabled>Palier - 5 (Bientôt)</option>
                 </select>
             </div>
-            
-            <!-- Affichage des coordonnées -->
-            <div id="coord-display" class="coord-display" style="display: none;">
-                <strong>Coordonnées:</strong> <span id="coord-text">--, --</span>
-            </div>
-            
-
             
             <!-- Panneau d'icônes (accessible uniquement avec Supabase) -->
             <div id="icon-panel" class="icon-panel" style="display: none;">

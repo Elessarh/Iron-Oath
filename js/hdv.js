@@ -1114,13 +1114,12 @@ class HDVSystem {
         console.log('📞 Contact trader - Informations:', {
             trader: traderName,
             item: itemName,
-            currentUser: currentUser,
-            mailboxSystemAvailable: !!window.mailboxSystem
+            currentUser: currentUser
         });
         
         // Vérifier l'authentification
         if (!currentUser) {
-            this.showNotification('❌ Vous devez être connecté pour contacter un vendeur !', 'error');
+            this.showNotification('❌ Vous devez être connecté pour contacter un trader !', 'error');
             this.redirectToLogin();
             return;
         }
@@ -1131,101 +1130,86 @@ class HDVSystem {
             return;
         }
 
-        // Vérifier si le système de boîte mail est disponible
-        if (window.mailboxSystem) {
-            console.log('📬 Ouverture interface de composition de message');
-            
-            // Trouver l'ordre correspondant pour obtenir plus d'infos
-            const order = this.orders.find(o => 
-                (o.seller === traderName || o.buyer === traderName || o.creator === traderName) && 
-                o.item.name === itemName
-            );
-            
-            console.log('🔍 Ordre trouvé:', order);
-            
-            if (order) {
-                // Ouvrir l'interface de composition avec un sujet pré-rempli mais contenu vide
-                const subject = `${order.type === 'sell' ? '🔴 Votre vente' : '🔵 Votre achat'} - ${itemName}`;
-                
-                // Rediriger vers la boîte mail avec les données pré-remplies
-                const mailboxUrl = `../pages/hdv.html#mailbox?to=${encodeURIComponent(traderName)}&subject=${encodeURIComponent(subject)}`;
-                
-                // Ouvrir la boîte mail dans le HDV
-                this.switchTab('mailbox');
-                
-                // Pré-remplir les champs si la boîte mail est déjà chargée
-                setTimeout(() => {
-                    const toInput = document.getElementById('compose-to');
-                    const subjectInput = document.getElementById('compose-subject');
-                    const contentTextarea = document.getElementById('compose-content');
-                    
-                    if (toInput) toInput.value = traderName;
-                    if (subjectInput) subjectInput.value = subject;
-                    if (contentTextarea) contentTextarea.focus(); // Focus sur le contenu pour que l'utilisateur puisse écrire
-                    
-                    if (window.mailboxSystem && window.mailboxSystem.validateForm) {
-                        window.mailboxSystem.validateForm();
-                    }
-                }, 100);
-                
-                this.showNotification(`📝 Interface de message ouverte pour contacter ${traderName}`, 'info');
-                
-            } else {
-                console.warn('❌ Ordre non trouvé pour le contact');
-                this.showNotification('❌ Impossible de trouver les détails de l\'ordre', 'error');
-            }
-        } else {
-            console.warn('❌ Système de boîte mail non disponible');
-            this.showNotification('❌ Système de messagerie non disponible', 'error');
-            
-            // Fallback vers l'ancien système
-            console.log('💬 Utilisation du système de chat modal (fallback)');
-            this.openChatModal(traderName, itemName);
+        // Trouver l'ordre correspondant pour obtenir plus d'infos
+        const order = this.orders.find(o => 
+            (o.seller === traderName || o.buyer === traderName || o.creator === traderName) && 
+            o.item.name === itemName
+        );
+        
+        if (!order) {
+            console.warn('❌ Ordre non trouvé pour le contact');
+            this.showNotification('❌ Impossible de trouver les détails de l\'ordre', 'error');
+            return;
         }
+
+        // Ouvrir directement l'interface de composition de message personnalisé
+        this.openCustomMessageModal(traderName, itemName, order);
     }
 
-    openChatModal(traderName, itemName) {
+    openCustomMessageModal(traderName, itemName, order) {
         const modal = document.createElement('div');
-        modal.className = 'chat-modal-overlay';
+        modal.className = 'contact-modal-overlay';
         modal.innerHTML = `
-            <div class="chat-modal">
-                <div class="chat-header">
+            <div class="contact-modal">
+                <div class="contact-header">
                     <h3>💬 Contacter ${traderName}</h3>
-                    <p>Concernant: <strong>${itemName}</strong></p>
-                    <button class="close-modal" onclick="this.closest('.chat-modal-overlay').remove()">❌</button>
+                    <p>Concernant: <strong>${order.type === 'sell' ? '🔴 Vente' : '🔵 Achat'} - ${itemName}</strong></p>
+                    <p class="order-details">Prix: <strong>${order.price} cols</strong> • Quantité: <strong>${order.quantity}</strong></p>
+                    <button class="close-modal" onclick="this.closest('.contact-modal-overlay').remove()">❌</button>
                 </div>
                 
-                <div class="chat-messages" id="chat-messages">
-                    <div class="system-message">
-                        <p>📝 Conversation avec ${traderName} concernant "${itemName}"</p>
-                        <p>🔒 Les messages sont sécurisés et privés</p>
-                    </div>
-                </div>
-                
-                <div class="chat-input-area">
-                    <div class="quick-messages">
-                        <button class="quick-msg" onclick="hdvSystem.sendQuickMessage('Bonjour, je suis intéressé par votre ${itemName}')">
-                            💰 Je suis intéressé par ${itemName}
-                        </button>
-                        <button class="quick-msg" onclick="hdvSystem.sendQuickMessage('Quel est votre meilleur prix pour ${itemName} ?')">
-                            💸 Négocier le prix
-                        </button>
-                        <button class="quick-msg" onclick="hdvSystem.sendQuickMessage('Pouvez-vous me contacter en jeu ?')">
-                            🎮 Contact en jeu
-                        </button>
-                    </div>
-                    
-                    <div class="message-compose">
-                        <textarea 
-                            id="message-input" 
-                            placeholder="Écrivez votre message..."
-                            rows="3"
-                            maxlength="500"
-                        ></textarea>
-                        <div class="message-actions">
-                            <span class="char-count">0/500</span>
-                            <button class="send-message" onclick="hdvSystem.sendMessage()">
-                                📤 Envoyer
+                <div class="message-compose-area">
+                    <div class="compose-form">
+                        <div class="form-group">
+                            <label for="message-subject">📋 Sujet du message</label>
+                            <input 
+                                type="text" 
+                                id="message-subject" 
+                                value="${order.type === 'sell' ? '🔴 Intéressé par votre vente' : '🔵 Proposition pour votre achat'} - ${itemName}"
+                                maxlength="100"
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="custom-message-content">✏️ Votre message personnalisé</label>
+                            <textarea 
+                                id="custom-message-content" 
+                                placeholder="Écrivez votre message personnalisé ici...
+                                
+Exemples:
+• Bonjour, je suis intéressé par votre ${itemName}. Êtes-vous disponible pour un échange ?
+• Votre prix me convient parfaitement. Quand pouvons-nous nous retrouver en jeu ?
+• Je propose ${Math.floor(order.price * 0.9)} cols au lieu de ${order.price}. Qu'en pensez-vous ?"
+                                rows="8"
+                                maxlength="1000"
+                            ></textarea>
+                            <div class="char-counter">
+                                <span id="char-count">0</span>/1000 caractères
+                            </div>
+                        </div>
+                        
+                        <div class="quick-suggestions">
+                            <h4>💡 Suggestions rapides (cliquez pour ajouter) :</h4>
+                            <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Bonjour ${traderName}, je suis intéressé par votre ${itemName}. Êtes-vous disponible pour discuter ?')">
+                                � Intérêt général
+                            </button>
+                            <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Votre prix de ${order.price} cols me convient. Quand pouvons-nous nous retrouver en jeu ?')">
+                                ✅ Accepter le prix
+                            </button>
+                            <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Pourriez-vous accepter ${Math.floor(order.price * 0.9)} cols au lieu de ${order.price} ? Je suis très intéressé.')">
+                                💸 Négocier le prix
+                            </button>
+                            <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Pouvez-vous me contacter en jeu ? Mon pseudo est [VOTRE_PSEUDO]. Merci !')">
+                                🎮 Contact en jeu
+                            </button>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-secondary" onclick="this.closest('.contact-modal-overlay').remove()">
+                                ↩️ Annuler
+                            </button>
+                            <button class="btn btn-primary" onclick="hdvSystem.sendCustomMessage('${traderName}', '${itemName}')">
+                                📤 Envoyer le message
                             </button>
                         </div>
                     </div>
@@ -1236,148 +1220,216 @@ class HDVSystem {
         document.body.appendChild(modal);
 
         // Gestion du compteur de caractères
-        const messageInput = document.getElementById('message-input');
-        const charCount = modal.querySelector('.char-count');
+        const messageContent = document.getElementById('custom-message-content');
+        const charCount = document.getElementById('char-count');
         
-        messageInput.addEventListener('input', () => {
-            const length = messageInput.value.length;
-            charCount.textContent = `${length}/500`;
-            charCount.style.color = length > 450 ? '#ff6b6b' : '#888';
+        messageContent.addEventListener('input', () => {
+            const length = messageContent.value.length;
+            charCount.textContent = length;
+            charCount.parentElement.style.color = length > 900 ? '#ff6b6b' : length > 700 ? '#ffa500' : '#4CAF50';
         });
 
         // Focus sur le textarea
-        messageInput.focus();
+        messageContent.focus();
+        
+        // Fermer avec Escape
+        document.addEventListener('keydown', function escapeHandler(e) {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        });
     }
 
-    sendQuickMessage(message) {
-        const messageInput = document.getElementById('message-input');
-        if (messageInput) {
-            messageInput.value = message;
-            messageInput.focus();
+    addSuggestion(text) {
+        const messageContent = document.getElementById('custom-message-content');
+        if (messageContent) {
+            const currentText = messageContent.value;
+            const newText = currentText ? currentText + '\n\n' + text : text;
+            messageContent.value = newText;
             
-            // Trigger input event pour le compteur
-            messageInput.dispatchEvent(new Event('input'));
+            // Trigger le compteur de caractères
+            messageContent.dispatchEvent(new Event('input'));
+            
+            // Focus et positionner le curseur à la fin
+            messageContent.focus();
+            messageContent.setSelectionRange(newText.length, newText.length);
         }
     }
 
-    sendMessage() {
-        const messageInput = document.getElementById('message-input');
-        const chatMessages = document.getElementById('chat-messages');
+    async sendCustomMessage(traderName, itemName) {
+        const subjectInput = document.getElementById('message-subject');
+        const contentInput = document.getElementById('custom-message-content');
         
-        if (!messageInput || !chatMessages) return;
+        if (!subjectInput || !contentInput) {
+            this.showNotification('❌ Erreur: Champs de message non trouvés', 'error');
+            return;
+        }
         
-        const message = messageInput.value.trim();
-        if (!message) {
-            this.showNotification('❌ Veuillez écrire un message', 'error');
+        const subject = subjectInput.value.trim();
+        const content = contentInput.value.trim();
+        
+        if (!subject) {
+            this.showNotification('❌ Veuillez entrer un sujet pour votre message', 'error');
+            subjectInput.focus();
+            return;
+        }
+        
+        if (!content) {
+            this.showNotification('❌ Veuillez écrire votre message', 'error');
+            contentInput.focus();
+            return;
+        }
+        
+        if (content.length < 10) {
+            this.showNotification('❌ Votre message doit faire au moins 10 caractères', 'error');
+            contentInput.focus();
             return;
         }
 
-        // Ajouter le message à la conversation
-        const messageElement = document.createElement('div');
-        messageElement.className = 'user-message';
-        messageElement.innerHTML = `
-            <div class="message-content">
-                <div class="message-text">${message}</div>
-                <div class="message-time">${new Date().toLocaleTimeString()}</div>
-            </div>
-        `;
-        
-        chatMessages.appendChild(messageElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-        // Vider le champ
-        messageInput.value = '';
-        messageInput.dispatchEvent(new Event('input'));
-
-        // Simulation de réponse automatique
-        setTimeout(() => {
-            const responseElement = document.createElement('div');
-            responseElement.className = 'trader-message';
-            responseElement.innerHTML = `
-                <div class="message-content">
-                    <div class="message-text">Merci pour votre message ! Je vous répondrai dès que possible. 🎮</div>
-                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
-                </div>
-            `;
-            chatMessages.appendChild(responseElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }, 2000);
-
-        this.showNotification('✅ Message envoyé !', 'success');
-    }
-
-    showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: var(--accent-color);
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 10000;
-            max-width: 300px;
-        `;
-
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 5000);
-    }
-
-    formatTime(timestamp) {
-        const now = new Date();
-        const diff = now - timestamp;
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-
-        if (days > 0) return `Il y a ${days} jour${days > 1 ? 's' : ''}`;
-        if (hours > 0) return `Il y a ${hours} heure${hours > 1 ? 's' : ''}`;
-        if (minutes > 0) return `Il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
-        return 'À l\'instant';
-    }
-
-    // Formater la date/heure complète de création d'un ordre
-    formatOrderDate(order) {
         try {
-            let date;
+            const currentUser = this.getCurrentUserInfo();
             
-            // Utiliser created_at de Supabase en priorité
-            if (order.created_at) {
-                date = new Date(order.created_at);
-            } else if (order.timestamp) {
-                date = new Date(order.timestamp);
-            } else {
-                return 'Date inconnue';
-            }
-
-            // Vérifier que la date est valide
-            if (isNaN(date.getTime())) {
-                return 'Date invalide';
-            }
-
-            // Format: "le 08/11/2025 à 14:30"
-            const options = {
-                day: '2-digit',
-                month: '2-digit', 
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
+            // Créer l'objet message
+            const message = {
+                id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                from: currentUser.username,
+                to: traderName,
+                subject: subject,
+                content: content,
+                timestamp: new Date().toISOString(),
+                read: false,
+                relatedItem: itemName
             };
             
-            const formatted = date.toLocaleDateString('fr-FR', options);
-            return `le ${formatted.replace(',', ' à')}`;
+            console.log('📤 Envoi message personnalisé:', message);
+            
+            // Essayer d'envoyer via Supabase d'abord
+            let messageSent = false;
+            if (window.mailboxSystem && window.mailboxSystem.sendMessage) {
+                try {
+                    const success = await window.mailboxSystem.sendMessage(message.to, message.subject, message.content);
+                    if (success) {
+                        messageSent = true;
+                        console.log('✅ Message envoyé via système Supabase');
+                    }
+                } catch (supabaseError) {
+                    console.warn('⚠️ Échec envoi Supabase, sauvegarde locale:', supabaseError);
+                }
+            }
+            
+            // Sauvegarder en local en fallback
+            if (!messageSent) {
+                const messages = JSON.parse(localStorage.getItem('hdv_messages') || '[]');
+                messages.push(message);
+                localStorage.setItem('hdv_messages', JSON.stringify(messages));
+                console.log('💾 Message sauvegardé localement');
+            }
+            
+            // Fermer la modal
+            document.querySelector('.contact-modal-overlay')?.remove();
+            
+            this.showNotification(`✅ Message envoyé à ${traderName} avec succès !`, 'success');
             
         } catch (error) {
-            console.error('❌ Erreur formatage date ordre:', error);
-            return 'Date inconnue';
+            console.error('❌ Erreur envoi message:', error);
+            this.showNotification('❌ Erreur lors de l\'envoi du message: ' + error.message, 'error');
         }
+    }
+
+    // Méthode pour formater la date des ordres
+    formatOrderDate(order) {
+        if (!order.timestamp) return '';
+        
+        const orderDate = new Date(order.timestamp);
+        const now = new Date();
+        const diffTime = Math.abs(now - orderDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+            return 'Aujourd\'hui';
+        } else if (diffDays === 2) {
+            return 'Hier';
+        } else if (diffDays <= 7) {
+            return `Il y a ${diffDays - 1} jours`;
+        } else {
+            return orderDate.toLocaleDateString('fr-FR');
+        }
+    }
+
+    // Méthode pour formater l'heure
+    formatTime(timestamp) {
+        if (!timestamp) return '';
+        return new Date(timestamp).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // Méthode pour afficher les notifications
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `hdv-notification ${type}`;
+        notification.textContent = message;
+        
+        // Styles inline pour les notifications
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            z-index: 10001;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            word-wrap: break-word;
+            animation: slideInRight 0.3s ease-out;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 4000);
+    }
+
+    // Méthode pour formater la date des ordres
+    formatOrderDate(order) {
+        if (!order.timestamp) return '';
+        
+        const orderDate = new Date(order.timestamp);
+        const now = new Date();
+        const diffTime = Math.abs(now - orderDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+            return 'Aujourd\'hui';
+        } else if (diffDays === 2) {
+            return 'Hier';
+        } else if (diffDays <= 7) {
+            return `Il y a ${diffDays - 1} jours`;
+        } else {
+            return orderDate.toLocaleDateString('fr-FR');
+        }
+    }
+
+    // Méthode pour formater l'heure
+    formatTime(timestamp) {
+        if (!timestamp) return '';
+        return new Date(timestamp).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
 }
 

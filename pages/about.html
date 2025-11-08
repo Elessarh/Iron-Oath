@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À Propos d'Iron Oath - Notre Histoire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components/security.css">
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfo = document.getElementById('user-info');
+            
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+                userInfo.classList.remove('js-visible');
+            }
+        });
+    </script>
+    
+    <style>
+        /* Styles spécifiques pour la page À Propos */
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 50px;
+            color: var(--color-white);
+        }
+        
+        .about-hero {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(0, 168, 255, 0.1), rgba(138, 43, 226, 0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(0, 168, 255, 0.3);
+        }
+        
+        .about-hero h1 {
+            font-family: var(--font-title);
+            font-size: 3rem;
+            color: var(--color-accent);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
+        }
+        
+        .about-hero p {
+            font-size: 1.2rem;
+            color: var(--color-white);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .guild-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            display: block;
+            border-radius: 50%;
+            border: 3px solid var(--color-accent);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.4);
+        }
+        
+        .content-section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(13, 25, 43, 0.6));
+            border-radius: 12px;
+            border: 1px solid rgba(0, 168, 255, 0.2);
+        }
+        
+        .content-section h2 {
+            font-family: var(--font-title);
+            font-size: 2rem;
+            color: var(--color-accent);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0, 168, 255, 0.3);
+        }
+        
+        .content-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 168, 255, 0.3);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 168, 255, 0.1), rgba(138, 43, 226, 0.1));
+            border: 1px solid rgba(0, 168, 255, 0.3);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 168, 255, 0.2);
+        }
+        
+        .stat-number {
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            color: var(--color-accent);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--color-white);
+            opacity: 0.9;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .project-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(13, 25, 43, 0.8));
+            border: 1px solid rgba(0, 168, 255, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 168, 255, 0.5);
+        }
+        
+        .project-card h3 {
+            font-family: var(--font-title);
+            color: var(--color-accent);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .project-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .status-completed {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+        
+        .status-progress {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+        
+        .status-planned {
+            background: rgba(108, 117, 125, 0.2);
+            color: #6c757d;
+            border: 1px solid #6c757d;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: linear-gradient(135deg, rgba(0, 168, 255, 0.8), rgba(138, 43, 226, 0.8));
+            color: var(--color-white);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: var(--font-title);
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 168, 255, 0.4);
+        }
+        
+        .back-button::before {
+            content: "←";
+            font-size: 1.2rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .about-container {
+                padding: 80px 15px 30px;
+            }
+            
+            .about-hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton de retour -->
+    <a href="../index.html" class="back-button">Retour à l'accueil</a>
+
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <a href="about.html">
+                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+                </a>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html">Accueil</a></li>
+                <li><a href="map.html">Carte</a></li>
+                <li><a href="bestiaire.html">Bestiaire</a></li>
+                <li><a href="items.html">Items</a></li>
+                <li><a href="hdv.html">HDV</a></li>
+                <li><a href="quetes.html">Quêtes</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <span id="username"></span>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Contenu Principal -->
+    <main class="about-container">
+        <!-- Section Héros -->
+        <div class="about-hero">
+            <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="guild-logo">
+            <h1>Iron Oath</h1>
+            <p>Découvrez l'histoire de notre guilde, nos aventures épiques et les projets qui forgent notre légende dans l'univers Minecraft.</p>
+        </div>
+
+        <!-- Notre Histoire -->
+        <section class="content-section">
+            <h2>🏰 Notre Histoire</h2>
+            <p>
+                Iron Oath n'est pas simplement une guilde Minecraft, c'est une fraternité de bâtisseurs, d'explorateurs et de guerriers unis par un serment de fer. 
+                Fondée par des passionnés qui partageaient une vision commune : créer un univers persistant où chaque bloc posé raconte une histoire, 
+                où chaque aventure devient légende.
+            </p>
+            <p>
+                Nos débuts remontent aux premiers jours de notre serveur, quand une poignée d'amis a décidé de transformer un monde vierge en un empire 
+                prospère. De nos humbles cabanes de bois aux majestueuses citadelles que nous érigeons aujourd'hui, chaque construction porte la marque 
+                de notre détermination et de notre créativité collective.
+            </p>
+            <p>
+                Le "Serment de Fer" qui donne son nom à notre guilde symbolise notre engagement indéfectible : protéger nos terres, 
+                défendre nos alliés, et repousser sans cesse les limites de ce qui est possible dans Minecraft.
+            </p>
+        </section>
+
+        <!-- Statistiques de la Guilde -->
+        <section class="content-section">
+            <h2>📊 Nos Réalisations</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">1000+</span>
+                    <div class="stat-label">Heures de Jeu Collectif</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">30+</span>
+                    <div class="stat-label">Membres Actifs</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vidéo de Présentation -->
+        <section class="content-section">
+            <h2>🎬 Nos Aventures en Vidéo</h2>
+            <p>
+                Plongez dans l'univers d'Iron Oath à travers cette vidéo qui capture l'essence de nos aventures, 
+                nos constructions les plus impressionnantes et l'esprit de camaraderie qui anime notre guilde.
+            </p>
+            <div class="video-container">
+                <div class="video-wrapper">
+                    <iframe 
+                        src="https://www.youtube.com/embed/WVRGykLETx0?si=yEludtm8lecWBisg" 
+                        title="Iron Oath - Nos Aventures"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nos Projets -->
+        <section class="content-section">
+            <h2>🚀 Nos Projets</h2>
+            <p>
+                Iron Oath ne se contente pas de survivre dans Minecraft, nous innovons constamment. 
+                Voici un aperçu de nos projets les plus ambitieux :
+            </p>
+            
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3>🗺️ Système de Cartographie Interactive</h3>
+                    <div class="project-status status-completed">Terminé</div>
+                    <p>
+                        Une carte interactive complète de notre monde avec localisation des points d'intérêt, 
+                        système de coordonnées et navigation vers les quêtes.
+                    </p>
+                </div>
+                
+                <div class="project-card">
+                    <h3>🏪 Système HDV Automatisé</h3>
+                    <div class="project-status status-completed">Terminé</div>
+                    <p>
+                        Un système de commerce avancé avec gestion des ordres, messagerie automatique, 
+                        et notifications en temps réel pour faciliter les échanges entre membres.
+                    </p>
+                </div>
+                
+                <div class="project-card">
+                    <h3>📚 Base de Données des Créatures</h3>
+                    <div class="project-status status-completed">Terminé</div>
+                    <p>
+                        Un bestiaire complet avec système de filtrage, informations détaillées sur chaque mob, 
+                        et stratégies de combat optimisées.
+                    </p>
+                </div>
+                
+                <div class="project-card">
+                    <h3>⚔️ Catalogue d'Items Avancé</h3>
+                    <div class="project-status status-completed">Terminé</div>
+                    <p>
+                        Un système de gestion d'inventaire sophistiqué avec recherche par catégorie, 
+                        rareté et informations détaillées sur chaque item.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Philosophie -->
+        <section class="content-section">
+            <h2>⚡ Notre Philosophie</h2>
+            <p>
+                <strong>"Par le fer, nous bâtissons. Par l'honneur, nous défendons. Par l'unité, nous triomphons."</strong>
+            </p>
+            <p>
+                Cette devise résume l'esprit d'Iron Oath. Nous croyons que les plus grandes réalisations naissent de la collaboration, 
+                de la persévérance et du respect mutuel. Chaque membre apporte sa pierre à l'édifice, et ensemble, 
+                nous créons des merveilles qui défient l'imagination.
+            </p>
+            <p>
+                Notre serment nous lie au-delà du simple jeu : nous sommes une communauté, une famille unie par la passion du craft, 
+                de l'exploration et de l'aventure partagée.
+            </p>
+        </section>
+
+        <!-- Rejoindre la Guilde -->
+        <section class="content-section">
+            <h2>🤝 Rejoindre Iron Oath</h2>
+            <p>
+                Tu partages notre vision ? Tu souhaites participer à des projets épiques et forger ta propre légende à nos côtés ? 
+                Iron Oath recrute des membres motivés, créatifs et prêts à s'engager dans l'aventure.
+            </p>
+            <p>
+                <strong>Critères de recrutement :</strong><br>
+                • Passion pour Minecraft et ses possibilités infinies<br>
+                • Esprit d'équipe et respect des autres membres<br>
+                • Volonté de contribuer aux projets collectifs<br>
+                • Engagement sur le long terme<br>
+            </p>
+            <p>
+                <a href="connexion.html" style="color: var(--color-accent); text-decoration: none; font-weight: bold;">
+                    → Connectez-vous pour postuler et rejoindre notre aventure !
+                </a>
+            </p>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script type="module" src="../js/auth-supabase.js"></script>
+    <script>
+        // Gestion du menu mobile
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+        
+        // Animation d'apparition des éléments au scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observer tous les éléments de contenu
+        document.querySelectorAll('.content-section, .stat-card, .project-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+    
+    <!-- Système de sécurité -->
+    <script src="../js/security.js"></script>
+    
+    <!-- Script de vérification des liens (dev) -->
+    <script src="../js/link-checker.js"></script>
+</body>
+</html>
