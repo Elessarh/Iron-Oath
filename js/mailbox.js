@@ -604,7 +604,17 @@ ${this.currentUser.username || 'Un aventurier'}`;
         
         // Combiner utilisateurs connus et tous les utilisateurs
         const knownUsers = JSON.parse(localStorage.getItem('knownUsers') || '[]');
-        const availableUsers = [...new Set([...knownUsers, ...allUsers])];
+        
+        // Ajouter automatiquement les expéditeurs des messages reçus
+        const messagesSenders = [
+            ...this.receivedMessages.map(msg => msg.sender_username),
+            ...this.sentMessages.map(msg => msg.recipient_username)
+        ].filter(Boolean);
+        
+        // Combiner toutes les sources d'utilisateurs
+        const availableUsers = [...new Set([...knownUsers, ...allUsers, ...messagesSenders])];
+        
+        console.log('👥 Utilisateurs disponibles:', availableUsers);
         
         composeContainer.innerHTML = `
             <div class="compose-form-panel">
@@ -1090,15 +1100,19 @@ ${this.currentUser.username || 'Un aventurier'}`;
                 // Retirer l'élément de l'affichage
                 const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
                 if (messageElement) {
+                    // Récupérer la liste parent avant animation
+                    const messagesList = messageElement.closest('.messages-list');
+                    
                     messageElement.style.animation = 'slideOutRight 0.3s ease-out';
                     setTimeout(() => {
                         messageElement.remove();
                         
-                        // Vérifier s'il reste des messages
-                        const messagesList = messageElement.closest('.messages-list');
-                        const remainingMessages = messagesList.querySelectorAll('.message-item');
-                        if (remainingMessages.length === 0) {
-                            messagesList.innerHTML = '<div class="no-messages">📭 Aucun message</div>';
+                        // Vérifier s'il reste des messages (seulement si messagesList existe)
+                        if (messagesList) {
+                            const remainingMessages = messagesList.querySelectorAll('.message-item');
+                            if (remainingMessages.length === 0) {
+                                messagesList.innerHTML = '<div class="no-messages">📭 Aucun message</div>';
+                            }
                         }
                     }, 300);
                 }
@@ -1116,6 +1130,16 @@ ${this.currentUser.username || 'Un aventurier'}`;
     // Répondre à un message
     async replyToMessage(messageId, originalSender, originalSubject) {
         console.log('📧 replyToMessage appelée avec:', { messageId, originalSender, originalSubject });
+        
+        // Ajouter l'expéditeur aux utilisateurs connus pour validation
+        if (originalSender) {
+            const knownUsers = JSON.parse(localStorage.getItem('knownUsers') || '[]');
+            if (!knownUsers.includes(originalSender)) {
+                knownUsers.push(originalSender);
+                localStorage.setItem('knownUsers', JSON.stringify(knownUsers));
+                console.log('👥 Utilisateur ajouté aux connus:', originalSender);
+            }
+        }
         
         const modal = document.querySelector('.mailbox-modal');
         if (!modal) {
