@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components/hdv.css">
     <link rel="stylesheet" href="../css/components/item-selector.css">
-    <link rel="stylesheet" href="../css/components/mailbox.css">
+    <link rel="stylesheet" href="../css/components/mailbox-improved.css">
     <link rel="stylesheet" href="../css/components/security.css">
     
     <script>
@@ -75,7 +75,7 @@
                     <button class="hdv-tab active" data-tab="marketplace">💰 Place du Marché</button>
                     <button class="hdv-tab" data-tab="my-orders">📋 Mes Ordres</button>
                     <button class="hdv-tab" data-tab="create-order">💎 Créer un Ordre</button>
-                    <button class="hdv-tab mailbox-tab" onclick="openMailboxSafe()">
+                    <button class="hdv-tab mailbox-tab" onclick="if(window.mailboxSystem && window.mailboxSystem.openMailbox) { window.mailboxSystem.openMailbox(); } else { alert('Système de messagerie en cours de chargement...'); }">
                         📬 Boîte Mail
                         <span id="unread-count" class="unread-count" style="display: none;"></span>
                     </button>
@@ -239,15 +239,15 @@
     </main>
 
     <!-- Scripts -->
-    <script src="../js/security.js"></script>
-    <script type="module" src="../js/auth-supabase.js"></script>
-    <script src="../js/hdv-supabase.js"></script>
-    <script src="../js/mailbox-supabase.js"></script>
-    <script src="../js/mailbox.js"></script>
-    <script src="../js/migration-hdv.js"></script>
-    <script src="../js/item-selector.js"></script>
-    <script src="../js/items-catalog.js"></script>
-    <script src="../js/hdv.js"></script>
+    <script src="../js/security.js?v=20251108c"></script>
+    <script type="module" src="../js/auth-supabase.js?v=20251108c"></script>
+    <script src="../js/hdv-supabase.js?v=20251108c"></script>
+    <script src="../js/mailbox-supabase.js?v=20251108e"></script>
+    <script src="../js/mailbox.js?v=20251108e"></script>
+    <script src="../js/migration-hdv.js?v=20251108c"></script>
+    <script src="../js/item-selector.js?v=20251108c"></script>
+    <script src="../js/items-catalog.js?v=20251108c"></script>
+    <script src="../js/hdv.js?v=20251108c"></script>
     
     <script>
         // Initialisation du système HDV
@@ -268,28 +268,21 @@
                         console.warn('⚠️ MailboxSystem non disponible');
                     }
                     
-                    // Fonction sécurisée pour ouvrir la boîte mail
-                    window.openMailboxSafe = async function() {
-                        try {
-                            console.log('📬 Tentative d\'ouverture de la boîte mail...');
-                            
-                            if (window.mailboxSystem && typeof window.mailboxSystem.openMailbox === 'function') {
-                                await window.mailboxSystem.openMailbox();
-                                console.log('✅ Boîte mail ouverte avec succès');
-                            } else {
-                                console.error('❌ Système de boîte mail non disponible');
-                                alert('❌ Système de messagerie non disponible. Veuillez recharger la page.');
-                            }
-                        } catch (error) {
-                            console.error('❌ Erreur ouverture boîte mail:', error);
-                            alert('❌ Erreur lors de l\'ouverture de la boîte mail');
-                        }
-                    };
-                    
                     // Exposer les méthodes de debug
                     window.hdvDebug = {
                         checkAuth: () => window.hdvSystem.checkAuthStatus(),
                         forceAccess: (username) => window.hdvSystem.forceAccess(username),
+                        // Debug de la boîte mail
+                        testMailbox: () => {
+                            console.log('🔍 === TEST MAILBOX ===');
+                            console.log('📦 window.mailboxSystem:', !!window.mailboxSystem);
+                            console.log('📦 MailboxSystem:', typeof MailboxSystem);
+                            if (window.mailboxSystem) {
+                                console.log('📦 openMailbox method:', typeof window.mailboxSystem.openMailbox);
+                                console.log('📦 mailboxSystem keys:', Object.keys(window.mailboxSystem));
+                            }
+                            return 'Test terminé - vérifiez la console';
+                        },
                         // Fonction pour créer un ordre de test
                         createTestOrder: () => {
                             const testOrder = {

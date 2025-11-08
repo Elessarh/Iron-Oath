@@ -109,20 +109,40 @@ class MailboxSystem {
 
     // Obtenir l'utilisateur connecté via Supabase
     async getCurrentUser() {
-        if (!this.supabaseManager) return null;
-        
+        // Solution de contournement direct sans passer par getUserProfile
         try {
-            const profile = await this.supabaseManager.getUserProfile();
-            if (profile) {
-                return {
-                    id: profile.id,
-                    username: profile.username,
-                    email: profile.email || ''
-                };
+            if (!this.supabaseManager || !this.supabaseManager.supabase) {
+                console.error('❌ Supabase non disponible pour mailbox');
+                return null;
             }
-            return null;
+
+            // Récupérer directement l'utilisateur authentifié
+            const { data: { user }, error } = await this.supabaseManager.supabase.auth.getUser();
+            if (error || !user) {
+                console.error('❌ Erreur récupération utilisateur auth:', error);
+                return null;
+            }
+
+            // Récupérer le profil directement depuis user_profiles
+            const { data: profile, error: profileError } = await this.supabaseManager.supabase
+                .from('user_profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            if (profileError) {
+                console.error('❌ Erreur profil user_profiles:', profileError);
+                return null;
+            }
+
+            console.log('✅ Profil mailbox récupéré:', profile);
+            return {
+                id: profile.id,
+                username: profile.username,
+                email: profile.email || user.email || ''
+            };
         } catch (error) {
-            console.error('❌ Erreur récupération utilisateur:', error);
+            console.error('❌ Erreur getCurrentUser mailbox:', error);
             return null;
         }
     }
@@ -352,8 +372,47 @@ ${this.currentUser.username || 'Un aventurier'}`;
         // Afficher les messages reçus par défaut
         this.showTab('received', modal);
         
-        // Mettre à jour le compteur
-        await this.updateUnreadCount();
+        // Mettre à jour les compteurs
+        await this.updateTabCounts(modal);
+    }
+
+    // Mettre à jour les compteurs des onglets
+    async updateTabCounts(modal) {
+        if (!this.supabaseManager || !modal) return;
+        
+        try {
+            const [receivedMessages, sentMessages, unreadCount] = await Promise.all([
+                this.supabaseManager.loadReceivedMessages(),
+                this.supabaseManager.loadSentMessages(),
+                this.supabaseManager.getUnreadCount()
+            ]);
+            
+            // Mettre à jour les compteurs
+            const receivedCountEl = modal.querySelector('#received-count');
+            const sentCountEl = modal.querySelector('#sent-count');
+            const headerUnreadEl = modal.querySelector('#header-unread');
+            
+            if (receivedCountEl) {
+                receivedCountEl.textContent = receivedMessages.length;
+                receivedCountEl.style.display = receivedMessages.length > 0 ? 'block' : 'none';
+            }
+            
+            if (sentCountEl) {
+                sentCountEl.textContent = sentMessages.length;
+                sentCountEl.style.display = sentMessages.length > 0 ? 'block' : 'none';
+            }
+            
+            if (headerUnreadEl) {
+                if (unreadCount > 0) {
+                    headerUnreadEl.textContent = `${unreadCount} nouveau${unreadCount > 1 ? 'x' : ''}`;
+                    headerUnreadEl.style.display = 'block';
+                } else {
+                    headerUnreadEl.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('❌ Erreur mise à jour compteurs:', error);
+        }
     }
 
     // Configuration des écouteurs d'événements
@@ -363,24 +422,35 @@ ${this.currentUser.username || 'Un aventurier'}`;
             modal.remove();
         });
 
-        // Onglets
-        modal.querySelectorAll('.tab-btn').forEach(btn => {
+        // Onglets de navigation
+        modal.querySelectorAll('.mailbox-tab').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const tab = e.target.dataset.tab;
+                const tab = e.target.closest('.mailbox-tab').dataset.tab;
                 this.showTab(tab, modal);
             });
         });
 
-        // Bouton composer
-        modal.querySelector('.compose-btn').addEventListener('click', () => {
-            this.showComposeForm(modal);
+        // Bouton actualiser dans le header
+        modal.querySelector('.refresh-mailbox').addEventListener('click', async () => {
+            await this.refreshMessages();
+            await this.updateTabCounts(modal);
+            
+            // Actualiser l'onglet actuel
+            const activeTab = modal.querySelector('.mailbox-tab.active');
+            if (activeTab) {
+                const tabName = activeTab.dataset.tab;
+                await this.showTab(tabName, modal);
+            }
         });
 
-        // Bouton actualiser
-        modal.querySelector('.refresh-btn').addEventListener('click', async () => {
-            await this.refreshMessages();
-            await this.refreshMailboxDisplay(modal);
-        });
+        // Bouton marquer tout comme lu
+        const markAllReadBtn = modal.querySelector('.mark-all-read');
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', async () => {
+                await this.markAllAsRead();
+                await this.refreshMailboxDisplay(modal);
+            });
+        }
 
         // Fermer en cliquant à l'extérieur
         modal.addEventListener('click', (e) => {
@@ -393,100 +463,473 @@ ${this.currentUser.username || 'Un aventurier'}`;
     // Afficher un onglet
     async showTab(tabName, modal) {
         // Activer l'onglet
-        modal.querySelectorAll('.tab-btn').forEach(btn => {
+        modal.querySelectorAll('.mailbox-tab').forEach(btn => {
             btn.classList.remove('active');
         });
         modal.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
 
-        // Afficher le contenu
-        modal.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
+        // Afficher le panneau correspondant
+        modal.querySelectorAll('.mailbox-panel').forEach(panel => {
+            panel.classList.remove('active');
         });
-        modal.querySelector(`#${tabName}`).classList.add('active');
-
-        // Charger les messages selon l'onglet
-        let messages = [];
-        if (tabName === 'received') {
-            messages = await this.supabaseManager.loadReceivedMessages();
-        } else if (tabName === 'sent') {
-            messages = await this.supabaseManager.loadSentMessages();
+        
+        const targetPanel = modal.querySelector(`#${tabName}`);
+        if (targetPanel) {
+            targetPanel.classList.add('active');
         }
 
-        const messagesList = modal.querySelector(`#${tabName} .messages-list`);
-        messagesList.innerHTML = messages.length > 0 ? 
-            messages.map(msg => this.renderMessage(msg, tabName)).join('') :
-            '<div class="no-messages">📭 Aucun message</div>';
+        // Charger le contenu selon l'onglet
+        if (tabName === 'received') {
+            await this.loadReceivedMessages(modal);
+        } else if (tabName === 'sent') {
+            await this.loadSentMessages(modal);
+        } else if (tabName === 'compose') {
+            await this.showComposeFormInPanel(modal);
+        }
+    }
+
+    // Charger les messages reçus
+    async loadReceivedMessages(modal) {
+        const messagesList = modal.querySelector('#received .messages-list');
+        if (!messagesList) return;
+
+        // Afficher le loading
+        messagesList.innerHTML = `
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Chargement des messages reçus...</p>
+            </div>
+        `;
+
+        try {
+            const messages = await this.supabaseManager.loadReceivedMessages();
+            
+            if (messages.length > 0) {
+                messagesList.innerHTML = messages.map(msg => this.renderMessage(msg, 'received')).join('');
+                
+                // Mettre à jour le compteur
+                const receivedCount = modal.querySelector('#received-count');
+                if (receivedCount) {
+                    receivedCount.textContent = messages.length;
+                }
+            } else {
+                messagesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h4>Aucun message reçu</h4>
+                        <p>Votre boîte de réception est vide</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('❌ Erreur chargement messages reçus:', error);
+            messagesList.innerHTML = `
+                <div class="error-state">
+                    <div class="error-icon">⚠️</div>
+                    <h4>Erreur de chargement</h4>
+                    <p>Impossible de charger les messages reçus</p>
+                    <button class="btn btn-secondary" onclick="mailboxSystem.loadReceivedMessages(document.querySelector('.mailbox-modal'))">Réessayer</button>
+                </div>
+            `;
+        }
+    }
+
+    // Charger les messages envoyés
+    async loadSentMessages(modal) {
+        const messagesList = modal.querySelector('#sent .messages-list');
+        if (!messagesList) return;
+
+        // Afficher le loading
+        messagesList.innerHTML = `
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Chargement des messages envoyés...</p>
+            </div>
+        `;
+
+        try {
+            const messages = await this.supabaseManager.loadSentMessages();
+            
+            if (messages.length > 0) {
+                messagesList.innerHTML = messages.map(msg => this.renderMessage(msg, 'sent')).join('');
+                
+                // Mettre à jour le compteur
+                const sentCount = modal.querySelector('#sent-count');
+                if (sentCount) {
+                    sentCount.textContent = messages.length;
+                }
+            } else {
+                messagesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📤</div>
+                        <h4>Aucun message envoyé</h4>
+                        <p>Vous n'avez envoyé aucun message</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('❌ Erreur chargement messages envoyés:', error);
+            messagesList.innerHTML = `
+                <div class="error-state">
+                    <div class="error-icon">⚠️</div>
+                    <h4>Erreur de chargement</h4>
+                    <p>Impossible de charger les messages envoyés</p>
+                    <button class="btn btn-secondary" onclick="mailboxSystem.loadSentMessages(document.querySelector('.mailbox-modal'))">Réessayer</button>
+                </div>
+            `;
+        }
+    }
+
+    // Afficher le formulaire de composition dans le panneau dédié
+    async showComposeFormInPanel(modal) {
+        const composeContainer = modal.querySelector('#compose .compose-container');
+        if (!composeContainer) return;
+
+        // Récupérer la liste des utilisateurs depuis la base de données
+        let allUsers = [];
+        try {
+            if (this.supabaseManager) {
+                const { data, error } = await this.supabaseManager.supabase
+                    .from('user_profiles')
+                    .select('username')
+                    .order('username');
+                    
+                if (!error && data) {
+                    allUsers = data.map(user => user.username);
+                }
+            }
+        } catch (error) {
+            console.log('⚠️ Impossible de charger la liste des utilisateurs:', error);
+        }
+        
+        // Combiner utilisateurs connus et tous les utilisateurs
+        const knownUsers = JSON.parse(localStorage.getItem('knownUsers') || '[]');
+        const availableUsers = [...new Set([...knownUsers, ...allUsers])];
+        
+        composeContainer.innerHTML = `
+            <div class="compose-form-panel">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label>Destinataire <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="text" id="compose-to" placeholder="Saisissez le nom d'utilisateur..." autocomplete="off">
+                            <div class="autocomplete-suggestions"></div>
+                        </div>
+                        <div class="user-validation" id="user-validation"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Sujet <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="text" id="compose-subject" placeholder="Sujet de votre message" maxlength="100">
+                            <div class="char-count"><span id="subject-count">0</span>/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Message <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <textarea id="compose-content" rows="8" placeholder="Rédigez votre message..." maxlength="1000"></textarea>
+                            <div class="char-count"><span id="content-count">0</span>/1000</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions-panel">
+                    <button class="btn btn-primary" id="send-message-btn" disabled>
+                        <span class="btn-icon">📤</span>
+                        <span class="btn-text">Envoyer le message</span>
+                    </button>
+                    <button class="btn btn-secondary" id="clear-form-btn">
+                        <span class="btn-icon">🗑️</span>
+                        <span class="btn-text">Effacer</span>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Initialiser l'autocomplétion et la validation
+        this.setupComposeFormEvents(availableUsers);
+        
+        // Ajouter l'événement pour effacer le formulaire
+        const clearBtn = modal.querySelector('#clear-form-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                this.resetComposeForm();
+            });
+        }
+    }
+
+    // Ajouter fonction pour marquer tous les messages comme lus
+    async markAllAsRead() {
+        if (!this.supabaseManager) {
+            this.showNotification('❌ Service non disponible', 'error');
+            return;
+        }
+
+        try {
+            const user = await this.supabaseManager.getCurrentUser();
+            if (!user) return;
+
+            // Marquer tous les messages non lus comme lus
+            const { error } = await this.supabaseManager.supabase
+                .from('messages')
+                .update({ read_at: new Date().toISOString() })
+                .eq('recipient_id', user.id)
+                .is('read_at', null);
+
+            if (error) {
+                throw error;
+            }
+
+            await this.updateUnreadCount();
+            this.showNotification('✅ Tous les messages marqués comme lus', 'success');
+        } catch (error) {
+            console.error('❌ Erreur marquage global:', error);
+            this.showNotification('❌ Erreur lors du marquage', 'error');
+        }
     }
 
     // Rendu d'un message
     renderMessage(message, type) {
         const isUnread = !message.read_at && type === 'received';
-        const date = new Date(message.created_at).toLocaleString('fr-FR');
+        const date = new Date(message.created_at);
+        const formattedDate = date.toLocaleString('fr-FR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // Calculer le temps écoulé
+        const timeAgo = this.getTimeAgo(date);
         
         return `
             <div class="message-item ${isUnread ? 'unread' : ''}" data-message-id="${message.id}">
                 <div class="message-header">
                     <div class="message-info">
-                        <span class="message-from">
-                            ${type === 'received' ? 'De' : 'À'}: <strong>${type === 'received' ? message.sender_username : message.recipient_username}</strong>
-                        </span>
-                        <span class="message-date">${date}</span>
+                        <div class="message-user-line">
+                            <span class="message-from">
+                                ${type === 'received' ? '📥 De' : '📤 À'}: 
+                                <strong>${type === 'received' ? message.sender_username : message.recipient_username}</strong>
+                            </span>
+                            ${isUnread ? '<span class="unread-badge">Nouveau</span>' : ''}
+                            ${message.message_type === 'order' ? '<span class="trade-badge">📦 Commande</span>' : ''}
+                        </div>
+                        <div class="message-time-line">
+                            <span class="message-date" title="${formattedDate}">${timeAgo}</span>
+                        </div>
                     </div>
                     <div class="message-actions">
-                        ${isUnread ? '<button class="btn-read" onclick="mailboxSystem.markAsRead(' + message.id + ')">✓</button>' : ''}
-                        <button class="btn-delete" onclick="mailboxSystem.deleteMessage(${message.id})">🗑️</button>
+                        ${type === 'received' ? `<button class="btn-small reply-btn" onclick="mailboxSystem.replyToMessage(${message.id}, '${message.sender_username}', '${message.subject.replace(/'/g, "\\'")}')">↩️ Répondre</button>` : ''}
+                        ${isUnread ? `<button class="btn-small reply-btn" onclick="mailboxSystem.markAsRead(${message.id})">✓ Lu</button>` : ''}
+                        <button class="btn-small delete-btn" onclick="mailboxSystem.deleteMessage(${message.id})">🗑️</button>
                     </div>
                 </div>
                 <div class="message-subject">
-                    <strong>${message.subject}</strong>
-                    ${message.message_type === 'order' ? '<span class="order-badge">📦 Commande</span>' : ''}
+                    <h4>${this.escapeHtml(message.subject)}</h4>
                 </div>
                 <div class="message-content">
-                    ${message.content}
+                    <p>${this.escapeHtml(message.content).replace(/\n/g, '<br>')}</p>
                 </div>
             </div>
         `;
     }
 
-    // Afficher le formulaire de composition
-    showComposeForm(modal) {
-        const composeArea = modal.querySelector('.compose-area');
+    // Calculer le temps écoulé depuis un message
+    getTimeAgo(date) {
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 1) return 'À l\'instant';
+        if (diffMins < 60) return `Il y a ${diffMins} min`;
+        if (diffHours < 24) return `Il y a ${diffHours}h`;
+        if (diffDays === 1) return 'Hier';
+        if (diffDays < 7) return `Il y a ${diffDays} jours`;
+        
+        return date.toLocaleDateString('fr-FR');
+    }
+
+    // Échapper le HTML pour éviter les injections
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Afficher le formulaire de composition (méthode héritée - redirige vers le panneau)
+    async showComposeForm(modal) {
+        // Rediriger vers l'onglet composition
+        this.showTab('compose', modal);
+    }
+
+    // Configurer les événements du formulaire de composition
+    setupComposeFormEvents(availableUsers) {
+        const toInput = document.getElementById('compose-to');
+        const subjectInput = document.getElementById('compose-subject');
+        const contentTextarea = document.getElementById('compose-content');
+        const sendBtn = document.getElementById('send-message-btn');
+        const suggestions = document.querySelector('.autocomplete-suggestions');
+        const userValidation = document.getElementById('user-validation');
+
+        // Autocomplétion utilisateurs
+        let currentSuggestionIndex = -1;
+        
+        toInput.addEventListener('input', (e) => {
+            const value = e.target.value.toLowerCase();
+            
+            if (value.length > 0) {
+                const matches = availableUsers.filter(user => 
+                    user.toLowerCase().includes(value)
+                ).slice(0, 5);
+                
+                if (matches.length > 0) {
+                    suggestions.innerHTML = matches.map((user, index) => 
+                        `<div class="autocomplete-suggestion" data-index="${index}">${user}</div>`
+                    ).join('');
+                    suggestions.style.display = 'block';
+                } else {
+                    suggestions.style.display = 'none';
+                }
+            } else {
+                suggestions.style.display = 'none';
+            }
+            
+            // Validation utilisateur
+            this.validateUser(e.target.value.trim(), availableUsers);
+            this.validateForm();
+        });
+
+        // Navigation clavier dans les suggestions
+        toInput.addEventListener('keydown', (e) => {
+            const suggestionItems = suggestions.querySelectorAll('.autocomplete-suggestion');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                currentSuggestionIndex = Math.min(currentSuggestionIndex + 1, suggestionItems.length - 1);
+                this.updateSuggestionSelection(suggestionItems, currentSuggestionIndex);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                currentSuggestionIndex = Math.max(currentSuggestionIndex - 1, -1);
+                this.updateSuggestionSelection(suggestionItems, currentSuggestionIndex);
+            } else if (e.key === 'Enter' && currentSuggestionIndex >= 0) {
+                e.preventDefault();
+                const selectedSuggestion = suggestionItems[currentSuggestionIndex];
+                if (selectedSuggestion) {
+                    toInput.value = selectedSuggestion.textContent;
+                    suggestions.style.display = 'none';
+                    currentSuggestionIndex = -1;
+                    this.validateUser(toInput.value, availableUsers);
+                    this.validateForm();
+                }
+            } else if (e.key === 'Escape') {
+                suggestions.style.display = 'none';
+                currentSuggestionIndex = -1;
+            }
+        });
+
+        // Clic sur une suggestion
+        suggestions.addEventListener('click', (e) => {
+            if (e.target.classList.contains('autocomplete-suggestion')) {
+                toInput.value = e.target.textContent;
+                suggestions.style.display = 'none';
+                this.validateUser(toInput.value, availableUsers);
+                this.validateForm();
+            }
+        });
+
+        // Masquer suggestions en cliquant ailleurs
+        document.addEventListener('click', (e) => {
+            if (!toInput.contains(e.target) && !suggestions.contains(e.target)) {
+                suggestions.style.display = 'none';
+                currentSuggestionIndex = -1;
+            }
+        });
+
+        // Compteurs de caractères
+        subjectInput.addEventListener('input', () => {
+            const count = subjectInput.value.length;
+            document.getElementById('subject-count').textContent = count;
+            document.getElementById('subject-count').style.color = count > 90 ? '#ff6666' : '#00a8ff';
+            this.validateForm();
+        });
+
+        contentTextarea.addEventListener('input', () => {
+            const count = contentTextarea.value.length;
+            document.getElementById('content-count').textContent = count;
+            document.getElementById('content-count').style.color = count > 950 ? '#ff6666' : '#00a8ff';
+            this.validateForm();
+        });
+
+        // Bouton d'envoi
+        sendBtn.addEventListener('click', () => this.sendComposeMessage());
+    }
+
+    // Mettre à jour la sélection des suggestions
+    updateSuggestionSelection(suggestions, index) {
+        suggestions.forEach((item, i) => {
+            if (i === index) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    }
+
+    // Valider l'utilisateur
+    validateUser(username, availableUsers) {
+        const userValidation = document.getElementById('user-validation');
+        
+        if (!username) {
+            userValidation.innerHTML = '';
+            return false;
+        }
+        
+        const userExists = availableUsers.some(user => 
+            user.toLowerCase() === username.toLowerCase()
+        );
+        
+        if (userExists) {
+            userValidation.innerHTML = '<div class="validation-success">✅ Utilisateur trouvé</div>';
+            return true;
+        } else {
+            userValidation.innerHTML = '<div class="validation-error">❌ Utilisateur non trouvé</div>';
+            return false;
+        }
+    }
+
+    // Valider le formulaire complet
+    validateForm() {
+        const toInput = document.getElementById('compose-to');
+        const subjectInput = document.getElementById('compose-subject');
+        const contentTextarea = document.getElementById('compose-content');
+        const sendBtn = document.getElementById('send-message-btn');
+        
+        if (!toInput || !subjectInput || !contentTextarea || !sendBtn) {
+            return; // Les éléments ne sont pas encore chargés
+        }
+        
+        // Récupérer la liste des utilisateurs disponibles
         const knownUsers = JSON.parse(localStorage.getItem('knownUsers') || '[]');
         
-        composeArea.innerHTML = `
-            <div class="compose-form">
-                <h3>✉️ Nouveau message</h3>
-                <div class="form-group">
-                    <label>Destinataire:</label>
-                    <input type="text" id="compose-to" list="users-list" placeholder="Nom d'utilisateur">
-                    <datalist id="users-list">
-                        ${knownUsers.map(user => `<option value="${user}">`).join('')}
-                    </datalist>
-                </div>
-                <div class="form-group">
-                    <label>Sujet:</label>
-                    <input type="text" id="compose-subject" placeholder="Sujet du message">
-                </div>
-                <div class="form-group">
-                    <label>Message:</label>
-                    <textarea id="compose-content" rows="5" placeholder="Votre message..."></textarea>
-                </div>
-                <div class="form-actions">
-                    <button class="btn btn-primary" onclick="mailboxSystem.sendComposeMessage()">📤 Envoyer</button>
-                    <button class="btn btn-secondary" onclick="mailboxSystem.hideComposeForm()">❌ Annuler</button>
-                </div>
-            </div>
-        `;
+        const isUserValid = this.validateUser(toInput.value.trim(), knownUsers);
+        const isSubjectValid = subjectInput.value.trim().length > 0;
+        const isContentValid = contentTextarea.value.trim().length > 0;
         
-        composeArea.style.display = 'block';
+        const isFormValid = isUserValid && isSubjectValid && isContentValid;
+        
+        sendBtn.disabled = !isFormValid;
+        sendBtn.style.opacity = isFormValid ? '1' : '0.5';
     }
 
-    // Masquer le formulaire de composition
+    // Masquer le formulaire de composition (méthode héritée - pour compatibilité)
     hideComposeForm() {
-        const composeArea = document.querySelector('.compose-area');
-        if (composeArea) {
-            composeArea.style.display = 'none';
-        }
+        // Cette méthode est conservée pour compatibilité mais non utilisée avec la nouvelle interface
+        console.log('📝 hideComposeForm() appelée (compatibilité)');
     }
 
     // Envoyer le message composé
@@ -494,21 +937,200 @@ ${this.currentUser.username || 'Un aventurier'}`;
         const to = document.getElementById('compose-to').value.trim();
         const subject = document.getElementById('compose-subject').value.trim();
         const content = document.getElementById('compose-content').value.trim();
+        const sendBtn = document.getElementById('send-message-btn');
         
+        // Validation finale
         if (!to || !subject || !content) {
-            this.showNotification('❌ Veuillez remplir tous les champs', 'error');
+            this.showNotification('❌ Veuillez remplir tous les champs obligatoires', 'error');
             return;
         }
         
-        const success = await this.sendMessage(to, subject, content);
-        if (success) {
-            this.hideComposeForm();
-            // Actualiser l'affichage
-            const modal = document.querySelector('.mailbox-modal');
-            if (modal) {
-                await this.refreshMailboxDisplay(modal);
-            }
+        // Vérifier la longueur
+        if (subject.length > 100) {
+            this.showNotification('❌ Le sujet est trop long (max 100 caractères)', 'error');
+            return;
         }
+        
+        if (content.length > 1000) {
+            this.showNotification('❌ Le message est trop long (max 1000 caractères)', 'error');
+            return;
+        }
+        
+        // Vérifier que l'utilisateur existe
+        try {
+            const { data: recipientData, error } = await this.supabaseManager.supabase
+                .from('user_profiles')
+                .select('username')
+                .eq('username', to)
+                .single();
+                
+            if (error || !recipientData) {
+                this.showNotification(`❌ L'utilisateur "${to}" n'existe pas`, 'error');
+                return;
+            }
+        } catch (error) {
+            this.showNotification('❌ Erreur lors de la vérification du destinataire', 'error');
+            return;
+        }
+        
+        // Désactiver le bouton pendant l'envoi
+        sendBtn.disabled = true;
+        sendBtn.textContent = '⏳ Envoi en cours...';
+        
+        try {
+            const success = await this.sendMessage(to, subject, content);
+            if (success) {
+                this.resetComposeForm();
+                // Actualiser les compteurs et l'affichage
+                const modal = document.querySelector('.mailbox-modal');
+                if (modal) {
+                    await this.updateTabCounts(modal);
+                    // Basculer vers les messages envoyés pour voir le message
+                    await this.showTab('sent', modal);
+                }
+                this.showNotification('✅ Message envoyé avec succès !', 'success');
+            }
+        } catch (error) {
+            console.error('❌ Erreur envoi message:', error);
+            this.showNotification('❌ Erreur lors de l\'envoi du message', 'error');
+        } finally {
+            // Réactiver le bouton
+            sendBtn.disabled = false;
+            sendBtn.textContent = '📤 Envoyer';
+        }
+    }
+
+    // Nettoyer le formulaire de composition
+    resetComposeForm() {
+        const toInput = document.getElementById('compose-to');
+        const subjectInput = document.getElementById('compose-subject');
+        const contentTextarea = document.getElementById('compose-content');
+        
+        if (toInput) toInput.value = '';
+        if (subjectInput) subjectInput.value = '';
+        if (contentTextarea) contentTextarea.value = '';
+        
+        // Réinitialiser les compteurs
+        const subjectCount = document.getElementById('subject-count');
+        const contentCount = document.getElementById('content-count');
+        if (subjectCount) subjectCount.textContent = '0';
+        if (contentCount) contentCount.textContent = '0';
+        
+        // Masquer les suggestions
+        const suggestions = document.querySelector('.autocomplete-suggestions');
+        if (suggestions) suggestions.style.display = 'none';
+        
+        // Nettoyer la validation
+        const userValidation = document.getElementById('user-validation');
+        if (userValidation) userValidation.innerHTML = '';
+    }
+
+    // Marquer un message comme lu
+    async markAsRead(messageId) {
+        if (!this.supabaseManager) {
+            this.showNotification('❌ Service non disponible', 'error');
+            return;
+        }
+
+        try {
+            const success = await this.supabaseManager.markAsRead(messageId);
+            if (success) {
+                // Mettre à jour l'affichage
+                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+                if (messageElement) {
+                    messageElement.classList.remove('unread');
+                    const readBtn = messageElement.querySelector('.btn-read');
+                    if (readBtn) {
+                        readBtn.remove();
+                    }
+                }
+                
+                // Mettre à jour le compteur
+                await this.updateUnreadCount();
+                this.showNotification('✅ Message marqué comme lu', 'success');
+            }
+        } catch (error) {
+            console.error('❌ Erreur marquage lecture:', error);
+            this.showNotification('❌ Erreur lors du marquage', 'error');
+        }
+    }
+
+    // Supprimer un message
+    async deleteMessage(messageId) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce message ?')) {
+            return;
+        }
+
+        if (!this.supabaseManager) {
+            this.showNotification('❌ Service non disponible', 'error');
+            return;
+        }
+
+        try {
+            const success = await this.supabaseManager.deleteMessage(messageId);
+            if (success) {
+                // Retirer l'élément de l'affichage
+                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+                if (messageElement) {
+                    messageElement.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => {
+                        messageElement.remove();
+                        
+                        // Vérifier s'il reste des messages
+                        const messagesList = messageElement.closest('.messages-list');
+                        const remainingMessages = messagesList.querySelectorAll('.message-item');
+                        if (remainingMessages.length === 0) {
+                            messagesList.innerHTML = '<div class="no-messages">📭 Aucun message</div>';
+                        }
+                    }, 300);
+                }
+                
+                // Mettre à jour le compteur
+                await this.updateUnreadCount();
+                this.showNotification('✅ Message supprimé', 'success');
+            }
+        } catch (error) {
+            console.error('❌ Erreur suppression message:', error);
+            this.showNotification('❌ Erreur lors de la suppression', 'error');
+        }
+    }
+
+    // Répondre à un message
+    async replyToMessage(messageId, originalSender, originalSubject) {
+        const modal = document.querySelector('.mailbox-modal');
+        if (!modal) return;
+
+        // Basculer vers l'onglet composition
+        await this.showTab('compose', modal);
+        
+        // Attendre que le formulaire soit chargé
+        setTimeout(() => {
+            // Pré-remplir les champs
+            const toInput = document.getElementById('compose-to');
+            const subjectInput = document.getElementById('compose-subject');
+            
+            if (toInput) {
+                toInput.value = originalSender;
+                // Déclencher la validation
+                const event = new Event('input', { bubbles: true });
+                toInput.dispatchEvent(event);
+            }
+            
+            if (subjectInput) {
+                const replySubject = originalSubject.startsWith('Re: ') ? 
+                    originalSubject : `Re: ${originalSubject}`;
+                subjectInput.value = replySubject;
+                // Déclencher la validation
+                const event = new Event('input', { bubbles: true });
+                subjectInput.dispatchEvent(event);
+            }
+            
+            // Donner le focus au champ message
+            const contentTextarea = document.getElementById('compose-content');
+            if (contentTextarea) {
+                contentTextarea.focus();
+            }
+        }, 100);
     }
 
     // Mettre à jour le compteur de messages non lus
@@ -553,32 +1175,80 @@ ${this.currentUser.username || 'Un aventurier'}`;
         return `
             <div class="mailbox-content">
                 <div class="mailbox-header">
-                    <h2>📬 Boîte Mail - ${this.currentUser.username}</h2>
-                    <button class="close-mailbox">✖</button>
+                    <div class="mailbox-title">
+                        <h2>📬 Boîte Mail</h2>
+                        <div class="mailbox-user">
+                            <span class="user-name">${this.currentUser?.username || 'Utilisateur'}</span>
+                            <span class="unread-indicator" id="header-unread"></span>
+                        </div>
+                    </div>
+                    <div class="mailbox-header-actions">
+                        <button class="refresh-mailbox" title="Actualiser la boîte mail">
+                            🔄 <span class="btn-text">Actualiser</span>
+                        </button>
+                        <button class="close-mailbox" title="Fermer la boîte mail">✖</button>
+                    </div>
+                </div>
+
+                <div class="mailbox-navigation">
+                    <div class="mailbox-tabs">
+                        <button class="mailbox-tab active" data-tab="received">
+                            <span class="tab-icon">📥</span>
+                            <span class="tab-label">Messages reçus</span>
+                            <span class="tab-count" id="received-count"></span>
+                        </button>
+                        <button class="mailbox-tab" data-tab="sent">
+                            <span class="tab-icon">📤</span>
+                            <span class="tab-label">Messages envoyés</span>
+                            <span class="tab-count" id="sent-count"></span>
+                        </button>
+                        <button class="mailbox-tab" data-tab="compose">
+                            <span class="tab-icon">✉️</span>
+                            <span class="tab-label">Nouveau message</span>
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="mailbox-toolbar">
-                    <button class="compose-btn btn btn-primary">✉️ Composer</button>
-                    <button class="refresh-btn btn btn-secondary">🔄 Actualiser</button>
-                </div>
-                
-                <div class="mailbox-tabs">
-                    <button class="tab-btn active" data-tab="received">📥 Reçus</button>
-                    <button class="tab-btn" data-tab="sent">📤 Envoyés</button>
-                </div>
-                
-                <div class="compose-area" style="display: none;"></div>
-                
-                <div class="mailbox-body">
-                    <div id="received" class="tab-content active">
-                        <div class="messages-list">
-                            <div class="loading">📥 Chargement des messages reçus...</div>
+                <div class="mailbox-panels">
+                    <div id="received" class="mailbox-panel active">
+                        <div class="panel-header">
+                            <h3>📥 Messages reçus</h3>
+                            <div class="panel-actions">
+                                <button class="btn-small mark-all-read" title="Marquer tout comme lu">
+                                    ✓ Tout marquer comme lu
+                                </button>
+                            </div>
+                        </div>
+                        <div class="messages-container">
+                            <div class="messages-list">
+                                <div class="loading-state">
+                                    <div class="loading-spinner"></div>
+                                    <p>Chargement des messages reçus...</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div id="sent" class="tab-content">
-                        <div class="messages-list">
-                            <div class="loading">📤 Chargement des messages envoyés...</div>
+                    <div id="sent" class="mailbox-panel">
+                        <div class="panel-header">
+                            <h3>📤 Messages envoyés</h3>
+                        </div>
+                        <div class="messages-container">
+                            <div class="messages-list">
+                                <div class="loading-state">
+                                    <div class="loading-spinner"></div>
+                                    <p>Chargement des messages envoyés...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="compose" class="mailbox-panel">
+                        <div class="panel-header">
+                            <h3>✉️ Nouveau message</h3>
+                        </div>
+                        <div class="compose-container">
+                            <!-- Le formulaire sera inséré ici -->
                         </div>
                     </div>
                 </div>
@@ -604,9 +1274,123 @@ ${this.currentUser.username || 'Un aventurier'}`;
             }
         });
     }
+
+    // Test complet du système de messagerie
+    async testMailboxSystem() {
+        console.log('🧪 === TEST SYSTÈME MESSAGERIE ===');
+        
+        try {
+            // Test de la connectivité Supabase
+            if (!this.supabaseManager) {
+                throw new Error('Supabase Manager non disponible');
+            }
+            
+            const connectivityOk = await this.supabaseManager.testConnectivity();
+            if (!connectivityOk) {
+                throw new Error('Test de connectivité échoué');
+            }
+
+            // Test de récupération de l'utilisateur actuel
+            this.currentUser = await this.getCurrentUser();
+            if (!this.currentUser) {
+                throw new Error('Impossible de récupérer l\'utilisateur actuel');
+            }
+            console.log('✅ Utilisateur actuel:', this.currentUser.username);
+
+            // Test de chargement des messages
+            await this.loadMessages();
+            console.log(`✅ Messages chargés: ${this.messages.length} total`);
+
+            // Test de comptage des non lus
+            await this.updateUnreadCount();
+            console.log('✅ Compteur de messages non lus mis à jour');
+
+            console.log('🎉 === TOUS LES TESTS RÉUSSIS ===');
+            this.showNotification('🎉 Système de messagerie opérationnel !', 'success');
+            return true;
+
+        } catch (error) {
+            console.error('❌ === ÉCHEC DU TEST ===', error);
+            this.showNotification(`❌ Erreur système: ${error.message}`, 'error');
+            return false;
+        }
+    }
+
+    // Fonction de diagnostic rapide
+    async diagnoseMailboxIssues() {
+        console.log('🔍 === DIAGNOSTIC MESSAGERIE ===');
+        
+        const issues = [];
+        
+        // Vérifier Supabase
+        if (!window.supabase) {
+            issues.push('❌ window.supabase non disponible');
+        } else {
+            console.log('✅ window.supabase disponible');
+        }
+        
+        // Vérifier MailboxSupabaseManager
+        if (!window.mailboxSupabaseManager) {
+            issues.push('❌ window.mailboxSupabaseManager non disponible');
+        } else {
+            console.log('✅ window.mailboxSupabaseManager disponible');
+        }
+        
+        // Vérifier l'authentification
+        try {
+            const { data: { user } } = await window.supabase.auth.getUser();
+            if (!user) {
+                issues.push('❌ Utilisateur non connecté');
+            } else {
+                console.log('✅ Utilisateur connecté:', user.email);
+            }
+        } catch (error) {
+            issues.push(`❌ Erreur authentification: ${error.message}`);
+        }
+        
+        if (issues.length === 0) {
+            console.log('✅ === DIAGNOSTIC RÉUSSI - AUCUN PROBLÈME ===');
+            return true;
+        } else {
+            console.log('❌ === PROBLÈMES DÉTECTÉS ===');
+            issues.forEach(issue => console.log(issue));
+            return false;
+        }
+    }
 }
 
 // Initialiser le système de messagerie
 document.addEventListener('DOMContentLoaded', () => {
     window.mailboxSystem = new MailboxSystem();
 });
+
+// Fonctions globales pour les tests (accessibles depuis la console)
+window.testMailbox = async () => {
+    if (window.mailboxSystem) {
+        return await window.mailboxSystem.testMailboxSystem();
+    } else {
+        console.error('❌ Mailbox System non initialisé');
+        return false;
+    }
+};
+
+window.diagnoseMailbox = async () => {
+    if (window.mailboxSystem) {
+        return await window.mailboxSystem.diagnoseMailboxIssues();
+    } else {
+        console.error('❌ Mailbox System non initialisé');
+        return false;
+    }
+};
+
+// Fonction pour envoyer un message de test
+window.sendTestMessage = async (toUsername, subject = 'Message de test', content = 'Ceci est un message de test pour vérifier le système de messagerie.') => {
+    if (window.mailboxSystem) {
+        return await window.mailboxSystem.sendMessage(toUsername, subject, content);
+    } else {
+        console.error('❌ Mailbox System non initialisé');
+        return false;
+    }
+};
+
+console.log('📬 Mailbox System chargé. Utilisez testMailbox(), diagnoseMailbox() ou sendTestMessage() pour tester.');

@@ -53,23 +53,36 @@ class MailboxSupabaseManager {
         if (!ready) return null;
 
         try {
-            const targetUserId = userId || (await this.getCurrentUser())?.id;
-            if (!targetUserId) return null;
-
+            let targetUserId = userId;
+            
+            // Si pas d'userId fourni, récupérer l'utilisateur actuel
+            if (!targetUserId) {
+                const { data: { user }, error: userError } = await this.supabase.auth.getUser();
+                if (userError || !user) {
+                    console.error('❌ Erreur récupération utilisateur actuel:', userError);
+                    return null;
+                }
+                targetUserId = user.id;
+            }
+            
+            console.log('🔍 Recherche profil utilisateur ID:', targetUserId);
+            
+            // Utiliser EXPLICITEMENT la table user_profiles
             const { data, error } = await this.supabase
-                .from('profiles')
+                .from('user_profiles')
                 .select('*')
                 .eq('id', targetUserId)
                 .single();
 
             if (error) {
-                console.error('❌ Erreur profil utilisateur:', error);
+                console.error('❌ Erreur profil utilisateur (user_profiles):', error);
                 return null;
             }
 
+            console.log('✅ Profil utilisateur trouvé:', data);
             return data;
         } catch (error) {
-            console.error('❌ Erreur récupération profil:', error);
+            console.error('❌ Erreur dans getUserProfile:', error);
             return null;
         }
     }
@@ -92,7 +105,7 @@ class MailboxSupabaseManager {
 
             // Trouver le destinataire
             const { data: recipientData, error: recipientError } = await this.supabase
-                .from('profiles')
+                .from('user_profiles')
                 .select('id, username')
                 .eq('username', recipientUsername)
                 .single();
@@ -280,6 +293,99 @@ class MailboxSupabaseManager {
         const content = `Transaction HDV: ${message}`;
         
         return await this.sendMessage(recipientUsername, subject, content, 'order');
+    }
+
+    // Obtenir la liste de tous les utilisateurs (pour autocomplétion)
+    async getAllUsers() {
+        try {
+            const ready = await this.ensureInitialized();
+            if (!ready) return [];
+
+            const { data, error } = await this.supabase
+                .from('user_profiles')
+                .select('username')
+                .order('username');
+
+            if (error) {
+                console.error('❌ Erreur récupération utilisateurs:', error);
+                return [];
+            }
+
+            return data.map(user => user.username);
+
+        } catch (error) {
+            console.error('❌ Erreur getAllUsers:', error);
+            return [];
+        }
+    }
+
+    // Vérifier qu'un utilisateur existe
+    async userExists(username) {
+        try {
+            const ready = await this.ensureInitialized();
+            if (!ready) return false;
+
+            const { data, error } = await this.supabase
+                .from('user_profiles')
+                .select('username')
+                .eq('username', username)
+                .single();
+
+            return !error && !!data;
+
+        } catch (error) {
+            console.error('❌ Erreur vérification utilisateur:', error);
+            return false;
+        }
+    }
+
+    // Test de la connectivité et des fonctions
+    async testConnectivity() {
+        try {
+            console.log('🧪 Test de connectivité mailbox...');
+            
+            const ready = await this.ensureInitialized();
+            if (!ready) {
+                throw new Error('Supabase non initialisé');
+            }
+
+            // Test 1: Récupérer l'utilisateur actuel
+            const user = await this.getCurrentUser();
+            if (!user) {
+                throw new Error('Utilisateur non connecté');
+            }
+            console.log('✅ Test 1: Utilisateur connecté -', user.email);
+
+            // Test 2: Récupérer le profil
+            const profile = await this.getUserProfile();
+            if (!profile) {
+                throw new Error('Profil utilisateur non trouvé');
+            }
+            console.log('✅ Test 2: Profil utilisateur -', profile.username);
+
+            // Test 3: Charger les messages reçus
+            const receivedMessages = await this.loadReceivedMessages();
+            console.log(`✅ Test 3: ${receivedMessages.length} messages reçus chargés`);
+
+            // Test 4: Charger les messages envoyés
+            const sentMessages = await this.loadSentMessages();
+            console.log(`✅ Test 4: ${sentMessages.length} messages envoyés chargés`);
+
+            // Test 5: Compter les messages non lus
+            const unreadCount = await this.getUnreadCount();
+            console.log(`✅ Test 5: ${unreadCount} messages non lus`);
+
+            // Test 6: Récupérer tous les utilisateurs
+            const allUsers = await this.getAllUsers();
+            console.log(`✅ Test 6: ${allUsers.length} utilisateurs dans la base`);
+
+            console.log('🎉 Tous les tests de connectivité réussis !');
+            return true;
+
+        } catch (error) {
+            console.error('❌ Échec test de connectivité:', error);
+            return false;
+        }
     }
 }
 
