@@ -104,24 +104,40 @@
         <div class="creatures-grid" id="creatures-grid">
             <!-- Les créatures seront chargées dynamiquement par JavaScript -->
         </div>
+
+        <!-- Contrôles de pagination -->
+        <div class="pagination-container" id="pagination-container" style="display: none;">
+            <div class="pagination-info">
+                <span id="pagination-info-text">Affichage de 1-12 sur 45 créatures</span>
+            </div>
+            <div class="pagination-controls">
+                <button class="pagination-btn" id="prev-page" disabled>
+                    <i class="fas fa-chevron-left"></i> Précédent
+                </button>
+                <div class="pagination-numbers" id="pagination-numbers">
+                    <!-- Numéros de pages générés dynamiquement -->
+                </div>
+                <button class="pagination-btn" id="next-page">
+                    Suivant <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="pagination-settings">
+                <label for="items-per-page">Éléments par page:</label>
+                <select id="items-per-page">
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                    <option value="36">36</option>
+                    <option value="48">48</option>
+                </select>
+            </div>
+        </div>
     </main>
 
     <!-- Script du bestiaire -->
     <script type="module" src="../js/auth-supabase.js"></script>
     <script src="../js/bestiaire.js"></script>
     
-    <script>
-        // Gestion du menu mobile
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
-        
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            hamburger.classList.toggle('active');
-        });
-
-        // Écran de chargement supprimé - plus de gestion nécessaire
-    </script>
+    <script src="../js/navbar-mobile.js"></script>
 
 </body>
 </html>

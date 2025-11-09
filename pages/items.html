@@ -146,6 +146,33 @@
                         <p>Chargement des items...</p>
                     </div>
                 </div>
+
+                <!-- Contrôles de pagination pour les items -->
+                <div class="pagination-container" id="items-pagination-container" style="display: none;">
+                    <div class="pagination-info">
+                        <span id="items-pagination-info-text">Affichage de 1-12 sur 45 items</span>
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" id="items-prev-page" disabled>
+                            <i class="fas fa-chevron-left"></i> Précédent
+                        </button>
+                        <div class="pagination-numbers" id="items-pagination-numbers">
+                            <!-- Numéros de pages générés dynamiquement -->
+                        </div>
+                        <button class="pagination-btn" id="items-next-page">
+                            Suivant <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="pagination-settings">
+                        <label for="items-per-page-select">Éléments par page:</label>
+                        <select id="items-per-page-select">
+                            <option value="12">12</option>
+                            <option value="24">24</option>
+                            <option value="36">36</option>
+                            <option value="48">48</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -261,14 +288,23 @@
                     rarity: 'all',
                     search: ''
                 };
+                
+                // Propriétés de pagination
+                this.currentPage = 1;
+                this.itemsPerPage = 12;
+                this.totalPages = 1;
+                
                 this.init();
             }
 
             init() {
                 this.loadAllItems();
                 this.setupFilters();
+                this.setupPaginationListeners();
+                this.calculatePagination();
                 this.displayItems();
                 this.updateStats();
+                this.updatePaginationUI();
             }
 
             // Charger tous les items du catalogue
@@ -301,6 +337,161 @@
                     'legendary': 'Un objet légendaire aux capacités extraordinaires.'
                 };
                 return descriptions[item.rarity] || descriptions['common'];
+            }
+
+            // Configuration des écouteurs d'événements de pagination
+            setupPaginationListeners() {
+                // Boutons précédent/suivant
+                const prevBtn = document.getElementById('items-prev-page');
+                const nextBtn = document.getElementById('items-next-page');
+                
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        if (this.currentPage > 1) {
+                            this.currentPage--;
+                            this.displayItems();
+                            this.updatePaginationUI();
+                            this.scrollToTop();
+                        }
+                    });
+                }
+                
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        if (this.currentPage < this.totalPages) {
+                            this.currentPage++;
+                            this.displayItems();
+                            this.updatePaginationUI();
+                            this.scrollToTop();
+                        }
+                    });
+                }
+                
+                // Sélecteur d'éléments par page
+                const itemsPerPageSelect = document.getElementById('items-per-page-select');
+                if (itemsPerPageSelect) {
+                    itemsPerPageSelect.addEventListener('change', (e) => {
+                        this.itemsPerPage = parseInt(e.target.value);
+                        this.currentPage = 1; // Reset à la première page
+                        this.calculatePagination();
+                        this.displayItems();
+                        this.updatePaginationUI();
+                    });
+                }
+            }
+
+            // Calcul de la pagination
+            calculatePagination() {
+                this.totalPages = Math.ceil(this.filteredItems.length / this.itemsPerPage);
+                
+                // S'assurer que la page actuelle est valide
+                if (this.currentPage > this.totalPages) {
+                    this.currentPage = Math.max(1, this.totalPages);
+                }
+            }
+
+            // Mise à jour de l'interface de pagination
+            updatePaginationUI() {
+                const paginationContainer = document.getElementById('items-pagination-container');
+                const prevBtn = document.getElementById('items-prev-page');
+                const nextBtn = document.getElementById('items-next-page');
+                const paginationInfo = document.getElementById('items-pagination-info-text');
+                const paginationNumbers = document.getElementById('items-pagination-numbers');
+                
+                if (!paginationContainer) return;
+                
+                // Afficher/masquer la pagination selon le nombre d'éléments
+                if (this.filteredItems.length <= this.itemsPerPage) {
+                    paginationContainer.style.display = 'none';
+                    return;
+                } else {
+                    paginationContainer.style.display = 'block';
+                }
+                
+                // Mise à jour des boutons précédent/suivant
+                if (prevBtn) {
+                    prevBtn.disabled = this.currentPage <= 1;
+                }
+                if (nextBtn) {
+                    nextBtn.disabled = this.currentPage >= this.totalPages;
+                }
+                
+                // Mise à jour du texte informatif
+                if (paginationInfo) {
+                    const startItem = (this.currentPage - 1) * this.itemsPerPage + 1;
+                    const endItem = Math.min(this.currentPage * this.itemsPerPage, this.filteredItems.length);
+                    paginationInfo.textContent = `Affichage de ${startItem}-${endItem} sur ${this.filteredItems.length} items`;
+                }
+                
+                // Génération des numéros de pages
+                if (paginationNumbers) {
+                    paginationNumbers.innerHTML = this.generatePageNumbers();
+                }
+            }
+
+            // Génération des numéros de pages avec ellipses
+            generatePageNumbers() {
+                let pages = [];
+                const maxVisiblePages = 7;
+                
+                if (this.totalPages <= maxVisiblePages) {
+                    // Afficher toutes les pages si peu nombreuses
+                    for (let i = 1; i <= this.totalPages; i++) {
+                        pages.push(this.createPageButton(i));
+                    }
+                } else {
+                    // Logique d'ellipses pour beaucoup de pages
+                    pages.push(this.createPageButton(1));
+                    
+                    if (this.currentPage > 4) {
+                        pages.push('<span class="pagination-ellipsis">...</span>');
+                    }
+                    
+                    const start = Math.max(2, this.currentPage - 1);
+                    const end = Math.min(this.totalPages - 1, this.currentPage + 1);
+                    
+                    for (let i = start; i <= end; i++) {
+                        pages.push(this.createPageButton(i));
+                    }
+                    
+                    if (this.currentPage < this.totalPages - 3) {
+                        pages.push('<span class="pagination-ellipsis">...</span>');
+                    }
+                    
+                    if (this.totalPages > 1) {
+                        pages.push(this.createPageButton(this.totalPages));
+                    }
+                }
+                
+                return pages.join('');
+            }
+
+            // Création d'un bouton de page
+            createPageButton(pageNumber) {
+                const isActive = pageNumber === this.currentPage ? 'active' : '';
+                return `
+                    <button class="pagination-number ${isActive}" onclick="window.itemCards.goToPage(${pageNumber})">
+                        ${pageNumber}
+                    </button>
+                `;
+            }
+
+            // Navigation vers une page spécifique
+            goToPage(pageNumber) {
+                if (pageNumber >= 1 && pageNumber <= this.totalPages) {
+                    this.currentPage = pageNumber;
+                    this.displayItems();
+                    this.updatePaginationUI();
+                    this.scrollToTop();
+                }
+            }
+
+            // Scroll vers le haut de la grille
+            scrollToTop() {
+                const grid = document.getElementById('items-grid');
+                if (grid) {
+                    grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             }
 
             // Configurer les filtres
@@ -347,8 +538,12 @@
                     return matchesSearch && matchesCategory && matchesRarity;
                 });
 
+                // Recalculer la pagination après filtrage
+                this.currentPage = 1; // Reset à la première page
+                this.calculatePagination();
                 this.displayItems();
                 this.updateStats();
+                this.updatePaginationUI();
             }
 
             // Vérifier si une catégorie d'item correspond au filtre
@@ -378,7 +573,7 @@
                 this.applyFilters();
             }
 
-            // Afficher les items en cartes
+            // Afficher les items en cartes avec pagination
             displayItems() {
                 const grid = document.getElementById('items-grid');
                 const loader = document.getElementById('items-loader');
@@ -398,13 +593,22 @@
                     
                     if (this.filteredItems.length === 0) {
                         grid.innerHTML = '<div class="no-items">Aucun item trouvé</div>';
+                        this.updatePaginationUI();
                         return;
                     }
 
-                    this.filteredItems.forEach(item => {
+                    // Calcul des items à afficher pour la page actuelle
+                    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+                    const endIndex = startIndex + this.itemsPerPage;
+                    const itemsToShow = this.filteredItems.slice(startIndex, endIndex);
+
+                    itemsToShow.forEach(item => {
                         const card = this.createItemCard(item);
                         grid.appendChild(card);
                     });
+                    
+                    // Mettre à jour l'interface de pagination après l'affichage
+                    this.updatePaginationUI();
                 }, 300);
             }
 
@@ -675,18 +879,9 @@
                 }
             });
         }
-
-        // Menu hamburger
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
-
-        if (hamburger && navMenu) {
-            hamburger.addEventListener('click', () => {
-                navMenu.classList.toggle('active');
-                hamburger.classList.toggle('active');
-            });
-        }
     </script>
+    
+    <script src="../js/navbar-mobile.js"></script>
     
     <!-- Système de sécurité -->
     <script src="../js/security.js"></script>

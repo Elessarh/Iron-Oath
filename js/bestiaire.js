@@ -451,11 +451,168 @@ const creaturesData = [
 let filteredCreatures = [...creaturesData];
 let selectedCreature = null;
 
+// État de la pagination
+let currentPage = 1;
+let itemsPerPage = 12;
+let totalPages = 1;
+
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
+    calculatePagination();
     renderCreatures();
     setupEventListeners();
+    setupPaginationListeners();
 });
+
+// Configuration des écouteurs d'événements de pagination
+function setupPaginationListeners() {
+    // Boutons précédent/suivant
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderCreatures();
+                updatePaginationUI();
+            }
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderCreatures();
+                updatePaginationUI();
+            }
+        });
+    }
+    
+    // Sélecteur d'éléments par page
+    const itemsPerPageSelect = document.getElementById('items-per-page');
+    if (itemsPerPageSelect) {
+        itemsPerPageSelect.addEventListener('change', (e) => {
+            itemsPerPage = parseInt(e.target.value);
+            currentPage = 1; // Reset à la première page
+            calculatePagination();
+            renderCreatures();
+            updatePaginationUI();
+        });
+    }
+}
+
+// Calcul de la pagination
+function calculatePagination() {
+    totalPages = Math.ceil(filteredCreatures.length / itemsPerPage);
+    
+    // S'assurer que la page actuelle est valide
+    if (currentPage > totalPages) {
+        currentPage = Math.max(1, totalPages);
+    }
+}
+
+// Mise à jour de l'interface de pagination
+function updatePaginationUI() {
+    const paginationContainer = document.getElementById('pagination-container');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    const paginationInfo = document.getElementById('pagination-info-text');
+    const paginationNumbers = document.getElementById('pagination-numbers');
+    
+    if (!paginationContainer) return;
+    
+    // Afficher/masquer la pagination selon le nombre d'éléments
+    if (filteredCreatures.length <= itemsPerPage) {
+        paginationContainer.style.display = 'none';
+        return;
+    } else {
+        paginationContainer.style.display = 'block';
+    }
+    
+    // Mise à jour des boutons précédent/suivant
+    if (prevBtn) {
+        prevBtn.disabled = currentPage <= 1;
+    }
+    if (nextBtn) {
+        nextBtn.disabled = currentPage >= totalPages;
+    }
+    
+    // Mise à jour du texte informatif
+    if (paginationInfo) {
+        const startItem = (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, filteredCreatures.length);
+        paginationInfo.textContent = `Affichage de ${startItem}-${endItem} sur ${filteredCreatures.length} créatures`;
+    }
+    
+    // Génération des numéros de pages
+    if (paginationNumbers) {
+        paginationNumbers.innerHTML = generatePageNumbers();
+    }
+}
+
+// Génération des numéros de pages avec ellipses
+function generatePageNumbers() {
+    let pages = [];
+    const maxVisiblePages = 7;
+    
+    if (totalPages <= maxVisiblePages) {
+        // Afficher toutes les pages si peu nombreuses
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(createPageButton(i));
+        }
+    } else {
+        // Logique d'ellipses pour beaucoup de pages
+        pages.push(createPageButton(1));
+        
+        if (currentPage > 4) {
+            pages.push('<span class="pagination-ellipsis">...</span>');
+        }
+        
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+            pages.push(createPageButton(i));
+        }
+        
+        if (currentPage < totalPages - 3) {
+            pages.push('<span class="pagination-ellipsis">...</span>');
+        }
+        
+        if (totalPages > 1) {
+            pages.push(createPageButton(totalPages));
+        }
+    }
+    
+    return pages.join('');
+}
+
+// Création d'un bouton de page
+function createPageButton(pageNumber) {
+    const isActive = pageNumber === currentPage ? 'active' : '';
+    return `
+        <button class="pagination-number ${isActive}" onclick="goToPage(${pageNumber})">
+            ${pageNumber}
+        </button>
+    `;
+}
+
+// Navigation vers une page spécifique
+function goToPage(pageNumber) {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+        currentPage = pageNumber;
+        renderCreatures();
+        updatePaginationUI();
+        
+        // Scroll vers le haut de la grille
+        const grid = document.getElementById('creatures-grid');
+        if (grid) {
+            grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+}
 
 // Configuration des écouteurs d'événements
 function setupEventListeners() {
@@ -489,7 +646,7 @@ function setupEventListeners() {
     });
 }
 
-// Rendu des créatures avec images
+// Rendu des créatures avec images et pagination
 function renderCreatures() {
     const grid = document.getElementById('creatures-grid');
     if (!grid) return;
@@ -501,10 +658,16 @@ function renderCreatures() {
                 <p>Essayez de modifier vos filtres de recherche</p>
             </div>
         `;
+        updatePaginationUI();
         return;
     }
 
-    grid.innerHTML = filteredCreatures.map(creature => `
+    // Calcul des créatures à afficher pour la page actuelle
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const creaturesToShow = filteredCreatures.slice(startIndex, endIndex);
+
+    grid.innerHTML = creaturesToShow.map(creature => `
         <div class="creature-card ${creature.category}" onclick="openCreatureModal(${creature.id})">
             <div class="creature-image-container">
                 <img src="${creature.image}" alt="${creature.name}" class="creature-image" 
@@ -548,6 +711,9 @@ function renderCreatures() {
             </div>
         </div>
     `).join('');
+    
+    // Mettre à jour l'interface de pagination après le rendu
+    updatePaginationUI();
 }
 
 // Filtrage des créatures
@@ -576,7 +742,11 @@ function filterCreatures() {
         return matchesSearch && matchesPalier && matchesCategory && matchesLevel && matchesType;
     });
 
+    // Recalculer la pagination après filtrage
+    currentPage = 1; // Reset à la première page
+    calculatePagination();
     renderCreatures();
+    updatePaginationUI();
 }
 
 // Ouverture du modal avec design amélioré
