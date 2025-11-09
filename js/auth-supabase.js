@@ -7,23 +7,9 @@ const ENCODED_SUPABASE_KEY = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5Lm
 
 function decodeKey(encodedKey) {
     try {
+        // Décodage Base64 simple - pas de rotation nécessaire
         const decoded = atob(encodedKey);
-        let result = '';
-        for (let i = 0; i < decoded.length; i++) {
-            const char = decoded.charAt(i);
-            const code = char.charCodeAt(0);
-            
-            if (code >= 65 && code <= 90) {
-                result += String.fromCharCode(((code - 65 - 3 + 26) % 26) + 65);
-            } else if (code >= 97 && code <= 122) {
-                result += String.fromCharCode(((code - 97 - 3 + 26) % 26) + 97);
-            } else if (code >= 48 && code <= 57) {
-                result += String.fromCharCode(((code - 48 - 3 + 10) % 10) + 48);
-            } else {
-                result += char;
-            }
-        }
-        return result;
+        return decoded;
     } catch (error) {
         console.error('Erreur décodage clé:', error);
         return null;
@@ -35,6 +21,10 @@ async function initSupabase() {
     try {
         const SUPABASE_URL = decodeKey(ENCODED_SUPABASE_URL);
         const SUPABASE_ANON_KEY = decodeKey(ENCODED_SUPABASE_KEY);
+        
+        console.log('🔍 Debug Supabase URLs:');
+        console.log('URL décodée:', SUPABASE_URL);
+        console.log('URL valide?', SUPABASE_URL && SUPABASE_URL.startsWith('http'));
         
         if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
             throw new Error('Erreur de décodage des clés');
