@@ -220,62 +220,20 @@
 }
 
 /* ========================================
-   CONTRÔLES DE ZOOM MINIMALISTES
+   GESTION DES COUCHES DE MARKERS
 ======================================== */
 
-.zoom-controls-minimal {
+.leaflet-control-layers {
     background: rgba(0, 0, 0, 0.8);
-    border-radius: 8px;
-    padding: 8px;
     border: 1px solid rgba(0, 168, 255, 0.3);
+    border-radius: 8px;
 }
 
-.zoom-widget {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-}
-
-.zoom-btn {
-    width: 32px;
-    height: 32px;
-    background: rgba(0, 168, 255, 0.2);
-    border: 1px solid rgba(0, 168, 255, 0.5);
-    border-radius: 6px;
+.leaflet-control-layers label {
     color: white;
-    cursor: pointer;
-    font-family: var(--font-title);
-    font-size: 14px;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.zoom-btn:hover {
-    background: rgba(0, 168, 255, 0.4);
-    transform: scale(1.1);
-}
-
-.zoom-btn.reset {
-    font-size: 12px;
-}
-
-.zoom-display {
-    color: var(--color-accent);
-    font-family: var(--font-title);
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    min-width: 20px;
-    padding: 2px;
-}
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    animation: subtitleFade 2s ease-in-out infinite alternate;
-}
-
+/* Animation des titres */
 @keyframes titlePulse {
     0%, 100% {
         filter: brightness(1) saturate(1);

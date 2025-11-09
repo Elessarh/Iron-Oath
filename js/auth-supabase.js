@@ -605,10 +605,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                     
                     await registerUser(username, email, password, confirmPassword);
                 });
+            } else {
+                console.error('Formulaire d\'inscription non trouvé dans le DOM');
             }
         }, 500);
-    } else {
-        console.error('❌ Formulaire d\'inscription non trouvé dans le DOM');
     }
     
     // Boutons de basculement entre formulaires
