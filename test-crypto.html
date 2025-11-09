@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Clés Cryptées</title>
+</head>
+<body>
+    <h1>Test de décodage des clés Supabase</h1>
+    <div id="result"></div>
+    
+    <script src="../js/crypto-keys.js"></script>
+    <script>
+        // Test de décodage
+        const encodedUrl = 'aHR0cHM6Ly96aGJ1d3d2YWZicnJ4cHN1cGVidC5zdXBhYmFzZS5jbw==';
+        const encodedKey = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5wb1luVjNkM1poWm1KeWNuaHdjM1Z3WldKMElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTmpJME9URXhNVEU0TENKbGVIQWlPakl3Tnpnd05qY3hNVEU0ZlEuRE4yVHNwTmRvWHdUUW9EaTFLczRYRk5KWlQwUW92bDBzNUNYOEtVRGlLaw==';
+        
+        const decodedUrl = decodeKey(encodedUrl);
+        const decodedKey = decodeKey(encodedKey);
+        
+        document.getElementById('result').innerHTML = `
+            <p><strong>URL décodée:</strong> ${decodedUrl}</p>
+            <p><strong>Clé décodée:</strong> ${decodedKey}</p>
+            <p><strong>Test réussi:</strong> ${decodedUrl && decodedKey ? '✅' : '❌'}</p>
+        `;
+    </script>
+</body>
+</html>

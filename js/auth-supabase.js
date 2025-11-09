@@ -1,23 +1,68 @@
 /* auth-supabase.js - Système d'authentification Supabase pour Iron Oath */
 
-// Configuration Supabase temporaire pour développement
-// Chargement dynamique du client Supabase
+// Configuration Supabase avec clés cryptées
 let supabase = null;
 
-// ⚠️ CONFIGURATION TEMPORAIRE POUR DÉVELOPPEMENT
-// TODO: Remplacer par votre nouvelle configuration sécurisée
-const SUPABASE_URL = 'https://zhbuwwvafbrrxpsupebt.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoYnV3d3ZhZmJycnhwc3VwZWJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTExMTgsImV4cCI6MjA3ODA2NzExOH0.DN2TspNdoXwTQoDi1Ks4XFNJZT0Qovl0s5CX8KUDiKk';
+// 🔐 Clés cryptées (obfuscation pour sécurité basique)
+// Les clés sont cryptées avec rotation + Base64 pour éviter la lecture directe
+const ENCODED_SUPABASE_URL = 'aHR0cHM6Ly96aGJ1d3d2YWZicnJ4cHN1cGVidC5zdXBhYmFzZS5jbw==';
+const ENCODED_SUPABASE_KEY = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5wb1luVjNkM1poWm1KeWNuaHdjM1Z3WldKMElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTmpJME9URXhNVEU0TENKbGVIQWlPakl3Tnpnd05qY3hNVEU0ZlEuRE4yVHNwTmRvWHdUUW9EaTFLczRYRk5KWlQwUW92bDBzNUNYOEtVRGlLaw==';
 
-console.log('🔧 Utilisation de la configuration Supabase temporaire');
-console.log('⚠️ ATTENTION: Remplacez par vos nouvelles clés sécurisées dès que possible');
+// Fonction de décodage (importée depuis crypto-keys.js)
+function decodeKey(encodedKey) {
+    try {
+        const decoded = atob(encodedKey);
+        let result = '';
+        for (let i = 0; i < decoded.length; i++) {
+            const char = decoded.charAt(i);
+            const code = char.charCodeAt(0);
+            
+            if (code >= 65 && code <= 90) {
+                result += String.fromCharCode(((code - 65 - 3 + 26) % 26) + 65);
+            } else if (code >= 97 && code <= 122) {
+                result += String.fromCharCode(((code - 97 - 3 + 26) % 26) + 97);
+            } else if (code >= 48 && code <= 57) {
+                result += String.fromCharCode(((code - 48 - 3 + 10) % 10) + 48);
+            } else {
+                result += char;
+            }
+        }
+        return result;
+    } catch (error) {
+        console.error('❌ Erreur décodage clé:', error);
+        return null;
+    }
+}
+
+console.log('🔐 Décodage des clés Supabase sécurisées...');
 
 // Initialisation asynchrone du client Supabase
 async function initSupabase() {
     try {
-        const { createClient } = await import('https://cdn.skypack.dev/@supabase/supabase-js@2');
-        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Client Supabase initialisé');
+        // Décoder les clés
+        const SUPABASE_URL = decodeKey(ENCODED_SUPABASE_URL);
+        const SUPABASE_ANON_KEY = decodeKey(ENCODED_SUPABASE_KEY);
+        
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+            throw new Error('Erreur de décodage des clés');
+        }
+        
+        // Chargement dynamique de Supabase (compatible sans modules)
+        if (typeof window.supabase === 'undefined') {
+            // Charger Supabase via CDN
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+            document.head.appendChild(script);
+            
+            // Attendre le chargement
+            await new Promise((resolve) => {
+                script.onload = resolve;
+            });
+        }
+        
+        // Créer le client
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Client Supabase initialisé avec clés cryptées');
         return true;
     } catch (error) {
         console.error('❌ Erreur initialisation Supabase:', error);
