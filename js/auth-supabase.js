@@ -58,6 +58,9 @@ async function initSupabase() {
         console.log('✅ Client Supabase créé:', !!supabase);
         console.log('🔍 Client Supabase URL:', supabase.supabaseUrl);
         
+        // Partager l'instance Supabase globalement pour les autres modules
+        window.globalSupabase = supabase;
+        
         // Test rapide de connectivité
         try {
             const { data, error } = await supabase.auth.getUser();

@@ -13,8 +13,8 @@ class HDVSupabaseManager {
         console.log('⏳ Attente de Supabase...');
         
         for (let i = 0; i < 50; i++) { // Max 5 secondes d'attente
-            if (window.supabase) {
-                this.supabase = window.supabase;
+            if (window.globalSupabase) {
+                this.supabase = window.globalSupabase;
                 this.initialized = true;
                 console.log('✅ Supabase connecté au HDV Manager');
                 return true;
@@ -22,7 +22,7 @@ class HDVSupabaseManager {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         
-        console.error('❌ Timeout: Supabase non disponible après 5 secondes');
+        console.error('❌ Timeout: Instance globale Supabase non disponible après 5 secondes');
         return false;
     }
 

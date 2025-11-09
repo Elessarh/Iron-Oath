@@ -15,19 +15,19 @@ class MailboxSupabaseManager {
 
         console.log('⏳ Attente de Supabase pour messagerie...');
         
-        // Attendre que Supabase soit disponible
+        // Attendre que l'instance globale Supabase soit disponible
         let attempts = 0;
-        while (!window.supabase && attempts < 50) {
+        while (!window.globalSupabase && attempts < 50) {
             await new Promise(resolve => setTimeout(resolve, 100));
             attempts++;
         }
 
-        if (!window.supabase) {
-            console.error('❌ Supabase non disponible pour la messagerie');
+        if (!window.globalSupabase) {
+            console.error('❌ Instance globale Supabase non disponible pour la messagerie');
             return false;
         }
 
-        this.supabase = window.supabase;
+        this.supabase = window.globalSupabase;
         this.initialized = true;
         console.log('✅ Supabase connecté au Mailbox Manager');
         return true;

@@ -22,6 +22,7 @@ body {
     font-family: var(--font-text);
     min-height: 100vh;
     overflow-x: hidden;
+    padding-top: 70px !important; /* Espace fixe pour la navbar */
 }
 
 /* Arrière-plan spécial pour la page d'accueil */
@@ -360,16 +361,17 @@ body .nav-connexion .nav-link:hover {
 
 /* Header et Navigation - Version améliorée pour mobile */
 .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    background: linear-gradient(to bottom, rgba(10, 10, 26, 0.95), rgba(10, 10, 26, 0.85));
-    backdrop-filter: blur(15px);
-    padding: 1rem 0;
-    border-bottom: 1px solid rgba(0, 168, 255, 0.2);
-    transition: transform 0.3s ease-in-out;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 100 !important;
+    background: linear-gradient(to bottom, rgba(10, 10, 26, 0.95), rgba(10, 10, 26, 0.85)) !important;
+    backdrop-filter: blur(15px) !important;
+    padding: 1rem 0 !important;
+    margin: 0 !important;
+    border-bottom: 1px solid rgba(0, 168, 255, 0.2) !important;
+    transition: transform 0.3s ease-in-out !important;
 }
 
 /* Auto-hide navbar on scroll down (mobile only) */
@@ -378,11 +380,11 @@ body .nav-connexion .nav-link:hover {
 }
 
 .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: flex;
-    justify-content: space-between;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
     align-items: center;
     position: relative;
 }
@@ -684,8 +686,6 @@ body .nav-connexion .nav-link:hover {
     .nav-logo-safe {
         height: 35px !important;
         max-width: 150px !important;
-    }
-}
     }
     
     .nav-logo {
