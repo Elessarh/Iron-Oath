@@ -77,103 +77,81 @@
             <p class="map-subtitle">Découvrez les territoires de votre guilde</p>
         </div>
         
-        <!-- Contrôles de la carte (style filtres comme bestiaire) -->
-        <div class="filters">
-            <div class="filter-group">
-                <button id="place-mode-btn" class="filter-button admin-only" style="display: none;">✏️ Mode Édition</button>
-            </div>
-            
-            <!-- Sélecteur de zone -->
-            <div class="filter-group">
-                <label for="floor-select" class="filter-label"></label>
-                <select id="floor-select" class="floor-selector">
-                    <option value="1">Palier - 1</option>
-                    <option value="2" disabled>Palier - 2 (Bientôt)</option>
-                    <option value="3" disabled>Palier - 3 (Bientôt)</option>
-                    <option value="4" disabled>Palier - 4 (Bientôt)</option>
-                    <option value="5" disabled>Palier - 5 (Bientôt)</option>
+        <!-- Contrôles de la carte modernisés -->
+        <div class="map-controls-container">
+            <!-- Sélecteur de palier -->
+            <div class="palier-selector">
+                <label for="floor-select" class="palier-label">🏰 Palier</label>
+                <select id="floor-select" class="palier-dropdown">
+                    <option value="1">Palier 1</option>
+                    <option value="2" disabled>Palier 2 (Bientôt)</option>
+                    <option value="3" disabled>Palier 3 (Bientôt)</option>
+                    <option value="4" disabled>Palier 4 (Bientôt)</option>
+                    <option value="5" disabled>Palier 5 (Bientôt)</option>
                 </select>
             </div>
             
-            <!-- Panneau d'icônes (accessible uniquement avec Supabase) -->
-            <div id="icon-panel" class="icon-panel" style="display: none;">
-                <h3>Gestion des Waypoints</h3>
-                
-                <!-- Visibilité des icônes -->
-                <div class="icon-visibility">
-                    <h4>Affichage des icônes</h4>
-                    <div class="icon-controls">
-                        <div class="icon-item">
-                            <input type="checkbox" id="toggle-donjon" checked>
-                            <label for="toggle-donjon">
-                                <img src="../assets/map_assets/Donjon.png" alt="Donjon" class="icon-preview">
-                                Donjons
-                            </label>
-                        </div>
-                        <div class="icon-item">
-                            <input type="checkbox" id="toggle-marchand" checked>
-                            <label for="toggle-marchand">
-                                <img src="../assets/map_assets/Marchand.png" alt="Marchand" class="icon-preview">
-                                Marchands
-                            </label>
-                        </div>
-                        <div class="icon-item">
-                            <input type="checkbox" id="toggle-monstre" checked>
-                            <label for="toggle-monstre">
-                                <img src="../assets/map_assets/Monstre.png" alt="Monstre" class="icon-preview">
-                                Monstres
-                            </label>
-                        </div>
-                        <div class="icon-item">
-                            <input type="checkbox" id="toggle-quete" checked>
-                            <label for="toggle-quete">
-                                <img src="../assets/map_assets/Quête.png" alt="Quête" class="icon-preview">
-                                Quêtes
-                            </label>
-                        </div>
-                        <div class="icon-item">
-                            <input type="checkbox" id="toggle-ville" checked>
-                            <label for="toggle-ville">
-                                <img src="../assets/map_assets/Ville.png" alt="Ville" class="icon-preview">
-                                Villes
-                            </label>
-                        </div>
+            <!-- Panneau de contrôle des éléments -->
+            <div class="element-toggles">
+                <h3 class="toggles-title">🎛️ Affichage des Éléments</h3>
+                <div class="toggles-grid">
+                    <div class="toggle-item">
+                        <input type="checkbox" id="toggle-quete" checked>
+                        <label for="toggle-quete" class="toggle-label">
+                            <div class="toggle-icon">
+                                <img src="../assets/map_assets/Quêtes Secondaires.png" alt="Quêtes">
+                            </div>
+                            <span class="toggle-text">Quêtes</span>
+                        </label>
                     </div>
-                </div>
-
-                <!-- Système de placement par coordonnées -->
-                <div class="waypoint-placer">
-                    <h4>Placer un Waypoint</h4>
-                    <div class="placement-form">
-                        <div class="coord-inputs">
-                            <label>
-                                X: <input type="number" id="waypoint-x" placeholder="Longitude" step="0.000001">
-                            </label>
-                            <label>
-                                Y: <input type="number" id="waypoint-y" placeholder="Latitude" step="0.000001">
-                            </label>
-                        </div>
-                        
-                        <div class="icon-selector">
-                            <label>Type d'icône:</label>
-                            <select id="waypoint-type">
-                                <option value="donjon">🏰 Donjon</option>
-                                <option value="marchand">🛒 Marchand</option>
-                                <option value="monstre">👹 Monstre</option>
-                                <option value="quete">❗ Quête</option>
-                                <option value="ville">🏘️ Ville</option>
-                            </select>
-                        </div>
-                        
-                        <div class="placement-actions">
-                            <button id="get-current-coords" class="filter-button">📍 Coordonnées actuelles</button>
-                            <button id="place-waypoint" class="filter-button waypoint-place-btn">✅ Placer Waypoint</button>
-                        </div>
+                    
+                    <div class="toggle-item">
+                        <input type="checkbox" id="toggle-donjon" checked>
+                        <label for="toggle-donjon" class="toggle-label">
+                            <div class="toggle-icon">
+                                <img src="../assets/map_assets/Donjon.png" alt="Donjons">
+                            </div>
+                            <span class="toggle-text">Donjons</span>
+                        </label>
                     </div>
-                </div>
-
-                <div class="placement-modes">
-                    <button id="place-mode-btn" class="filter-button">📍 Mode Placement Clic</button>
+                    
+                    <div class="toggle-item">
+                        <input type="checkbox" id="toggle-ville" checked>
+                        <label for="toggle-ville" class="toggle-label">
+                            <div class="toggle-icon">
+                                <img src="../assets/map_assets/Ville.png" alt="Villes">
+                            </div>
+                            <span class="toggle-text">Villes</span>
+                        </label>
+                    </div>
+                    
+                    <div class="toggle-item">
+                        <input type="checkbox" id="toggle-monstre" checked>
+                        <label for="toggle-monstre" class="toggle-label">
+                            <div class="toggle-icon">
+                                <img src="../assets/map_assets/Monstre.png" alt="Monstres">
+                            </div>
+                            <span class="toggle-text">Monstres</span>
+                        </label>
+                    </div>
+                    
+                    <div class="toggle-item">
+                        <input type="checkbox" id="toggle-marchand" checked>
+                        <label for="toggle-marchand" class="toggle-label">
+                            <div class="toggle-icon">
+                                <img src="../assets/map_assets/Marchand.png" alt="Marchands">
+                            </div>
+                            <span class="toggle-text">Marchands</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Mode édition (admin) -->
+                    <div class="toggle-item admin-only" style="display: none;">
+                        <button id="place-mode-btn" class="admin-toggle-btn">
+                            <div class="toggle-icon">✏️</div>
+                            <span class="toggle-text">Mode Édition</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

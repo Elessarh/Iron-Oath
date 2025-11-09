@@ -135,28 +135,33 @@ body .header {
 body .nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 2rem; /* Marges responsives au lieu de fixes */
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    min-height: 60px; /* Hauteur fixe pour éviter les variations */
-    flex-wrap: nowrap; /* Empêcher le wrap */
+    min-height: 60px;
+    flex-wrap: nowrap;
+    overflow: visible; /* Permettre aux éléments absolus d'être visibles */
 }
 
-/* Navigation globale - style stable */
+/* Navigation globale - style stable et centré */
 body .nav-menu {
     display: flex;
     gap: 2rem;
     list-style: none;
     font-family: var(--font-title);
-    min-width: 0; /* Éviter le débordement */
-    flex-shrink: 0; /* Empêcher la réduction */
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    position: static; /* Éviter tout positionnement spécial */
 }
 
 body .nav-menu li {
     margin: 0;
-    flex-shrink: 0; /* Empêcher la compression des éléments */
+    flex-shrink: 0;
 }
 
 body .nav-menu a {
@@ -166,11 +171,11 @@ body .nav-menu a {
     font-size: 1rem;
     font-weight: 400;
     position: relative;
-    padding: 0.5rem 0;
+    padding: 0.5rem 1rem; /* Padding horizontal pour éviter les chevauchements */
     transition: color 0.3s ease;
-    display: block; /* Assurer la stabilité */
-    white-space: nowrap; /* Éviter les retours à la ligne */
-    min-width: fit-content; /* Largeur minimale stable */
+    display: block;
+    white-space: nowrap;
+    text-align: center;
 }
 
 body .nav-menu a::after {
@@ -197,26 +202,32 @@ body .nav-menu a.active {
     color: var(--color-accent);
 }
 
-/* Logo et bouton connexion - positionnement stable */
+/* Logo et bouton connexion - positionnement sans conflit */
 body .nav-logo-container {
     position: absolute;
-    left: 0;
+    left: 2rem; /* Position responsive au lieu de fixe */
     top: 50%;
     transform: translateY(-50%);
+    z-index: 20;
+    max-width: 150px;
 }
 
 body .nav-logo-safe {
-    height: 40px !important;
-    width: auto !important;
-    max-height: 40px !important;
-    object-fit: contain !important;
+    height: 40px;
+    width: auto;
+    max-height: 40px;
+    object-fit: contain;
+    display: block;
 }
 
 body .nav-connexion {
-    position: absolute !important;
-    right: 4rem !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
+    position: absolute;
+    right: 2rem; /* Position responsive au lieu de fixe */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    max-width: 180px;
+    white-space: nowrap;
 }
 
 body .nav-connexion .connexion-link,
