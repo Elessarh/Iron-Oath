@@ -2107,3 +2107,181 @@
         display: none; /* Masquer les instructions sur très petits écrans */
     }
 }
+
+/* ========================================
+   STYLES POUR LES QUÊTES SUR LA CARTE
+======================================== */
+
+/* Style pour l'icône des quêtes principales */
+.main-quest-icon {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)) 
+            drop-shadow(0 0 16px rgba(255, 215, 0, 0.4));
+    animation: mainQuestPulse 2s ease-in-out infinite;
+}
+
+@keyframes mainQuestPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Popup de quête */
+.quest-marker-popup .leaflet-popup-content-wrapper {
+    background: linear-gradient(135deg, rgba(10, 10, 26, 0.95), rgba(20, 20, 40, 0.95));
+    border: 2px solid rgba(0, 168, 255, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(0, 168, 255, 0.2);
+}
+
+.quest-marker-popup .leaflet-popup-content {
+    margin: 0;
+    font-family: var(--font-text);
+    color: white;
+}
+
+.quest-popup {
+    min-width: 280px;
+}
+
+.quest-header {
+    background: linear-gradient(135deg, rgba(0, 168, 255, 0.2), rgba(138, 43, 226, 0.2));
+    border: 1px solid rgba(0, 168, 255, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-family: var(--font-title);
+}
+
+.quest-header.principale {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.2));
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+.quest-header.secondaire {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(138, 43, 226, 0.2));
+    border-color: rgba(0, 255, 255, 0.4);
+}
+
+.quest-details {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quest-details p {
+    margin: 4px 0;
+    font-size: 13px;
+}
+
+.quest-description {
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+    margin-top: 8px;
+}
+
+.quest-actions {
+    text-align: center;
+}
+
+.quest-btn {
+    background: linear-gradient(135deg, rgba(0, 168, 255, 0.8), rgba(138, 43, 226, 0.8));
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    color: white;
+    font-family: var(--font-title);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 168, 255, 0.3);
+}
+
+.quest-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 168, 255, 1), rgba(138, 43, 226, 1));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 168, 255, 0.3);
+}
+
+/* Style pour les popups multi-quêtes */
+.quest-popup.multi-quest .quest-list {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.quest-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    margin: 4px 0;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.quest-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.quest-item.principale {
+    border-color: rgba(255, 215, 0, 0.3);
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.quest-item.secondaire {
+    border-color: rgba(0, 255, 255, 0.3);
+    background: rgba(0, 255, 255, 0.1);
+}
+
+.quest-icon {
+    font-size: 14px;
+    min-width: 20px;
+}
+
+.quest-name {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.quest-step {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: var(--font-title);
+}
+
+/* Personnalisation de la pointe du popup */
+.quest-marker-popup .leaflet-popup-tip {
+    background: linear-gradient(135deg, rgba(10, 10, 26, 0.95), rgba(20, 20, 40, 0.95));
+    border: 2px solid rgba(0, 168, 255, 0.3);
+    border-top: none;
+    border-right: none;
+}
+
+/* Bouton de fermeture */
+.quest-marker-popup .leaflet-popup-close-button {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.quest-marker-popup .leaflet-popup-close-button:hover {
+    color: var(--color-accent);
+}
