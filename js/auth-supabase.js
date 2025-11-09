@@ -1,27 +1,29 @@
 /* auth-supabase.js - Système d'authentification Supabase pour Iron Oath */
 
-// Configuration Supabase sécurisée
-import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
+// Configuration Supabase temporaire pour développement
+// Chargement dynamique du client Supabase
+let supabase = null;
 
-// ⚠️ AVERTISSEMENT DE SÉCURITÉ: 
-// LES VRAIES CLÉS ONT ÉTÉ SUPPRIMÉES POUR LA SÉCURITÉ
-// CONFIGUREZ CES VALEURS VIA VOTRE SERVEUR OU VARIABLES D'ENVIRONNEMENT
+// ⚠️ CONFIGURATION TEMPORAIRE POUR DÉVELOPPEMENT
+// TODO: Remplacer par votre nouvelle configuration sécurisée
+const SUPABASE_URL = 'https://zhbuwwvafbrrxpsupebt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpoYnV3d3ZhZmJycnhwc3VwZWJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0OTExMTgsImV4cCI6MjA3ODA2NzExOH0.DN2TspNdoXwTQoDi1Ks4XFNJZT0Qovl0s5CX8KUDiKk';
 
-// Mode développement local seulement (remplacez par vos valeurs)
-const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+console.log('🔧 Utilisation de la configuration Supabase temporaire');
+console.log('⚠️ ATTENTION: Remplacez par vos nouvelles clés sécurisées dès que possible');
 
-// Vérification de sécurité
-if (SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY_HERE') {
-    console.error('❌ ERREUR DE SÉCURITÉ: Clés Supabase non configurées!');
-    console.error('📋 INSTRUCTIONS:');
-    console.error('1. Configurez les vraies clés côté serveur ou via variables d\'environnement');
-    console.error('2. Ne jamais exposer les vraies clés dans le code source');
-    throw new Error('Configuration Supabase manquante - Contactez l\'administrateur');
+// Initialisation asynchrone du client Supabase
+async function initSupabase() {
+    try {
+        const { createClient } = await import('https://cdn.skypack.dev/@supabase/supabase-js@2');
+        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Client Supabase initialisé');
+        return true;
+    } catch (error) {
+        console.error('❌ Erreur initialisation Supabase:', error);
+        return false;
+    }
 }
-
-// Créer le client Supabase seulement si configuré
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Variables globales
 let currentUser = null;
@@ -532,6 +534,13 @@ function isAdmin() {
 // ========== INITIALISATION AUTOMATIQUE ==========
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🔐 Initialisation du système d\'authentification Supabase...');
+    
+    // Initialiser Supabase d'abord
+    const supabaseReady = await initSupabase();
+    if (!supabaseReady) {
+        console.error('❌ Impossible d\'initialiser Supabase');
+        return;
+    }
     
     // Vérification immédiate pour éviter le flash
     const session = await supabase.auth.getSession();

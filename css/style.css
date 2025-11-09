@@ -137,7 +137,7 @@ body .nav-container {
     margin: 0 auto;
     padding: 0 2rem; /* Marges responsives au lieu de fixes */
     display: flex;
-    justify-content: center;
+    justify-content: space-between; /* Disposition équilibrée */
     align-items: center;
     position: relative;
     min-height: 60px;
@@ -157,6 +157,8 @@ body .nav-menu {
     align-items: center;
     flex-shrink: 0;
     position: static; /* Éviter tout positionnement spécial */
+    flex: 1; /* Prendre l'espace disponible */
+    order: 2; /* Élément central */
 }
 
 body .nav-menu li {
@@ -202,14 +204,11 @@ body .nav-menu a.active {
     color: var(--color-accent);
 }
 
-/* Logo et bouton connexion - positionnement sans conflit */
+/* Logo et bouton connexion - positionnement flexbox stable */
 body .nav-logo-container {
-    position: absolute;
-    left: 2rem; /* Position responsive au lieu de fixe */
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 20;
+    flex-shrink: 0; /* Ne pas rétrécir */
     max-width: 150px;
+    order: 1; /* Premier élément */
 }
 
 body .nav-logo-safe {
@@ -221,13 +220,10 @@ body .nav-logo-safe {
 }
 
 body .nav-connexion {
-    position: absolute;
-    right: 2rem; /* Position responsive au lieu de fixe */
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 20;
+    flex-shrink: 0; /* Ne pas rétrécir */
     max-width: 180px;
     white-space: nowrap;
+    order: 3; /* Dernier élément */
 }
 
 body .nav-connexion .connexion-link,
@@ -242,13 +238,13 @@ body .nav-connexion .nav-link {
     font-family: var(--font-title) !important;
 }
 
-/* Prévention du flash du bouton connexion - système renforcé */
+/* Prévention du flash du bouton connexion - visible par défaut */
 body .nav-connexion .connexion-link,
 body .nav-connexion .nav-link.connexion-link {
-    opacity: 0 !important;
-    visibility: hidden !important;
+    opacity: 1 !important; /* Visible par défaut */
+    visibility: visible !important; /* Visible par défaut */
     transition: opacity 0.3s ease, visibility 0.3s ease !important;
-    /* Suppression du display: none pour permettre l'affichage par JavaScript */
+    display: block !important; /* Affiché par défaut */
 }
 
 body .nav-connexion .connexion-link.show,
