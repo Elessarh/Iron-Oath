@@ -5,6 +5,11 @@ class ItemSelector {
         this.itemsData = this.initializeItemsData();
         this.selectedItem = null;
         this.onItemSelected = null; // Callback function
+        this.currentPage = 1;
+        this.itemsPerPage = 12;
+        this.filteredItems = [];
+        this.selectedCategory = 'all';
+        this.searchTerm = '';
     }
 
     // Données des items organisées par catégories
@@ -119,6 +124,55 @@ class ItemSelector {
         };
     }
 
+    // Obtenir tous les items avec leurs catégories
+    getAllItems() {
+        const allItems = [];
+        Object.entries(this.itemsData).forEach(([categoryKey, category]) => {
+            category.items.forEach(item => {
+                allItems.push({
+                    ...item,
+                    categoryKey: categoryKey,
+                    categoryName: category.name
+                });
+            });
+        });
+        return allItems;
+    }
+
+    // Filtrer les items selon les critères
+    getFilteredItems() {
+        let items = this.getAllItems();
+
+        // Filtrer par catégorie
+        if (this.selectedCategory !== 'all') {
+            items = items.filter(item => item.categoryKey === this.selectedCategory);
+        }
+
+        // Filtrer par recherche
+        if (this.searchTerm) {
+            const searchLower = this.searchTerm.toLowerCase();
+            items = items.filter(item => 
+                item.name.toLowerCase().includes(searchLower)
+            );
+        }
+
+        return items;
+    }
+
+    // Obtenir les items pour la page actuelle
+    getPaginatedItems() {
+        const filteredItems = this.getFilteredItems();
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        
+        return {
+            items: filteredItems.slice(startIndex, endIndex),
+            totalItems: filteredItems.length,
+            totalPages: Math.ceil(filteredItems.length / this.itemsPerPage),
+            currentPage: this.currentPage
+        };
+    }
+
     // Créer l'interface de sélection d'item
     createItemSelector() {
         const selector = document.createElement('div');
@@ -131,30 +185,34 @@ class ItemSelector {
                     <button class="close-selector">❌</button>
                 </div>
                 
-                <div class="item-search">
-                    <input type="text" placeholder="🔍 Rechercher un item..." class="item-search-input">
+                <div class="item-filters">
+                    <div class="item-search">
+                        <input type="text" placeholder="🔍 Rechercher un item..." class="item-search-input">
+                    </div>
+                    
+                    <div class="category-filter">
+                        <select class="category-select">
+                            <option value="all">📦 Toutes les catégories</option>
+                            ${Object.entries(this.itemsData).map(([categoryId, category]) => `
+                                <option value="${categoryId}">${category.name}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="items-info">
+                    <span class="items-count"></span>
+                    <span class="items-pagination-info"></span>
                 </div>
                 
-                <div class="item-categories">
-                    ${Object.entries(this.itemsData).map(([categoryId, category]) => `
-                        <div class="item-category" data-category="${categoryId}">
-                            <div class="category-header">
-                                <h4>${category.name}</h4>
-                                <span class="item-count">(${category.items.length} items)</span>
-                            </div>
-                            <div class="category-items">
-                                ${category.items.map(item => `
-                                    <div class="item-card" data-item-id="${item.id}" data-item-name="${item.name}" data-item-image="${item.image}" data-item-category="${categoryId}">
-                                        <div class="item-image">
-                                            <img src="../assets/items/${item.image}" alt="${item.name}" 
-                                                 onerror="this.src='../assets/items/default.png'">
-                                        </div>
-                                        <div class="item-name">${item.name}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('')}
+                <div class="items-grid" id="items-grid">
+                    <!-- Items will be populated here -->
+                </div>
+                
+                <div class="pagination-controls">
+                    <button class="pagination-btn prev-page" disabled>← Précédent</button>
+                    <div class="pagination-numbers"></div>
+                    <button class="pagination-btn next-page" disabled>Suivant →</button>
                 </div>
                 
                 <div class="selector-actions">
@@ -167,9 +225,101 @@ class ItemSelector {
         return selector;
     }
 
+    // Afficher les items dans la grille
+    displayItems(selector) {
+        const itemsGrid = selector.querySelector('#items-grid');
+        const itemsCount = selector.querySelector('.items-count');
+        const paginationInfo = selector.querySelector('.items-pagination-info');
+        
+        const paginatedData = this.getPaginatedItems();
+        const { items, totalItems, totalPages, currentPage } = paginatedData;
+
+        // Afficher les items
+        itemsGrid.innerHTML = items.map(item => `
+            <div class="item-card" data-item-id="${item.id}" data-item-name="${item.name}" 
+                 data-item-image="${item.image}" data-item-category="${item.categoryKey}">
+                <div class="item-image">
+                    <img src="../assets/items/${item.image}" alt="${item.name}" 
+                         onerror="this.src='../assets/items/default.png'">
+                </div>
+                <div class="item-info">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-category-tag">${item.categoryName}</div>
+                </div>
+            </div>
+        `).join('');
+
+        // Mettre à jour les informations
+        itemsCount.textContent = `${totalItems} item(s) trouvé(s)`;
+        paginationInfo.textContent = totalPages > 1 ? `Page ${currentPage} sur ${totalPages}` : '';
+
+        // Mettre à jour la pagination
+        this.updatePagination(selector, totalPages, currentPage);
+
+        // Réattacher les événements aux cartes d'items
+        this.attachItemEvents(selector);
+    }
+
+    // Mettre à jour les contrôles de pagination
+    updatePagination(selector, totalPages, currentPage) {
+        const prevBtn = selector.querySelector('.prev-page');
+        const nextBtn = selector.querySelector('.next-page');
+        const numbersContainer = selector.querySelector('.pagination-numbers');
+
+        // Boutons précédent/suivant
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= totalPages;
+
+        // Numéros de page
+        numbersContainer.innerHTML = '';
+        if (totalPages > 1) {
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                const pageNum = i;
+                const button = document.createElement('button');
+                button.className = `pagination-number ${pageNum === currentPage ? 'active' : ''}`;
+                button.textContent = pageNum;
+                button.addEventListener('click', () => this.goToPage(selector, pageNum));
+                numbersContainer.appendChild(button);
+            }
+
+            if (totalPages > 5) {
+                const dots = document.createElement('span');
+                dots.textContent = '...';
+                dots.className = 'pagination-dots';
+                numbersContainer.appendChild(dots);
+
+                const lastButton = document.createElement('button');
+                lastButton.className = `pagination-number ${totalPages === currentPage ? 'active' : ''}`;
+                lastButton.textContent = totalPages;
+                lastButton.addEventListener('click', () => this.goToPage(selector, totalPages));
+                numbersContainer.appendChild(lastButton);
+            }
+        }
+    }
+
+    // Aller à une page spécifique
+    goToPage(selector, page) {
+        this.currentPage = page;
+        this.displayItems(selector);
+    }
+
+    // Attacher les événements aux cartes d'items
+    attachItemEvents(selector) {
+        const itemCards = selector.querySelectorAll('.item-card');
+        itemCards.forEach(card => {
+            card.addEventListener('click', () => {
+                this.selectItem(selector, card);
+            });
+        });
+    }
+
     // Ouvrir le sélecteur d'items
     open(callback) {
         this.onItemSelected = callback;
+        this.currentPage = 1;
+        this.selectedCategory = 'all';
+        this.searchTerm = '';
+        
         const selector = this.createItemSelector();
         document.body.appendChild(selector);
 
@@ -179,6 +329,7 @@ class ItemSelector {
         }, 10);
 
         this.setupEventListeners(selector);
+        this.displayItems(selector);
     }
 
     // Configuration des événements
@@ -188,7 +339,9 @@ class ItemSelector {
         const cancelBtn = selector.querySelector('.cancel-selection');
         const confirmBtn = selector.querySelector('.confirm-selection');
         const searchInput = selector.querySelector('.item-search-input');
-        const itemCards = selector.querySelectorAll('.item-card');
+        const categorySelect = selector.querySelector('.category-select');
+        const prevBtn = selector.querySelector('.prev-page');
+        const nextBtn = selector.querySelector('.next-page');
 
         // Fermeture du modal
         [overlay, closeBtn, cancelBtn].forEach(element => {
@@ -197,14 +350,30 @@ class ItemSelector {
 
         // Recherche d'items
         searchInput.addEventListener('input', (e) => {
-            this.filterItems(selector, e.target.value);
+            this.searchTerm = e.target.value;
+            this.currentPage = 1;
+            this.displayItems(selector);
         });
 
-        // Sélection d'items
-        itemCards.forEach(card => {
-            card.addEventListener('click', () => {
-                this.selectItem(selector, card);
-            });
+        // Filtre par catégorie
+        categorySelect.addEventListener('change', (e) => {
+            this.selectedCategory = e.target.value;
+            this.currentPage = 1;
+            this.displayItems(selector);
+        });
+
+        // Navigation pagination
+        prevBtn.addEventListener('click', () => {
+            if (this.currentPage > 1) {
+                this.goToPage(selector, this.currentPage - 1);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const totalPages = this.getPaginatedItems().totalPages;
+            if (this.currentPage < totalPages) {
+                this.goToPage(selector, this.currentPage + 1);
+            }
         });
 
         // Confirmation de sélection
@@ -212,37 +381,6 @@ class ItemSelector {
             if (this.selectedItem && this.onItemSelected) {
                 this.onItemSelected(this.selectedItem);
                 this.close(selector);
-            }
-        });
-    }
-
-    // Filtrer les items par recherche
-    filterItems(selector, searchTerm) {
-        const categories = selector.querySelectorAll('.item-category');
-        const searchLower = searchTerm.toLowerCase();
-
-        categories.forEach(category => {
-            const items = category.querySelectorAll('.item-card');
-            let visibleCount = 0;
-
-            items.forEach(item => {
-                const itemName = item.dataset.itemName.toLowerCase();
-                const isVisible = itemName.includes(searchLower);
-                
-                item.style.display = isVisible ? 'flex' : 'none';
-                if (isVisible) visibleCount++;
-            });
-
-            // Masquer la catégorie si aucun item visible
-            category.style.display = visibleCount > 0 ? 'block' : 'none';
-            
-            // Mettre à jour le compteur
-            const counter = category.querySelector('.item-count');
-            if (searchTerm) {
-                counter.textContent = `(${visibleCount} items trouvés)`;
-            } else {
-                const totalItems = category.querySelectorAll('.item-card').length;
-                counter.textContent = `(${totalItems} items)`;
             }
         });
     }

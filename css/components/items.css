@@ -660,7 +660,10 @@
 
 /* Cartes d'items - Version compacte et élégante */
 .item-card {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 26, 0.98) 100%);
+    background: linear-gradient(135deg, 
+        rgba(30, 30, 40, 0.95) 0%, 
+        rgba(40, 40, 50, 0.95) 50%, 
+        rgba(25, 25, 35, 0.95) 100%);
     border: 2px solid rgba(0, 168, 255, 0.5);
     border-radius: 12px;
     overflow: hidden;
@@ -674,7 +677,9 @@
     height: auto;       /* Permet l'extension automatique */
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     margin: 0 auto;
 }
 
@@ -692,7 +697,7 @@
 }
 
 .item-rarity-badge {
-    background: rgba(0, 0, 0, 0.85);
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(40, 40, 50, 0.9));
     color: white;
     padding: 0.2rem 0.6rem;
     border-radius: 10px;
@@ -705,7 +710,7 @@
 }
 
 .item-category-icon {
-    background: rgba(0, 0, 0, 0.85);
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.9), rgba(40, 40, 50, 0.9));
     color: white;
     width: 28px;
     height: 28px;
@@ -815,10 +820,23 @@
 }
 
 /* Effets de rareté sur les cartes */
+.item-card.rarity-common { border-color: rgba(158, 158, 158, 0.5); }
 .item-card.rarity-uncommon { border-color: rgba(76, 175, 80, 0.5); }
 .item-card.rarity-rare { border-color: rgba(33, 150, 243, 0.5); }
 .item-card.rarity-epic { border-color: rgba(156, 39, 176, 0.5); }
 .item-card.rarity-legendary { border-color: rgba(255, 152, 0, 0.5); }
+
+/* S'assurer que le fond reste uniforme pour toutes les raretés */
+.item-card.rarity-common,
+.item-card.rarity-uncommon,
+.item-card.rarity-rare,
+.item-card.rarity-epic,
+.item-card.rarity-legendary {
+    background: linear-gradient(135deg, 
+        rgba(30, 30, 40, 0.95) 0%, 
+        rgba(40, 40, 50, 0.95) 50%, 
+        rgba(25, 25, 35, 0.95) 100%) !important;
+}
 
 .item-card.rarity-legendary:hover {
     box-shadow: 0 25px 60px rgba(255, 152, 0, 0.4);

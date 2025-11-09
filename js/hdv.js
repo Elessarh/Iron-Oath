@@ -23,7 +23,9 @@ class HDVSystem {
         this.orderType = null;
         this.filters = {
             category: 'all',
-            type: 'all'
+            type: 'all',
+            rarity: 'all',
+            search: ''
         };
         this.orders = [];
         this.myOrders = [];
@@ -52,6 +54,44 @@ class HDVSystem {
             'familiers': '🐾 Familiers',
             'montures': '🐎 Montures'
         };
+
+        // Système de rareté basé sur les mots-clés
+        this.rarityMapping = {
+            'legendaire': ['Légendaire', 'Mythique', 'Épique', 'Ultime', 'Divin', 'Titanesque', 'Shaman'],
+            'epique': ['Cristal', 'Enchantée', 'Magique', 'Arcanique', 'Supérieur', 'Maître'],
+            'rare': ['Renforcé', 'Soutien', 'Titan', 'Nautherion', 'Halloween', 'Overall'],
+            'peu_commun': ['Moyenne', 'Putrifié', 'Corrompu', 'Glacial', 'Martyr'],
+            'commun': ['Bûche', 'Minerai', 'Lingot', 'Viande', 'Sandwich', 'Peau', 'Os']
+        };
+
+        this.rarityNames = {
+            'legendaire': '🌟 Légendaire',
+            'epique': '🔮 Épique',
+            'rare': '💎 Rare',
+            'peu_commun': '🔷 Peu commun',
+            'commun': '⚪ Commun'
+        };
+
+        this.rarityColors = {
+            'legendaire': '#ff6b35',
+            'epique': '#8a2be2',
+            'rare': '#00a8ff',
+            'peu_commun': '#00ff88',
+            'commun': '#ffffff'
+        };
+
+        // Mapping des raretés anglaises vers françaises pour synchronisation avec l'onglet Items
+        this.rarityMapping_EN_FR = {
+            'legendary': 'legendaire',
+            'epic': 'epique', 
+            'rare': 'rare',
+            'uncommon': 'peu_commun',
+            'common': 'commun'
+        };
+
+        // Catalogue d'items (sera chargé depuis le fichier items-catalog-hdv.js)
+        this.itemsCatalog = null;
+        this.loadItemsCatalog();
         
         // Charger les données sauvegardées (asynchrone)
         await this.loadOrdersFromStorage();
@@ -61,6 +101,42 @@ class HDVSystem {
         
         // Démarrer l'auto-actualisation
         this.startAutoRefresh();
+    }
+
+    // Charger le catalogue d'items depuis la variable globale
+    loadItemsCatalog() {
+        try {
+            // Le catalogue d'items est défini dans items-catalog-hdv.js
+            if (typeof itemsCatalog !== 'undefined') {
+                this.itemsCatalog = itemsCatalog;
+                console.log('✅ Catalogue d\'items chargé avec', this.getTotalItemsCount(), 'items');
+            } else {
+                console.warn('⚠️ Catalogue d\'items non trouvé - utilisation du système de déduction par défaut');
+            }
+        } catch (error) {
+            console.warn('⚠️ Erreur lors du chargement du catalogue d\'items:', error);
+        }
+    }
+
+    // Obtenir le nombre total d'items dans le catalogue
+    getTotalItemsCount() {
+        if (!this.itemsCatalog) return 0;
+        let count = 0;
+        Object.values(this.itemsCatalog).forEach(category => {
+            count += category.items.length;
+        });
+        return count;
+    }
+
+    // Rechercher un item dans le catalogue par nom
+    findItemInCatalog(itemName) {
+        if (!this.itemsCatalog) return null;
+        
+        for (const category of Object.values(this.itemsCatalog)) {
+            const item = category.items.find(item => item.name === itemName);
+            if (item) return item;
+        }
+        return null;
     }
 
     // Déduire la catégorie d'un item à partir de son nom
@@ -87,6 +163,59 @@ class HDVSystem {
         
         // Sinon, essayer de la déduire
         return this.deduceItemCategory(item.name);
+    }
+
+    // Déduire la rareté d'un item à partir de son nom
+    deduceItemRarity(itemName) {
+        if (!itemName) return 'commun';
+        
+        for (const [rarityKey, keywords] of Object.entries(this.rarityMapping)) {
+            for (const keyword of keywords) {
+                if (itemName.toLowerCase().includes(keyword.toLowerCase())) {
+                    return rarityKey;
+                }
+            }
+        }
+        
+        return 'commun';
+    }
+
+    // Obtenir la rareté d'un item (avec fallback)
+    getItemRarity(item) {
+        // Si l'item a déjà une rareté française, l'utiliser
+        if (item.rarity && this.rarityNames[item.rarity]) {
+            return item.rarity;
+        }
+        
+        // Chercher d'abord dans le catalogue d'items pour avoir la rareté officielle
+        const catalogItem = this.findItemInCatalog(item.name);
+        if (catalogItem && catalogItem.rarity) {
+            // Convertir la rareté anglaise en française
+            const frenchRarity = this.rarityMapping_EN_FR[catalogItem.rarity];
+            if (frenchRarity) {
+                return frenchRarity;
+            }
+        }
+        
+        // Si l'item a une rareté anglaise, la convertir
+        if (item.rarity && this.rarityMapping_EN_FR[item.rarity]) {
+            return this.rarityMapping_EN_FR[item.rarity];
+        }
+        
+        // En dernier recours, déduire la rareté à partir du nom
+        return this.deduceItemRarity(item.name);
+    }
+
+    // Obtenir le nom affiché de la rareté
+    getRarityDisplayName(item) {
+        const rarity = this.getItemRarity(item);
+        return this.rarityNames[rarity] || this.rarityNames['commun'];
+    }
+
+    // Obtenir la couleur de la rareté
+    getRarityColor(item) {
+        const rarity = this.getItemRarity(item);
+        return this.rarityColors[rarity] || this.rarityColors['commun'];
     }
 
     // Système d'auto-actualisation optimisé
@@ -364,6 +493,38 @@ class HDVSystem {
             this.filters.type = e.target.value;
             this.applyFilters();
         });
+
+        document.getElementById('rarity-filter')?.addEventListener('change', (e) => {
+            this.filters.rarity = e.target.value;
+            this.applyFilters();
+        });
+
+        // Recherche d'items
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        
+        if (searchInput) {
+            // Recherche en temps réel
+            searchInput.addEventListener('input', (e) => {
+                this.filters.search = e.target.value.toLowerCase().trim();
+                this.applyFilters();
+            });
+            
+            // Recherche au focus perdu
+            searchInput.addEventListener('blur', (e) => {
+                this.filters.search = e.target.value.toLowerCase().trim();
+                this.applyFilters();
+            });
+        }
+        
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => {
+                if (searchInput) {
+                    this.filters.search = searchInput.value.toLowerCase().trim();
+                    this.applyFilters();
+                }
+            });
+        }
 
         // Types d'ordre (vente/achat)
         document.querySelectorAll('.order-type-card').forEach(card => {
@@ -838,6 +999,7 @@ class HDVSystem {
                         <div class="order-details">
                             <h3 class="order-item-name">${order.item.name}</h3>
                             <span class="item-category">${this.getItemCategory(order.item)}</span>
+                            <span class="item-rarity" style="color: ${this.getRarityColor(order.item)}">${this.getRarityDisplayName(order.item)}</span>
                             
                             <div class="order-meta">
                                 <div class="order-meta-item">
@@ -1010,11 +1172,18 @@ class HDVSystem {
             return;
         }
 
+        // Enrichir l'item avec catégorie et rareté automatiques
+        const enrichedItem = {
+            ...this.selectedItem,
+            category: this.getItemCategory(this.selectedItem),
+            rarity: this.getItemRarity(this.selectedItem)
+        };
+
         // Création de l'ordre
         const newOrder = {
             id: Date.now(),
             type: this.orderType,
-            item: this.selectedItem,
+            item: enrichedItem,
             quantity: quantity,
             price: price,
             total: quantity * price,
@@ -1151,12 +1320,38 @@ class HDVSystem {
     applyFilters() {
         let filteredOrders = [...this.orders];
 
+        // Filtre par type
         if (this.filters.type !== 'all') {
             filteredOrders = filteredOrders.filter(order => order.type === this.filters.type);
         }
 
+        // Filtre par catégorie
         if (this.filters.category !== 'all') {
-            filteredOrders = filteredOrders.filter(order => order.item.category === this.filters.category);
+            filteredOrders = filteredOrders.filter(order => 
+                this.getItemCategory(order.item).toLowerCase().includes(this.filters.category.toLowerCase())
+            );
+        }
+
+        // Filtre par rareté
+        if (this.filters.rarity !== 'all') {
+            filteredOrders = filteredOrders.filter(order => 
+                this.getItemRarity(order.item) === this.filters.rarity
+            );
+        }
+
+        // Filtre par recherche textuelle
+        if (this.filters.search && this.filters.search.length > 0) {
+            filteredOrders = filteredOrders.filter(order => {
+                const itemName = order.item.name.toLowerCase();
+                const itemCategory = this.getItemCategory(order.item).toLowerCase();
+                const creatorName = (order.creator || order.seller || order.buyer || '').toLowerCase();
+                const notes = (order.notes || '').toLowerCase();
+                
+                return itemName.includes(this.filters.search) ||
+                       itemCategory.includes(this.filters.search) ||
+                       creatorName.includes(this.filters.search) ||
+                       notes.includes(this.filters.search);
+            });
         }
 
         this.displayOrders(filteredOrders);

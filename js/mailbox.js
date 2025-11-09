@@ -660,7 +660,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
     setupMailboxEventListeners(modal) {
         // Fermer la modal
         modal.querySelector('.close-mailbox').addEventListener('click', () => {
-            modal.remove();
+            this.closeMailbox(modal);
         });
 
         // Onglets de navigation
@@ -696,11 +696,57 @@ ${this.currentUser.username || 'Un aventurier'}`;
         // Fermer en cliquant à l'extérieur
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.remove();
+                this.closeMailbox(modal);
+            }
+        });
+
+        // Fermer avec la touche Échap
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.parentNode) {
+                this.closeMailbox(modal);
             }
         });
     }
 
+    // Méthode centralisée pour fermer la boîte mail
+    closeMailbox(modal) {
+        // Animation de fermeture
+        modal.style.opacity = '0';
+        modal.style.transform = 'scale(0.9)';
+        
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.remove();
+            }
+            
+            // S'assurer que l'interface HDV reste visible et fonctionnelle
+            const hdvContainer = document.querySelector('.main-content');
+            if (hdvContainer) {
+                hdvContainer.style.display = 'block';
+            }
+            
+            // Réactiver les onglets HDV si nécessaire
+            const hdvTabs = document.querySelectorAll('.hdv-tab:not(.mailbox-tab)');
+            hdvTabs.forEach(tab => {
+                tab.style.pointerEvents = 'auto';
+                tab.style.opacity = '1';
+            });
+            
+            // Revenir à l'onglet actif précédent ou par défaut à la place du marché
+            const activeTab = document.querySelector('.hdv-tab.active:not(.mailbox-tab)');
+            if (!activeTab) {
+                // Si aucun onglet n'est actif, activer la place du marché par défaut
+                const marketTab = document.querySelector('.hdv-tab[data-tab="place-marche"]');
+                if (marketTab && window.hdvSystem && window.hdvSystem.showTab) {
+                    window.hdvSystem.showTab('place-marche');
+                }
+            }
+            
+            console.log('📬 Boîte mail fermée - retour à l\'interface HDV');
+        }, 300);
+    }
+
+    // Afficher un onglet spécifique
     // Afficher un onglet
     async showTab(tabName, modal) {
         // Activer l'onglet
