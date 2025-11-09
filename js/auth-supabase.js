@@ -3,7 +3,7 @@
 let supabase = null;
 
 const ENCODED_SUPABASE_URL = 'aHR0cHM6Ly96aGJ1d3d2YWZicnJ4cHN1cGVidC5zdXBhYmFzZS5jbw==';
-const ENCODED_SUPABASE_KEY = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5wb1luVjNkM1poWm1KeWNuaHdjM1Z3WldKMElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTmpJME9URXhNVEU0TENKbGVIQWlPakl3Tnpnd05qY3hNVEU0ZlEuRE4yVHNwTmRvWHdUUW9EaTFLczRYRk5KWlQwUW92bDBzNUNYOEtVRGlLaw==';
+const ENCODED_SUPABASE_KEY = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5wb1luVjNkM1poWm1KeWNuaHdjM1Z3WldKMElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTmpJME9URXhNVGdzSW1WNGNDSTZNakEzT0RBMk56RXhPSDAuRE4yVHNwTmRvWHdUUW9EaTFLczRYRk5KWlQwUW92bDBzNUNYOEtVRGlLaw==';
 
 function decodeKey(encodedKey) {
     try {
@@ -25,6 +25,8 @@ async function initSupabase() {
         console.log('🔍 Debug Supabase URLs:');
         console.log('URL décodée:', SUPABASE_URL);
         console.log('URL valide?', SUPABASE_URL && SUPABASE_URL.startsWith('http'));
+        console.log('Clé décodée (premières 20 chars):', SUPABASE_ANON_KEY ? SUPABASE_ANON_KEY.substring(0, 20) + '...' : 'null');
+        console.log('Clé valide?', SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.startsWith('eyJ'));
         
         if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
             throw new Error('Erreur de décodage des clés');
@@ -53,6 +55,17 @@ async function initSupabase() {
         }
         
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Client Supabase créé:', !!supabase);
+        console.log('🔍 Client Supabase URL:', supabase.supabaseUrl);
+        
+        // Test rapide de connectivité
+        try {
+            const { data, error } = await supabase.auth.getUser();
+            console.log('🔍 Test connectivité Supabase:', { data: !!data, error: error?.message });
+        } catch (testError) {
+            console.warn('⚠️ Test connectivité échoué:', testError.message);
+        }
+        
         return true;
     } catch (error) {
         console.error('Erreur initialisation Supabase:', error);
@@ -285,15 +298,24 @@ async function registerUser(username, email, password, confirmPassword) {
 }
 
 async function loginUser(email, password) {
+    console.log('🔑 Tentative de connexion pour:', email);
+    console.log('🔍 Supabase client disponible?', !!supabase);
+    console.log('🔍 Supabase auth disponible?', !!supabase?.auth);
+    
     try {
         const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
             email: email,
             password: password
         });
         
+        console.log('🔍 Réponse Supabase:', { authData: !!authData, error: signInError });
+        
         if (signInError) {
+            console.error('❌ Erreur de connexion détaillée:', signInError);
             if (signInError.message.includes('Invalid login credentials')) {
                 showMessage('Email ou mot de passe incorrect.');
+            } else if (signInError.message.includes('Email not confirmed')) {
+                showMessage('Veuillez confirmer votre email avant de vous connecter.');
             } else {
                 showMessage(`Erreur de connexion: ${signInError.message}`);
             }
