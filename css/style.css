@@ -130,6 +130,33 @@ body .header {
     backdrop-filter: blur(10px);
     padding: 1rem 0;
     /* Suppression des transitions pour éviter les déplacements */
+    /* STABILISATION ANTI-DÉCALAGE */
+    will-change: auto;
+    transform: translateZ(0); /* Force GPU rendering pour stabilité */
+}
+
+/* RÈGLE ANTI-DÉCALAGE GLOBALE POUR LA NAVIGATION */
+body .header *,
+body .nav-container *,
+body .nav-menu *,
+body .nav-connexion * {
+    /* Empêcher tout changement de layout imprévu */
+    will-change: auto !important;
+    transform: none !important;
+    transition: none !important;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Exceptions pour les effets hover (couleur seulement, sans transition) */
+body .nav-menu a:hover {
+    color: var(--color-accent) !important;
+}
+
+body .nav-connexion .connexion-link:hover,
+body .nav-connexion .nav-link:hover {
+    background: var(--color-accent) !important;
+    color: var(--color-white) !important;
 }
 
 body .nav-container {
@@ -143,6 +170,9 @@ body .nav-container {
     min-height: 60px;
     flex-wrap: nowrap;
     overflow: visible; /* Permettre aux éléments absolus d'être visibles */
+    /* STABILISATION TOTALE */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Navigation globale - style stable et centré */
@@ -159,6 +189,9 @@ body .nav-menu {
     position: static; /* Éviter tout positionnement spécial */
     flex: 1; /* Prendre l'espace disponible */
     order: 2; /* Élément central */
+    /* STABILISATION */
+    min-width: 0; /* Éviter le débordement */
+    overflow: visible;
 }
 
 body .nav-menu li {
@@ -174,10 +207,13 @@ body .nav-menu a {
     font-weight: 400;
     position: relative;
     padding: 0.5rem 1rem; /* Padding horizontal pour éviter les chevauchements */
-    transition: color 0.3s ease;
+    /* SUPPRIMÉ: transition: color 0.3s ease; */
     display: block;
     white-space: nowrap;
     text-align: center;
+    /* Stabiliser les dimensions */
+    min-width: auto;
+    box-sizing: border-box;
 }
 
 body .nav-menu a::after {
@@ -188,7 +224,7 @@ body .nav-menu a::after {
     width: 0;
     height: 2px;
     background: var(--color-accent);
-    transition: width 0.3s ease;
+    /* SUPPRIMÉ: transition: width 0.3s ease; */
 }
 
 body .nav-menu a:hover::after,
@@ -232,19 +268,19 @@ body .nav-connexion .nav-link {
     background: rgba(0, 168, 255, 0.1) !important;
     border: 1px solid var(--color-accent) !important;
     border-radius: 8px !important;
-    transition: all 0.3s ease !important;
+    /* SUPPRIMÉ: transition: all 0.3s ease !important; */
     color: var(--color-white) !important;
     text-decoration: none !important;
     font-family: var(--font-title) !important;
 }
 
-/* Prévention du flash du bouton connexion - visible par défaut */
+/* Prévention du flash du bouton connexion - géré par JavaScript */
 body .nav-connexion .connexion-link,
 body .nav-connexion .nav-link.connexion-link {
-    opacity: 1 !important; /* Visible par défaut */
-    visibility: visible !important; /* Visible par défaut */
-    transition: opacity 0.3s ease, visibility 0.3s ease !important;
-    display: block !important; /* Affiché par défaut */
+    opacity: 0 !important; /* Masqué par défaut */
+    visibility: hidden !important; /* Masqué par défaut */
+    /* SUPPRIMÉ: transition: opacity 0.3s ease, visibility 0.3s ease !important; */
+    display: none !important; /* Masqué par défaut - contrôlé par JS */
 }
 
 body .nav-connexion .connexion-link.show,
@@ -266,7 +302,7 @@ body .nav-connexion .nav-link.connexion-link.js-visible {
 body .nav-connexion .user-info {
     opacity: 0 !important;
     visibility: hidden !important;
-    transition: opacity 0.3s ease, visibility 0.3s ease !important;
+    /* SUPPRIMÉ: transition: opacity 0.3s ease, visibility 0.3s ease !important; */
     display: none !important; /* Masquage initial absolu */
 }
 
@@ -303,9 +339,9 @@ body .nav-connexion .nav-link:hover {
     height: 3px;
     background: var(--color-white);
     margin: 2px 0;
-    transition: all 0.3s ease;
+    /* SUPPRIMÉ: transition: all 0.3s ease; */
     border-radius: 2px;
-    transform-origin: center;
+    /* SUPPRIMÉ: transform-origin: center; */
 }
 
 /* Animation du hamburger actif */

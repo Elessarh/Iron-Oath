@@ -1,14 +1,10 @@
 /* auth-supabase.js - Système d'authentification Supabase pour Iron Oath */
 
-// Configuration Supabase avec clés cryptées
 let supabase = null;
 
-// 🔐 Clés cryptées (obfuscation pour sécurité basique)
-// Les clés sont cryptées avec rotation + Base64 pour éviter la lecture directe
 const ENCODED_SUPABASE_URL = 'aHR0cHM6Ly96aGJ1d3d2YWZicnJ4cHN1cGVidC5zdXBhYmFzZS5jbw==';
 const ENCODED_SUPABASE_KEY = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5wb1luVjNkM1poWm1KeWNuaHdjM1Z3WldKMElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTmpJME9URXhNVEU0TENKbGVIQWlPakl3Tnpnd05qY3hNVEU0ZlEuRE4yVHNwTmRvWHdUUW9EaTFLczRYRk5KWlQwUW92bDBzNUNYOEtVRGlLaw==';
 
-// Fonction de décodage (importée depuis crypto-keys.js)
 function decodeKey(encodedKey) {
     try {
         const decoded = atob(encodedKey);
@@ -29,17 +25,14 @@ function decodeKey(encodedKey) {
         }
         return result;
     } catch (error) {
-        console.error('❌ Erreur décodage clé:', error);
+        console.error('Erreur décodage clé:', error);
         return null;
     }
 }
 
-console.log('🔐 Décodage des clés Supabase sécurisées...');
-
 // Initialisation asynchrone du client Supabase
 async function initSupabase() {
     try {
-        // Décoder les clés
         const SUPABASE_URL = decodeKey(ENCODED_SUPABASE_URL);
         const SUPABASE_ANON_KEY = decodeKey(ENCODED_SUPABASE_KEY);
         
@@ -47,25 +40,32 @@ async function initSupabase() {
             throw new Error('Erreur de décodage des clés');
         }
         
-        // Chargement dynamique de Supabase (compatible sans modules)
         if (typeof window.supabase === 'undefined') {
-            // Charger Supabase via CDN
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
-            document.head.appendChild(script);
-            
-            // Attendre le chargement
-            await new Promise((resolve) => {
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
                 script.onload = resolve;
+                script.onerror = () => {
+                    const altScript = document.createElement('script');
+                    altScript.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js';
+                    altScript.onload = resolve;
+                    altScript.onerror = () => reject(new Error('Impossible de charger Supabase'));
+                    document.head.appendChild(altScript);
+                };
+                document.head.appendChild(script);
             });
+            
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
         
-        // Créer le client
+        if (!window.supabase || !window.supabase.createClient) {
+            throw new Error('Supabase non disponible après chargement');
+        }
+        
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Client Supabase initialisé avec clés cryptées');
         return true;
     } catch (error) {
-        console.error('❌ Erreur initialisation Supabase:', error);
+        console.error('Erreur initialisation Supabase:', error);
         return false;
     }
 }
@@ -73,28 +73,18 @@ async function initSupabase() {
 // Variables globales
 let currentUser = null;
 let userProfile = null;
-// Cache thread-safe pour stocker les pseudos par email
 const usernamePendingMap = new Map();
 
-// Variable pour éviter les appels multiples simultanés
 let isCheckingAuthState = false;
 let lastAuthStateCheck = 0;
 
 // ========== GESTION DE L'ÉTAT DE CONNEXION ==========
 function checkAuthState() {
-    // Éviter les appels trop fréquents (moins de 100ms d'écart)
     const now = Date.now();
-    if (now - lastAuthStateCheck < 100) {
-        console.log('🔍 Vérification auth ignorée (trop récente)');
-        return;
-    }
+    if (now - lastAuthStateCheck < 100) return;
     lastAuthStateCheck = now;
     
-    // Éviter les appels simultanés
-    if (isCheckingAuthState) {
-        console.log('🔍 Vérification auth en cours, ignorée');
-        return;
-    }
+    if (isCheckingAuthState) return;
     isCheckingAuthState = true;
     
     try {
@@ -102,30 +92,25 @@ function checkAuthState() {
         const loginLink = document.getElementById('login-link');
         const usernameSpan = document.getElementById('username');
         
-        console.log('🔍 Vérification état auth Supabase:', currentUser ? `Connecté: ${userProfile?.username || currentUser.email}` : 'Non connecté');
-        
-        // Mettre à jour les variables globales
         if (typeof window !== 'undefined') {
             window.currentUser = currentUser;
             window.userProfile = userProfile;
         }
         
         if (currentUser) {
-            // Utilisateur connecté - Masquer le bouton connexion et afficher les infos user
             if (userInfo) {
                 userInfo.style.display = 'flex';
                 userInfo.classList.add('show');
                 userInfo.classList.add('js-visible');
                 if (usernameSpan) {
-                    // Toujours prioriser le pseudo joueur au lieu de l'email
                     let displayName = 'Joueur';
                     if (userProfile && userProfile.username) {
                         displayName = userProfile.username;
                     } else if (currentUser.email) {
-                        // Créer un pseudo temporaire si pas de profil
                         displayName = 'Joueur_' + currentUser.email.split('@')[0];
                     }
                     usernameSpan.textContent = displayName;
+                }
                 }
             }
             if (loginLink) {
@@ -160,9 +145,6 @@ function showMessage(message, type = 'error') {
         messageEl.className = `auth-message ${type}`;
         messageEl.style.display = 'block';
         
-        console.log(`Auth Message (${type}): ${message}`);
-        
-        // Auto-hide après 5 secondes pour les messages de succès
         if (type === 'success') {
             setTimeout(() => {
                 messageEl.style.display = 'none';
@@ -173,25 +155,18 @@ function showMessage(message, type = 'error') {
 
 // ========== FONCTIONS D'AUTHENTIFICATION ==========
 async function registerUser(username, email, password, confirmPassword) {
-    console.log('🚀 Fonction registerUser appelée');
-    console.log('📊 Paramètres reçus:', { username, email, password: '***', confirmPassword: '***' });
-    
     try {
-        // Validation basique
         if (!username || !email || !password || !confirmPassword) {
-            console.log('❌ Validation échouée: champs manquants');
             showMessage('Veuillez remplir tous les champs.');
             return false;
         }
         
-        // Validation email simple
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             showMessage('Veuillez entrer un email valide.');
             return false;
         }
         
-        // Validation pseudo joueur
         if (username.length < 3) {
             showMessage('Le pseudo joueur doit contenir au moins 3 caractères.');
             return false;
@@ -202,7 +177,6 @@ async function registerUser(username, email, password, confirmPassword) {
             return false;
         }
         
-        // Validation caractères autorisés (lettres, chiffres, underscore, tiret)
         const usernameRegex = /^[a-zA-Z0-9_-]+$/;
         if (!usernameRegex.test(username)) {
             showMessage('Le pseudo joueur ne peut contenir que des lettres, chiffres, underscore et tirets.');
@@ -219,7 +193,6 @@ async function registerUser(username, email, password, confirmPassword) {
             return false;
         }
         
-        // Vérifier si le nom d'utilisateur existe déjà
         try {
             const { data: existingProfile } = await supabase
                 .from('user_profiles')
@@ -232,9 +205,8 @@ async function registerUser(username, email, password, confirmPassword) {
                 return false;
             }
         } catch (checkError) {
-            // Si erreur 406, la table n'existe pas ou n'est pas accessible
             if (checkError.code === 'PGRST116' || checkError.message.includes('406')) {
-                console.log('ℹ️ Vérification pseudo impossible (table inaccessible), on continue...');
+                // Table inaccessible, on continue
             } else {
                 console.error('Erreur vérification pseudo:', checkError);
                 showMessage('Erreur technique lors de la vérification. Réessayez.');
@@ -242,18 +214,15 @@ async function registerUser(username, email, password, confirmPassword) {
             }
         }
         
-        // ÉTAPE CRITIQUE: Stocker le pseudo avec l'email AVANT la création du compte
         usernamePendingMap.set(email, username);
-        console.log(`💾 Pseudo "${username}" stocké pour ${email}`);
         
-        // Créer le compte Supabase
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
             email: email,
             password: password,
         });
         
         if (signUpError) {
-            console.error('❌ Erreur inscription Supabase:', signUpError);
+            console.error('Erreur inscription Supabase:', signUpError);
             showMessage(`Erreur lors de l'inscription: ${signUpError.message}`);
             return false;
         }
@@ -285,23 +254,19 @@ async function registerUser(username, email, password, confirmPassword) {
                     ]);
                     
                 if (profileError) {
-                    console.error('❌ Erreur création profil:', profileError);
+                    console.error('Erreur création profil:', profileError);
                     
-                    // Si c'est un conflit (409), le profil existe déjà (race condition)
                     if (profileError.code === '23505') {
-                        console.log('ℹ️ Profil créé entre-temps (race condition), continuons...');
                         showMessage('Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte.', 'success');
                     } else {
                         showMessage(`Erreur lors de la création du profil: ${profileError.message}. Contactez le support.`);
                         return false;
                     }
                 } else {
-                    console.log('✅ Profil utilisateur créé avec succès');
                     showMessage('Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte.', 'success');
                 }
             }
             
-            // Basculer vers le formulaire de connexion après 3 secondes
             setTimeout(() => {
                 showLoginForm();
             }, 3000);
@@ -317,8 +282,6 @@ async function registerUser(username, email, password, confirmPassword) {
 }
 
 async function loginUser(email, password) {
-    console.log('🔑 Tentative de connexion pour:', email);
-    
     try {
         const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
             email: email,
@@ -340,7 +303,6 @@ async function loginUser(email, password) {
             
             showMessage('Connexion réussie ! Redirection...', 'success');
             
-            // Rediriger vers l'accueil après 2 secondes
             setTimeout(() => {
                 window.location.href = '../index.html';
             }, 2000);
@@ -384,46 +346,34 @@ async function loadUserProfile() {
             .single();
             
         if (error) {
-            // Si le profil n'existe pas, le créer automatiquement
             if (error.code === 'PGRST116' || error.message.includes('406')) {
-                console.log('👤 Profil utilisateur manquant, création automatique...');
                 return await createMissingProfile();
             } else {
                 console.error('Erreur chargement profil:', error);
-                // Essayer de créer le profil même en cas d'autre erreur
-                console.log('🔧 Tentative de création de profil automatique...');
                 return await createMissingProfile();
             }
         }
         
         userProfile = data;
-        console.log(`👤 Profil chargé: ${userProfile.username} (${userProfile.role})`);
         
-        // CORRECTION AUTOMATIQUE: Vérifier si c'est un pseudo généré et le corriger si possible
         if (userProfile.username.includes('_') && userProfile.username.match(/.*_[a-z0-9]{4}$/)) {
-            console.log('🔧 Pseudo généré automatiquement détecté, tentative de correction...');
             await autoCorrectUsername();
         }
         
-        // Nettoyer le cache après utilisation
         if (currentUser.email && usernamePendingMap.has(currentUser.email)) {
             usernamePendingMap.delete(currentUser.email);
-            console.log(`🧹 Cache nettoyé pour ${currentUser.email}`);
         }
         
-        // Mettre à jour l'interface
         checkAuthState();
         return userProfile;
         
     } catch (error) {
         console.error('Erreur technique chargement profil:', error);
         
-        // En cas d'erreur critique, essayer quand même de créer un profil
-        console.log('🔧 Erreur critique, tentative de récupération automatique...');
         try {
             return await createMissingProfile();
         } catch (recoveryError) {
-            console.error('❌ Échec de la récupération automatique:', recoveryError);
+            console.error('Échec de la récupération automatique:', recoveryError);
             showMessage('Erreur de synchronisation. Rechargez la page.', 'error');
             return null;
         }
@@ -434,20 +384,13 @@ async function createMissingProfile() {
     if (!currentUser) return null;
     
     try {
-        // Récupérer le pseudo depuis le cache ou générer un pseudo propre
         let username = usernamePendingMap.get(currentUser.email);
         
         if (username) {
-            console.log(`🎯 Utilisation du pseudo choisi depuis le cache: ${username}`);
-            // Nettoyer immédiatement après récupération
             usernamePendingMap.delete(currentUser.email);
         } else {
-            // Générer un pseudo propre basé sur l'email (sans suffixe aléatoire)
             username = currentUser.email.split('@')[0];
-            console.log(`🔨 Génération d'un pseudo propre: ${username}`);
         }
-        
-        console.log(`🔨 Création du profil pour ${currentUser.email} avec username: ${username}`);
         
         const { data, error } = await supabase
             .from('user_profiles')
@@ -462,11 +405,9 @@ async function createMissingProfile() {
             .single();
             
         if (error) {
-            console.error('❌ Erreur création profil:', error);
+            console.error('Erreur création profil:', error);
             
-            // Si c'est un conflit (23505), le profil existe déjà
             if (error.code === '23505') {
-                console.log('ℹ️ Profil déjà existant, récupération...');
                 const { data: existingProfile } = await supabase
                     .from('user_profiles')
                     .select('*')
@@ -475,7 +416,6 @@ async function createMissingProfile() {
                     
                 if (existingProfile) {
                     userProfile = existingProfile;
-                    console.log(`✅ Profil récupéré: ${userProfile.username}`);
                     return userProfile;
                 }
             }
@@ -484,25 +424,21 @@ async function createMissingProfile() {
         }
         
         userProfile = data;
-        console.log(`✅ Profil créé: ${userProfile.username} (${userProfile.role})`);
         checkAuthState();
         return userProfile;
         
     } catch (error) {
-        console.error('❌ Erreur technique création profil:', error);
+        console.error('Erreur technique création profil:', error);
         throw error;
     }
 }
 
-// Fonction de correction automatique pour les comptes existants
 async function autoCorrectUsername() {
     if (!currentUser || !userProfile) return;
     
     try {
-        // Essayer d'utiliser le nom de base de l'email
         const baseName = currentUser.email.split('@')[0];
         
-        // Vérifier si le nom de base est disponible
         const { data: existingProfile } = await supabase
             .from('user_profiles')
             .select('username')
@@ -510,9 +446,6 @@ async function autoCorrectUsername() {
             .single();
             
         if (!existingProfile) {
-            // Le nom de base est disponible, faire la correction
-            console.log(`✨ Correction automatique: ${userProfile.username} -> ${baseName}`);
-            
             const { data, error } = await supabase
                 .from('user_profiles')
                 .update({ username: baseName })
@@ -523,11 +456,10 @@ async function autoCorrectUsername() {
             if (!error && data) {
                 userProfile = data;
                 checkAuthState();
-                console.log(`✅ Pseudo corrigé automatiquement: ${userProfile.username}`);
             }
         }
     } catch (error) {
-        console.log('ℹ️ Correction automatique impossible:', error.message);
+        // Correction automatique échouée
     }
 }
 
@@ -578,26 +510,28 @@ function isAdmin() {
 
 // ========== INITIALISATION AUTOMATIQUE ==========
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🔐 Initialisation du système d\'authentification Supabase...');
-    
-    // Initialiser Supabase d'abord
     const supabaseReady = await initSupabase();
     if (!supabaseReady) {
-        console.error('❌ Impossible d\'initialiser Supabase');
+        console.error('Impossible d\'initialiser Supabase');
+        setTimeout(() => {
+            const loginLink = document.getElementById('login-link');
+            if (loginLink) {
+                loginLink.style.display = 'block';
+                loginLink.classList.add('show');
+                loginLink.classList.add('js-visible');
+            }
+        }, 1000);
         return;
     }
     
-    // Vérification immédiate pour éviter le flash
     const session = await supabase.auth.getSession();
     if (session?.data?.session?.user) {
         currentUser = session.data.session.user;
         await loadUserProfile();
     }
     
-    // Appel immédiat pour masquer le bouton connexion si possible
     checkAuthState();
     
-    // Vérifier l'état d'authentification initial
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
         currentUser = user;
@@ -605,18 +539,24 @@ document.addEventListener('DOMContentLoaded', async function() {
             await loadUserProfile();
             checkAuthState();
         } catch (error) {
-            console.error('⚠️ Erreur chargement profil initial:', error);
-            console.log('ℹ️ Continuons sans profil, la table user_profiles doit être créée');
+            console.error('Erreur chargement profil initial:', error);
         }
     }
     
-    // Mettre à jour l'interface selon l'état de connexion
     checkAuthState();
     
-    // Écouter les changements d'état d'authentification
+    setTimeout(() => {
+        if (!currentUser) {
+            const loginLink = document.getElementById('login-link');
+            if (loginLink && loginLink.style.display === 'none') {
+                loginLink.style.display = 'block';
+                loginLink.classList.add('show');
+                loginLink.classList.add('js-visible');
+            }
+        }
+    }, 1000);
+    
     supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('🔄 Changement d\'état auth:', event);
-        
         if (event === 'SIGNED_IN' && session?.user) {
             currentUser = session.user;
             await loadUserProfile();
@@ -628,19 +568,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
     
-    // Gestionnaires d'événements pour les formulaires
     const loginForm = document.querySelector('#login-form form');
     const registerForm = document.querySelector('#register-form form');
-    
-    console.log('🔍 Formulaires trouvés:', { 
-        loginForm: !!loginForm, 
-        registerForm: !!registerForm 
-    });
     
     if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            console.log('🔑 Formulaire de connexion soumis');
             
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
@@ -649,25 +582,32 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     if (registerForm) {
-        console.log('✅ Gestionnaire d\'événement ajouté au formulaire d\'inscription');
         registerForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            console.log('📝 Formulaire d\'inscription soumis - début de traitement');
             
             const username = document.getElementById('register-username').value;
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
             const confirmPassword = document.getElementById('register-confirm').value;
             
-            console.log('📊 Données du formulaire:', { 
-                username: username || 'VIDE', 
-                email: email || 'VIDE', 
-                password: password ? '***' : 'VIDE', 
-                confirmPassword: confirmPassword ? '***' : 'VIDE' 
-            });
-            
             await registerUser(username, email, password, confirmPassword);
         });
+    } else {
+        setTimeout(() => {
+            const form = document.querySelector('form[id*="register"]');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const username = document.getElementById('register-username').value;
+                    const email = document.getElementById('register-email').value;
+                    const password = document.getElementById('register-password').value;
+                    const confirmPassword = document.getElementById('register-confirm').value;
+                    
+                    await registerUser(username, email, password, confirmPassword);
+                });
+            }
+        }, 500);
     } else {
         console.error('❌ Formulaire d\'inscription non trouvé dans le DOM');
     }

@@ -72,7 +72,11 @@
     </section>
 
     <!-- Scripts -->
-    <script type="module" src="js/auth-supabase.js"></script>
+    <!-- Chargement Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    
+    <script src="js/crypto-keys.js"></script>
+    <script src="js/auth-supabase.js"></script>
     <script>
         // Écran de chargement supprimé - plus de gestion nécessaire
 
@@ -85,8 +89,5 @@
             hamburger.classList.toggle('active');
         });
     </script>
-    
-    <!-- Système de sécurité -->
-    <script src="js/security.js"></script>
 </body>
 </html>
