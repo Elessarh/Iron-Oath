@@ -2455,3 +2455,80 @@
 .quest-marker-popup .leaflet-popup-close-button:hover {
     color: var(--color-accent);
 }
+
+/* Styles pour les nouveaux types de lieux */
+
+/* Popups des villes */
+.location-popup {
+    min-width: 280px;
+}
+
+.location-popup.ville .location-header {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.2));
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-family: var(--font-title);
+    color: #FFD700;
+}
+
+/* Popups des donjons */
+.location-popup.donjon .location-header {
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.3), rgba(139, 0, 0, 0.2));
+    border: 1px solid rgba(220, 20, 60, 0.4);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-family: var(--font-title);
+    color: #DC143C;
+}
+
+/* Popups des marchands */
+.location-popup.marchand .location-header {
+    background: linear-gradient(135deg, rgba(50, 205, 50, 0.3), rgba(34, 139, 34, 0.2));
+    border: 1px solid rgba(50, 205, 50, 0.4);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-family: var(--font-title);
+    color: #32CD32;
+}
+
+/* Popups des zones de monstres */
+.location-popup.monstre .location-header {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(75, 0, 130, 0.2));
+    border: 1px solid rgba(138, 43, 226, 0.4);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-family: var(--font-title);
+    color: #8A2BE2;
+}
+
+/* Détails communs pour tous les types de lieux */
+.location-details {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.location-details p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.location-description {
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+    margin-top: 8px;
+}
