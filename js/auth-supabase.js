@@ -606,7 +606,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     await registerUser(username, email, password, confirmPassword);
                 });
             } else {
-                console.error('Formulaire d\'inscription non trouvé dans le DOM');
+                console.error('Formulaire inscription non trouve dans le DOM');
             }
         }, 500);
     }
@@ -647,3 +647,5 @@ window.updateGlobalAuthVars = function() {
     window.currentUser = currentUser;
     window.userProfile = userProfile;
 };
+
+}); // Fin de DOMContentLoaded
