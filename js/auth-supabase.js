@@ -111,7 +111,6 @@ function checkAuthState() {
                     }
                     usernameSpan.textContent = displayName;
                 }
-                }
             }
             if (loginLink) {
                 loginLink.style.display = 'none';
@@ -132,7 +131,7 @@ function checkAuthState() {
             }
         }
     } catch (error) {
-        console.error('❌ Erreur checkAuthState:', error);
+        console.error('Erreur checkAuthState:', error);
     } finally {
         isCheckingAuthState = false;
     }
