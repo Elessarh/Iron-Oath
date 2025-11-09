@@ -551,8 +551,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
             return;
         }
 
-        await this.loadMessages();
-
+        // Créer et afficher l'interface immédiatement avec les données en cache
         const modal = document.createElement('div');
         modal.className = 'mailbox-modal';
         modal.innerHTML = this.getMailboxHTML();
@@ -562,11 +561,60 @@ ${this.currentUser.username || 'Un aventurier'}`;
         // Ajouter les écouteurs d'événements
         this.setupMailboxEventListeners(modal);
         
-        // Afficher les messages reçus par défaut
+        // Afficher les messages reçus par défaut avec les données existantes
         this.showTab('received', modal);
         
-        // Mettre à jour les compteurs
-        await this.updateTabCounts(modal);
+        // Mettre à jour les compteurs avec les données en cache (rapide)
+        this.updateTabCountsFromCache(modal);
+        
+        // Charger les nouvelles données en arrière-plan (lent mais non bloquant)
+        this.refreshDataInBackground(modal);
+    }
+
+    // Nouvelle méthode pour mettre à jour depuis le cache (instantané)
+    updateTabCountsFromCache(modal) {
+        if (!modal) return;
+        
+        // Utiliser les données déjà chargées
+        const receivedCount = this.receivedMessages ? this.receivedMessages.length : 0;
+        const sentCount = this.sentMessages ? this.sentMessages.length : 0;
+        const unreadCount = this.receivedMessages ? 
+            this.receivedMessages.filter(msg => !msg.read_at).length : 0;
+        
+        // Mettre à jour les compteurs instantanément
+        const receivedTab = modal.querySelector('[data-tab="received"]');
+        const sentTab = modal.querySelector('[data-tab="sent"]');
+        
+        if (receivedTab) {
+            receivedTab.textContent = `📥 Reçus (${receivedCount})`;
+        }
+        if (sentTab) {
+            sentTab.textContent = `📤 Envoyés (${sentCount})`;
+        }
+        
+        console.log(`📊 Compteurs mis à jour (cache): ${receivedCount} reçus, ${sentCount} envoyés, ${unreadCount} non lus`);
+    }
+
+    // Nouvelle méthode pour actualiser en arrière-plan
+    async refreshDataInBackground(modal) {
+        try {
+            // Actualiser les données depuis Supabase en arrière-plan
+            await this.loadMessages();
+            
+            // Mettre à jour l'affichage avec les nouvelles données
+            await this.updateTabCounts(modal);
+            
+            // Actualiser l'onglet actuel si nécessaire
+            const activeTab = modal.querySelector('.mailbox-tab.active');
+            if (activeTab) {
+                const tabName = activeTab.getAttribute('data-tab');
+                this.showTab(tabName, modal);
+            }
+            
+            console.log('📬 Données actualisées en arrière-plan');
+        } catch (error) {
+            console.error('❌ Erreur actualisation arrière-plan:', error);
+        }
     }
 
     // Mettre à jour les compteurs des onglets
@@ -721,9 +769,6 @@ ${this.currentUser.username || 'Un aventurier'}`;
                         <div class="empty-actions">
                             <button class="btn btn-primary" onclick="mailboxSystem.openComposeTab(document.querySelector('.mailbox-modal'))">
                                 ✉️ Écrire un message
-                            </button>
-                            <button class="btn btn-secondary" onclick="mailboxSystem.createTestMessages()">
-                                🧪 Créer messages de test
                             </button>
                         </div>
                     </div>

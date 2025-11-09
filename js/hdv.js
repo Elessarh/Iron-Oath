@@ -28,6 +28,31 @@ class HDVSystem {
         this.orders = [];
         this.myOrders = [];
         
+        // Données des catégories pour déduction
+        this.categoryMapping = {
+            'armes': ['Bâton', 'Épée', 'Arc', 'Dague', 'Marteau'],
+            'consommables': ['Clé', 'Cristal', 'Parchemin', 'Potion', 'Sandwich', 'Viande'],
+            'ressources': ['Aile', 'Bonbon', 'Brindille', 'Bûche', 'Carapace', 'Cendre', 'Coeur', 'Corde', 'Corne', 'Crinière', 'Crocs', 'Débris', 'Éclat', 'Écorce', 'Essence', 'Fil', 'Fourrure', 'Fragment', 'Gelée', 'Griffe', 'Lingot', 'Minerai', 'Mycélium', 'Noyau', 'Os', 'Peau', 'Bourse', 'Pièce'],
+            'armures': ['Casque', 'Plastron', 'Jambières', 'Bottes', 'Bouclier'],
+            'accessoires': ['Anneau', 'Amulette', 'Collier', 'Bracelet'],
+            'outils': ['Pioche', 'Hache', 'Pelle', 'Canne'],
+            'runes': ['Rune'],
+            'familiers': ['Familier', 'Pet'],
+            'montures': ['Monture', 'Cheval', 'Dragon']
+        };
+        
+        this.categoryNames = {
+            'armes': '⚔️ Armes',
+            'consommables': '🧪 Consommables', 
+            'ressources': '🔧 Ressources',
+            'armures': '🛡️ Armures',
+            'accessoires': '💍 Accessoires',
+            'outils': '⛏️ Outils',
+            'runes': '✨ Runes',
+            'familiers': '🐾 Familiers',
+            'montures': '🐎 Montures'
+        };
+        
         // Charger les données sauvegardées (asynchrone)
         await this.loadOrdersFromStorage();
         
@@ -36,6 +61,32 @@ class HDVSystem {
         
         // Démarrer l'auto-actualisation
         this.startAutoRefresh();
+    }
+
+    // Déduire la catégorie d'un item à partir de son nom
+    deduceItemCategory(itemName) {
+        if (!itemName) return 'Catégorie inconnue';
+        
+        for (const [categoryKey, keywords] of Object.entries(this.categoryMapping)) {
+            for (const keyword of keywords) {
+                if (itemName.toLowerCase().includes(keyword.toLowerCase())) {
+                    return this.categoryNames[categoryKey] || 'Catégorie inconnue';
+                }
+            }
+        }
+        
+        return 'Catégorie inconnue';
+    }
+
+    // Obtenir la catégorie d'un item (avec fallback)
+    getItemCategory(item) {
+        // Si l'item a déjà une catégorie, l'utiliser
+        if (item.category) {
+            return item.category;
+        }
+        
+        // Sinon, essayer de la déduire
+        return this.deduceItemCategory(item.name);
     }
 
     // Système d'auto-actualisation optimisé
@@ -473,7 +524,7 @@ class HDVSystem {
                                 <img src="../assets/items/${order.item.image}" alt="${order.item.name}" onerror="this.src='../assets/items/default.png'">
                                 <div class="order-item-info">
                                     <h5>${order.item.name}</h5>
-                                    <span class="item-category">${order.item.category || 'Catégorie inconnue'}</span>
+                                    <span class="item-category">${this.getItemCategory(order.item)}</span>
                                 </div>
                             </div>
                             
@@ -777,51 +828,54 @@ class HDVSystem {
             <div class="orders-grid">
                 ${orders.map(order => `
                     <div class="order-card ${order.type}" data-order-id="${order.id}">
-                        <div class="order-header">
-                            <span class="order-type ${order.type}">
-                                ${order.type === 'sell' ? '🔴 VENTE' : '🔵 ACHAT'}
-                                <span class="order-date">${this.formatOrderDate(order)}</span>
-                            </span>
+                        <!-- Image de l'item -->
+                        <img src="../assets/items/${order.item.image}" 
+                             alt="${order.item.name}" 
+                             class="order-item-image"
+                             onerror="this.src='../assets/items/default.png'">
+                        
+                        <!-- Détails de l'ordre -->
+                        <div class="order-details">
+                            <h3 class="order-item-name">${order.item.name}</h3>
+                            <span class="item-category">${this.getItemCategory(order.item)}</span>
+                            
+                            <div class="order-meta">
+                                <div class="order-meta-item">
+                                    <span>${order.type === 'sell' ? '🔴' : '🔵'}</span>
+                                    <span>${order.type === 'sell' ? 'VENTE' : 'ACHAT'}</span>
+                                </div>
+                                <div class="order-meta-item">
+                                    <span>📦</span>
+                                    <span>Qté: ${order.quantity}</span>
+                                </div>
+                                <div class="order-meta-item">
+                                    <span>👤</span>
+                                    <span>${order.creator || order.seller || order.buyer || 'Aventurier Anonyme'}</span>
+                                </div>
+                                ${order.notes ? `
+                                <div class="order-meta-item">
+                                    <span>📝</span>
+                                    <span>${order.notes}</span>
+                                </div>
+                                ` : ''}
+                            </div>
                         </div>
-                
-                <div class="order-content">
-                    <div class="order-item">
-                        <img src="../assets/items/${order.item.image}" alt="${order.item.name}" onerror="this.src='../assets/items/default.png'">
-                        <div class="order-item-info">
-                            <h5>${order.item.name}</h5>
-                            <span class="item-category">${order.item.category || 'Catégorie inconnue'}</span>
+                        
+                        <!-- Prix et actions -->
+                        <div class="order-price-container">
+                            <div class="order-price">${order.price} cols</div>
+                            <div class="order-price-unit">/${order.quantity > 1 ? 'lot' : 'unité'}</div>
+                            
+                            <button class="contact-btn" onclick="hdvSystem.contactTrader('${order.creator || order.seller || order.buyer}', '${order.item.name}')">
+                                💬 Contacter
+                            </button>
+                            ${this.isMyOrder(order) ? `
+                                <button class="contact-btn" style="background: #e74c3c; margin-top: 0.5rem;" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
+                                    🗑️ Supprimer
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
-                    
-                    <div class="order-details">
-                        <div class="order-quantity">
-                            <span>Quantité: <strong>${order.quantity}</strong></span>
-                        </div>
-                        <div class="order-price">
-                            <span>Prix: <strong>${order.price} cols</strong></span>
-                        </div>
-                        <div class="order-trader">
-                            <span>${order.type === 'sell' ? 'Vendeur' : 'Acheteur'}: <strong>${order.creator || order.seller || order.buyer || 'Aventurier Anonyme'}</strong></span>
-                        </div>
-                        ${order.notes ? `
-                        <div class="order-notes">
-                            <span>📝 Notes: <em>${order.notes}</em></span>
-                        </div>
-                        ` : ''}
-                    </div>
-                </div>
-                
-                <div class="order-actions">
-                    <button class="btn btn-primary" onclick="hdvSystem.contactTrader('${order.creator || order.seller || order.buyer}', '${order.item.name}')">
-                        💬 Contacter
-                    </button>
-                    ${this.isMyOrder(order) ? `
-                        <button class="btn btn-danger" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
-                            🗑️ Supprimer
-                        </button>
-                    ` : ''}
-                </div>
-            </div>
                 `).join('')}
             </div>
         `;

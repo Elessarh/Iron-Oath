@@ -144,7 +144,7 @@ class ItemSelector {
                             </div>
                             <div class="category-items">
                                 ${category.items.map(item => `
-                                    <div class="item-card" data-item-id="${item.id}" data-item-name="${item.name}" data-item-image="${item.image}">
+                                    <div class="item-card" data-item-id="${item.id}" data-item-name="${item.name}" data-item-image="${item.image}" data-item-category="${categoryId}">
                                         <div class="item-image">
                                             <img src="../assets/items/${item.image}" alt="${item.name}" 
                                                  onerror="this.src='../assets/items/default.png'">
@@ -255,10 +255,16 @@ class ItemSelector {
         // Sélectionner le nouvel item
         card.classList.add('selected');
         
+        // Récupérer la catégorie depuis le dataset
+        const categoryKey = card.dataset.itemCategory;
+        const categoryData = this.itemsData[categoryKey];
+        
         this.selectedItem = {
             id: card.dataset.itemId,
             name: card.dataset.itemName,
-            image: card.dataset.itemImage
+            image: card.dataset.itemImage,
+            category: categoryData ? categoryData.name : 'Catégorie inconnue',
+            categoryKey: categoryKey
         };
 
         // Activer le bouton de confirmation
