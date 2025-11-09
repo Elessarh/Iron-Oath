@@ -92,6 +92,13 @@ function checkAuthState() {
         const loginLink = document.getElementById('login-link');
         const usernameSpan = document.getElementById('username');
         
+        console.log('🔍 Debug checkAuthState:', {
+            userInfo: !!userInfo,
+            loginLink: !!loginLink,
+            currentUser: !!currentUser,
+            userProfile: !!userProfile
+        });
+        
         if (typeof window !== 'undefined') {
             window.currentUser = currentUser;
             window.userProfile = userProfile;
@@ -119,15 +126,22 @@ function checkAuthState() {
             }
         } else {
             // Utilisateur non connecté - Afficher le bouton connexion et masquer les infos user
+            console.log('👤 Utilisateur non connecté - affichage du bouton connexion');
             if (userInfo) {
                 userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
                 userInfo.classList.remove('js-visible');
             }
             if (loginLink) {
+                console.log('🔗 Affichage du bouton connexion');
                 loginLink.style.display = 'block';
+                loginLink.style.opacity = '1';
+                loginLink.style.visibility = 'visible';
                 loginLink.classList.add('show');
                 loginLink.classList.add('js-visible');
+                console.log('🔗 Style appliqué:', loginLink.style.display, loginLink.className);
+            } else {
+                console.error('❌ Bouton login-link non trouvé dans le DOM');
             }
         }
     } catch (error) {
@@ -631,21 +645,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     console.log('✅ Système d\'authentification Supabase initialisé');
     console.log('📊 Utilisateur actuel:', currentUser ? userProfile?.username || currentUser.email : 'Aucun');
-});
-
-// Rendre les fonctions et variables accessibles globalement
-window.getCurrentUser = getCurrentUser;
-window.getUserProfile = getUserProfile;
-window.isLoggedIn = isLoggedIn;
-window.isAdmin = isAdmin;
-window.supabase = supabase;
-window.currentUser = currentUser;
-window.userProfile = userProfile;
-
-// Fonction pour exposer les variables mises à jour
-window.updateGlobalAuthVars = function() {
+    
+    // Rendre les fonctions et variables accessibles globalement
+    window.getCurrentUser = getCurrentUser;
+    window.getUserProfile = getUserProfile;
+    window.isLoggedIn = isLoggedIn;
+    window.isAdmin = isAdmin;
+    window.supabase = supabase;
     window.currentUser = currentUser;
     window.userProfile = userProfile;
-};
+
+    // Fonction pour exposer les variables mises à jour
+    window.updateGlobalAuthVars = function() {
+        window.currentUser = currentUser;
+        window.userProfile = userProfile;
+    };
 
 }); // Fin de DOMContentLoaded
