@@ -6,7 +6,7 @@
     <title>Carte - Iron Oath</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css?v=2">
-    <link rel="stylesheet" href="../css/components/map.css">
+    <link rel="stylesheet" href="../css/components/map.css?v=20251109i">
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -93,18 +93,28 @@
                 <h3 class="toggles-title">🎛️ Affichage des Éléments</h3>
                 <div class="toggles-grid">
                     <div class="toggle-item">
-                        <input type="checkbox" id="toggle-quete" checked>
-                        <label for="toggle-quete" class="toggle-label">
+                        <input type="checkbox" id="toggle-quetes-principales" checked>
+                        <label for="toggle-quetes-principales" class="toggle-label">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Quêtes Secondaires.png" alt="Quêtes">
+                                <img src="../assets/map_assets/Quêtes Principales.png" alt="Quêtes Principales">
                             </div>
-                            <span class="toggle-text">Quêtes</span>
+                            <span class="toggle-text">Quêtes Principales</span>
                         </label>
                     </div>
                     
                     <div class="toggle-item">
-                        <input type="checkbox" id="toggle-donjon" checked>
-                        <label for="toggle-donjon" class="toggle-label">
+                        <input type="checkbox" id="toggle-quetes-secondaires" checked>
+                        <label for="toggle-quetes-secondaires" class="toggle-label">
+                            <div class="toggle-icon">
+                                <img src="../assets/map_assets/Quêtes Secondaires.png" alt="Quêtes Secondaires">
+                            </div>
+                            <span class="toggle-text">Quêtes Secondaires</span>
+                        </label>
+                    </div>
+                    
+                    <div class="toggle-item">
+                        <input type="checkbox" id="toggle-donjons" checked>
+                        <label for="toggle-donjons" class="toggle-label">
                             <div class="toggle-icon">
                                 <img src="../assets/map_assets/Donjon.png" alt="Donjons">
                             </div>
@@ -113,8 +123,8 @@
                     </div>
                     
                     <div class="toggle-item">
-                        <input type="checkbox" id="toggle-ville" checked>
-                        <label for="toggle-ville" class="toggle-label">
+                        <input type="checkbox" id="toggle-villes" checked>
+                        <label for="toggle-villes" class="toggle-label">
                             <div class="toggle-icon">
                                 <img src="../assets/map_assets/Ville.png" alt="Villes">
                             </div>
@@ -123,8 +133,8 @@
                     </div>
                     
                     <div class="toggle-item">
-                        <input type="checkbox" id="toggle-monstre" checked>
-                        <label for="toggle-monstre" class="toggle-label">
+                        <input type="checkbox" id="toggle-monstres" checked>
+                        <label for="toggle-monstres" class="toggle-label">
                             <div class="toggle-icon">
                                 <img src="../assets/map_assets/Monstre.png" alt="Monstres">
                             </div>
@@ -133,8 +143,8 @@
                     </div>
                     
                     <div class="toggle-item">
-                        <input type="checkbox" id="toggle-marchand" checked>
-                        <label for="toggle-marchand" class="toggle-label">
+                        <input type="checkbox" id="toggle-marchands" checked>
+                        <label for="toggle-marchands" class="toggle-label">
                             <div class="toggle-icon">
                                 <img src="../assets/map_assets/Marchand.png" alt="Marchands">
                             </div>
@@ -227,7 +237,7 @@
     <!-- Notre JavaScript -->
     <script src="../js/crypto-keys.js"></script>
     <script src="../js/auth-supabase.js?v=20251109f"></script>
-    <script src="../js/map.js?v=20251109f"></script>
+    <script src="../js/map.js?v=20251109i"></script>
     <script src="../js/navbar-mobile.js"></script>
 </body>
 </html>
