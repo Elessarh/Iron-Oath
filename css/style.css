@@ -140,7 +140,8 @@ body .nav-container {
     justify-content: center;
     align-items: center;
     position: relative;
-    transition: none; /* Éviter les animations au chargement */
+    min-height: 60px; /* Hauteur fixe pour éviter les variations */
+    flex-wrap: nowrap; /* Empêcher le wrap */
 }
 
 /* Navigation globale - style stable */
@@ -149,11 +150,13 @@ body .nav-menu {
     gap: 2rem;
     list-style: none;
     font-family: var(--font-title);
-    transition: none; /* Éviter les animations au chargement */
+    min-width: 0; /* Éviter le débordement */
+    flex-shrink: 0; /* Empêcher la réduction */
 }
 
 body .nav-menu li {
     margin: 0;
+    flex-shrink: 0; /* Empêcher la compression des éléments */
 }
 
 body .nav-menu a {
@@ -164,9 +167,10 @@ body .nav-menu a {
     font-weight: 400;
     position: relative;
     padding: 0.5rem 0;
-    transition: color 0.3s ease; /* Seulement transition de couleur */
-    display: inline-block;
+    transition: color 0.3s ease;
+    display: block; /* Assurer la stabilité */
     white-space: nowrap; /* Éviter les retours à la ligne */
+    min-width: fit-content; /* Largeur minimale stable */
 }
 
 body .nav-menu a::after {
