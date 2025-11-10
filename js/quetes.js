@@ -117,9 +117,14 @@ class QuestSystem {
             section.style.display = 'none';
         });
 
-        // Masquer tous les groupes de quêtes secondaires (titres inclus)
+        // Masquer tous les groupes de quêtes (titres inclus) - secondaires ET principaux
         const allSecondaryGroups = document.querySelectorAll('.secondary-quest-group');
         allSecondaryGroups.forEach(group => {
+            group.style.display = 'none';
+        });
+
+        const allStepGroups = document.querySelectorAll('.quest-step-group');
+        allStepGroups.forEach(group => {
             group.style.display = 'none';
         });
 
@@ -138,8 +143,8 @@ class QuestSystem {
             quest.element.style.display = 'block';
             sectionsToShow.add(quest.section);
             
-            // Trouver le groupe parent (secondary-quest-group) si il existe
-            const parentGroup = quest.element.closest('.secondary-quest-group');
+            // Trouver le groupe parent (secondary-quest-group OU quest-step-group)
+            const parentGroup = quest.element.closest('.secondary-quest-group, .quest-step-group');
             if (parentGroup) {
                 groupsToShow.add(parentGroup);
             }
