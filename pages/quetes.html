@@ -1083,9 +1083,14 @@
                     const x = this.getAttribute('data-x');
                     const y = this.getAttribute('data-y');
                     
+                    console.log('🗺️ Coordinate clicked:', { x, y });
+                    
                     if (x && y) {
+                        console.log('🔄 Redirecting to map with coordinates');
                         // Naviguer vers la carte avec les coordonnées dans le même onglet
                         window.location.href = `map.html?x=${x}&y=${y}`;
+                    } else {
+                        console.warn('❌ Missing coordinates data');
                     }
                 });
                 
