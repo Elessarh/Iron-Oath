@@ -198,6 +198,26 @@
     line-height: 1.2;
 }
 
+/* Mode icône seulement - masquer le texte */
+.toggles-grid.icons-only .toggle-text {
+    display: none;
+}
+
+.toggles-grid.icons-only .toggle-label {
+    min-height: 60px;
+    padding: 0.8rem;
+}
+
+.toggles-grid.icons-only .toggle-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.toggles-grid.icons-only .toggle-icon img {
+    width: 32px;
+    height: 32px;
+}
+
 /* Bouton admin */
 .admin-toggle-btn {
     display: flex;
