@@ -649,6 +649,46 @@
     }
 }
 
+/* ==========================================
+   COORDONNÉES CLIQUABLES
+   ========================================== */
+
+.coordinates {
+    color: var(--color-accent) !important;
+    cursor: pointer !important;
+    text-decoration: underline !important;
+    font-weight: bold !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    display: inline-block !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    background: rgba(0, 168, 255, 0.1) !important;
+    border: 1px solid rgba(0, 168, 255, 0.3) !important;
+}
+
+.coordinates:hover {
+    color: #00ffff !important;
+    background: rgba(0, 168, 255, 0.2) !important;
+    border-color: rgba(0, 255, 255, 0.5) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 168, 255, 0.3) !important;
+}
+
+.coordinates:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(0, 168, 255, 0.4) !important;
+}
+
+.coordinates::before {
+    content: '🗺️ ';
+    opacity: 0.7;
+}
+
+.coordinates:hover::before {
+    opacity: 1;
+}
+
 @media (max-width: 480px) {
     .quest-item {
         padding: 1.5rem;

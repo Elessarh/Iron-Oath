@@ -2532,3 +2532,32 @@
     padding-top: 8px;
     margin-top: 8px;
 }
+
+/* ==========================================
+   MARQUEUR DE SURBRILLANCE POUR QUÊTES
+   ========================================== */
+
+.quest-highlight-marker {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.quest-highlight-marker div {
+    animation: pulse 2s infinite !important;
+    border-radius: 50% !important;
+    position: relative !important;
+}
+
+.quest-highlight-marker div::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid #ff0080;
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: pulse 2s infinite 0.5s;
+}
