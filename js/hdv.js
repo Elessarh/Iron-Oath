@@ -700,7 +700,7 @@ class HDVSystem {
                                     <span class="status-active">🟢 Actif</span>
                                 </div>
                                 <div class="order-actions-my">
-                                    <button class="btn btn-success btn-small" onclick="hdvSystem.finalizeTransactionInstant('${order.id}', '${order.item.name}', '${order.type}')" title="Transaction terminée - Supprimer immédiatement">
+                                    <button class="btn btn-success btn-small" onclick="hdvSystem.openFinalizeModal('${order.id}', '${order.item.name}', '${order.type}')" title="Transaction terminée">
                                         ✅ Vendu/Acheté
                                     </button>
                                 </div>
@@ -913,13 +913,184 @@ class HDVSystem {
         }
     }
 
+    // Ouvrir la modal de finalisation de transaction
+    openFinalizeModal(orderId, itemName, orderType) {
+        const actionText = orderType === 'sell' ? 'vendu' : 'acheté';
+        const otherParty = orderType === 'sell' ? 'acheteur' : 'vendeur';
+        
+        const modal = document.createElement('div');
+        modal.className = 'finalize-modal-overlay';
+        modal.innerHTML = `
+            <div class="finalize-modal">
+                <div class="finalize-header">
+                    <h3>✅ Finaliser la transaction</h3>
+                    <p>Vous avez <strong>${actionText}</strong> : <strong>${itemName}</strong></p>
+                    <button class="close-modal" onclick="this.closest('.finalize-modal-overlay').remove()">❌</button>
+                </div>
+                
+                <div class="finalize-content">
+                    <div class="form-group">
+                        <label for="other-party-name">À qui avez-vous ${actionText} cet item ?</label>
+                        <input 
+                            type="text" 
+                            id="other-party-name" 
+                            placeholder="Nom du ${otherParty}"
+                            maxlength="50"
+                            required
+                        >
+                        <p class="hint">Cette information sera sauvegardée dans l'historique pour les deux parties.</p>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" onclick="this.closest('.finalize-modal-overlay').remove()">
+                            ↩️ Annuler
+                        </button>
+                        <button class="btn btn-success" onclick="hdvSystem.confirmFinalization('${orderId}', '${itemName}', '${orderType}')">
+                            ✅ Confirmer la transaction
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Focus sur l'input
+        setTimeout(() => {
+            const input = document.getElementById('other-party-name');
+            if (input) input.focus();
+        }, 100);
+        
+        // Fermer avec Escape
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+
+        // Permettre de valider avec Enter
+        const enterHandler = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.confirmFinalization(orderId, itemName, orderType);
+            }
+        };
+        const input = document.getElementById('other-party-name');
+        if (input) {
+            input.addEventListener('keypress', enterHandler);
+        }
+    }
+
+    // Confirmer la finalisation avec le nom de l'autre partie
+    async confirmFinalization(orderId, itemName, orderType) {
+        const otherPartyInput = document.getElementById('other-party-name');
+        if (!otherPartyInput) {
+            this.showNotification('❌ Erreur: Champ non trouvé', 'error');
+            return;
+        }
+
+        const otherPartyName = otherPartyInput.value.trim();
+        
+        if (!otherPartyName) {
+            this.showNotification('❌ Veuillez entrer le nom de l\'autre partie', 'error');
+            otherPartyInput.focus();
+            return;
+        }
+
+        // Fermer la modal
+        document.querySelector('.finalize-modal-overlay')?.remove();
+
+        // Procéder à la finalisation
+        await this.finalizeTransactionInstant(orderId, itemName, orderType, otherPartyName);
+    }
+
     // Finaliser une transaction instantanément (depuis Mes Ordres)
-    async finalizeTransactionInstant(orderId, itemName, orderType) {
+    async finalizeTransactionInstant(orderId, itemName, orderType, otherPartyName = null) {
         const actionText = orderType === 'sell' ? 'vente' : 'achat';
         
         try {
-            console.log('⚡ Finalisation instantanée:', { orderId, itemName, orderType });
+            console.log('⚡ Finalisation instantanée:', { orderId, itemName, orderType, otherPartyName });
             
+            // Récupérer l'ordre complet pour avoir toutes les informations
+            const order = this.orders.find(o => String(o.id) === String(orderId)) || 
+                         this.myOrders.find(o => String(o.id) === String(orderId));
+            
+            if (!order) {
+                throw new Error('Ordre non trouvé');
+            }
+
+            // Obtenir l'utilisateur actuel
+            const currentUser = this.getCurrentUserInfo();
+            if (!currentUser) {
+                throw new Error('Utilisateur non connecté');
+            }
+
+            // Déterminer qui est le vendeur et qui est l'acheteur
+            let sellerName, sellerId, buyerName, buyerId;
+            
+            if (orderType === 'sell') {
+                // L'utilisateur actuel est le vendeur
+                sellerName = currentUser.username;
+                sellerId = currentUser.id;
+                // L'acheteur est la personne spécifiée
+                buyerName = otherPartyName || 'Acheteur inconnu';
+                buyerId = 'unknown'; // On n'a pas l'ID de l'acheteur
+            } else {
+                // L'utilisateur actuel est l'acheteur
+                buyerName = currentUser.username;
+                buyerId = currentUser.id;
+                // Le vendeur est la personne spécifiée
+                sellerName = otherPartyName || 'Vendeur inconnu';
+                sellerId = 'unknown'; // On n'a pas l'ID du vendeur
+            }
+
+            // Préparer les données pour l'historique
+            const transactionData = {
+                orderId: order.id,
+                sellerName: sellerName,
+                sellerId: sellerId,
+                buyerName: buyerName,
+                buyerId: buyerId,
+                itemName: order.item.name,
+                itemImage: order.item.image,
+                itemCategory: this.getItemCategory(order.item),
+                quantity: order.quantity,
+                price: order.price,
+                totalPrice: order.total || (order.price * order.quantity),
+                transactionType: orderType
+            };
+
+            console.log('📊 Données transaction pour historique:', transactionData);
+
+            // Sauvegarder dans l'historique (Supabase + localStorage)
+            let historySaved = false;
+            
+            // Essayer de sauvegarder dans Supabase d'abord
+            if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
+                try {
+                    console.log('💾 Sauvegarde transaction dans l\'historique Supabase...');
+                    await window.hdvSupabaseManager.saveTransactionToHistory(transactionData);
+                    console.log('✅ Transaction sauvegardée dans l\'historique Supabase');
+                    historySaved = true;
+                } catch (supabaseError) {
+                    console.warn('⚠️ Échec sauvegarde historique Supabase:', supabaseError);
+                }
+            }
+
+            // Sauvegarder en localStorage comme fallback
+            if (!historySaved) {
+                console.log('💾 Sauvegarde transaction dans localStorage...');
+                const history = JSON.parse(localStorage.getItem('hdv_purchase_history') || '[]');
+                history.push({
+                    ...transactionData,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('hdv_purchase_history', JSON.stringify(history));
+                console.log('✅ Transaction sauvegardée dans localStorage');
+            }
+
             // Supprimer immédiatement l'ordre
             let orderDeleted = false;
             
@@ -949,11 +1120,11 @@ class HDVSystem {
             this.loadMyOrders();      // Recharger Mes Ordres
             this.loadMarketplace();   // Recharger Marketplace
 
-            this.showNotification(`🎉 ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisée et supprimée !`, 'success');
+            this.showNotification(`🎉 ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisée et sauvegardée dans l'historique !`, 'success');
 
         } catch (error) {
             console.error('❌ Erreur lors de la finalisation instantanée:', error);
-            this.showNotification('❌ Erreur lors de la finalisation', 'error');
+            this.showNotification('❌ Erreur lors de la finalisation: ' + error.message, 'error');
         }
     }
 

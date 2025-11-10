@@ -256,6 +256,82 @@ class HDVSupabaseManager {
             return false;
         }
     }
+
+    // Sauvegarder une transaction dans l'historique d'achat
+    async saveTransactionToHistory(transaction) {
+        try {
+            // S'assurer que Supabase est initialisé
+            const ready = await this.ensureInitialized();
+            if (!ready) {
+                throw new Error('Supabase non disponible');
+            }
+
+            console.log('💾 Sauvegarde transaction dans l\'historique:', transaction);
+
+            // Préparer les données de la transaction pour l'historique
+            const historyData = {
+                order_id: transaction.orderId,
+                seller_id: transaction.sellerId,
+                seller_name: transaction.sellerName,
+                buyer_id: transaction.buyerId,
+                buyer_name: transaction.buyerName,
+                item_name: transaction.itemName,
+                item_image: transaction.itemImage,
+                item_category: transaction.itemCategory,
+                quantity: transaction.quantity,
+                price: transaction.price,
+                total_price: transaction.totalPrice,
+                transaction_type: transaction.transactionType
+            };
+
+            console.log('📤 Données historique envoyées à Supabase:', historyData);
+
+            const { data, error } = await this.supabase
+                .from('purchase_history')
+                .insert([historyData])
+                .select();
+
+            if (error) {
+                console.error('❌ Erreur Supabase historique:', error);
+                throw error;
+            }
+
+            console.log('✅ Transaction sauvegardée dans l\'historique:', data[0]);
+            return data[0];
+        } catch (error) {
+            console.error('❌ Erreur sauvegarde historique:', error);
+            throw error;
+        }
+    }
+
+    // Récupérer l'historique d'achat d'un utilisateur
+    async getUserPurchaseHistory(userId) {
+        try {
+            const ready = await this.ensureInitialized();
+            if (!ready) {
+                throw new Error('Supabase non disponible');
+            }
+
+            console.log('📥 Chargement historique d\'achat pour utilisateur:', userId);
+
+            const { data, error } = await this.supabase
+                .from('purchase_history')
+                .select('*')
+                .or(`seller_id.eq.${userId},buyer_id.eq.${userId}`)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('❌ Erreur chargement historique:', error);
+                throw error;
+            }
+
+            console.log(`✅ ${data.length} transactions chargées depuis l'historique`);
+            return data;
+        } catch (error) {
+            console.error('❌ Erreur chargement historique:', error);
+            return [];
+        }
+    }
 }
 
 // Instance globale
