@@ -143,7 +143,7 @@ const creaturesData = [
         attack: 28,
         defense: 22,
         palier: 2,
-        image: "../assets/mobs/Gardien Déchu.png",
+        image: "../assets/mobs/Gardien-Déchu.png",
         description: "Un gardien corrompu par une magie sombre, perdant lentement son humanité.",
         drops: ["Armure corrompue", "Essence sombre", "40-70 pièces d'or"],
         abilities: ["Corruption", "Résistance magique", "Drain de vie"],
