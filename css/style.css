@@ -120,54 +120,8 @@ select option {
     color: var(--color-white);
 }
 
-/* Correction Header HDV */
-body .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    background: linear-gradient(to bottom, rgba(10, 10, 26, 0.9), rgba(10, 10, 26, 0.7));
-    backdrop-filter: blur(10px);
-    padding: 1rem 0;
-    /* Suppression des transitions pour éviter les déplacements */
-    /* STABILISATION ANTI-DÉCALAGE */
-    will-change: auto;
-    transform: translateZ(0); /* Force GPU rendering pour stabilité */
-}
-
-/* RÈGLE ANTI-DÉCALAGE GLOBALE POUR LA NAVIGATION */
-body .header *,
-body .nav-container *,
-body .nav-menu *,
-body .nav-connexion * {
-    /* Empêcher tout changement de layout imprévu */
-    will-change: auto !important;
-    transform: none !important;
-    transition: none !important;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-
-/* Exceptions pour les effets hover (couleur seulement, sans transition) */
-body .nav-menu a:hover {
-    color: var(--color-accent) !important;
-}
-
-body .nav-connexion .connexion-link:hover,
-body .nav-connexion .nav-link:hover {
-    background: var(--color-accent) !important;
-    color: var(--color-white) !important;
-}
-
-body .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem; /* Marges responsives au lieu de fixes */
-    display: flex;
-    justify-content: space-between; /* Disposition équilibrée */
-    align-items: center;
-    position: relative;
+/* Navigation stable - Version unifiée */
+.nav-container {
     min-height: 60px;
     flex-wrap: nowrap;
     overflow: visible; /* Permettre aux éléments absolus d'être visibles */
@@ -259,8 +213,18 @@ body .nav-logo-safe {
 body .nav-connexion {
     flex-shrink: 0; /* Ne pas rétrécir */
     max-width: 180px;
+    min-width: 180px; /* Largeur fixe pour éviter le déplacement */
+    width: 180px; /* Largeur exacte */
     white-space: nowrap;
     order: 3; /* Dernier élément */
+    /* Anti-déplacement stabilisation */
+    position: relative;
+    will-change: auto;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    contain: layout style;
+    /* Empêche tout repositionnement */
+    box-sizing: border-box;
 }
 
 body .nav-connexion .connexion-link,
@@ -273,6 +237,15 @@ body .nav-connexion .nav-link {
     color: var(--color-white) !important;
     text-decoration: none !important;
     font-family: var(--font-title) !important;
+    /* Anti-déplacement - stabilisation absolue */
+    position: relative;
+    will-change: auto;
+    transform: none;
+    contain: layout style;
+    box-sizing: border-box;
+    /* Empêche tout changement de layout */
+    min-height: 40px;
+    min-width: 100px;
 }
 
 /* Prévention du flash du bouton connexion - géré par JavaScript */
@@ -305,6 +278,15 @@ body .nav-connexion .user-info {
     visibility: hidden !important;
     /* SUPPRIMÉ: transition: opacity 0.3s ease, visibility 0.3s ease !important; */
     display: none !important; /* Masquage initial absolu */
+    /* Anti-déplacement - stabilisation absolue */
+    position: relative;
+    will-change: auto;
+    transform: none;
+    contain: layout style;
+    box-sizing: border-box;
+    /* Garde l'espace même masqué */
+    min-height: 40px;
+    align-items: center;
 }
 
 body .nav-connexion .user-info.show,
@@ -318,6 +300,28 @@ body .nav-connexion .connexion-link:hover,
 body .nav-connexion .nav-link:hover {
     background: var(--color-accent) !important;
     color: var(--color-white) !important;
+    /* Anti-déplacement sur hover */
+    transform: none !important;
+    will-change: auto !important;
+    /* Empêche tout changement de dimensions */
+    padding: 0.5rem 1rem !important;
+    border: 1px solid var(--color-accent) !important;
+    box-sizing: border-box !important;
+}
+
+/* Anti-déplacement général pour tous les éléments cliquables */
+body .nav-connexion * {
+    will-change: auto;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Stabilisation des boutons de déconnexion */
+body .nav-connexion .logout-btn {
+    will-change: auto;
+    transform: none;
+    contain: layout style;
+    box-sizing: border-box;
 }
 
 /* Menu hamburger amélioré */
@@ -371,7 +375,13 @@ body .nav-connexion .nav-link:hover {
     padding: 1rem 0 !important;
     margin: 0 !important;
     border-bottom: 1px solid rgba(0, 168, 255, 0.2) !important;
-    transition: transform 0.3s ease-in-out !important;
+    /* Suppression de la transition pour éviter les déplacements */
+    /* transition: transform 0.3s ease-in-out !important; */
+    
+    /* Stabilisation anti-déplacement */
+    will-change: auto !important;
+    transform: translateZ(0) !important; /* Force GPU rendering pour stabilité */
+    backface-visibility: hidden !important;
 }
 
 /* Auto-hide navbar on scroll down (mobile only) */
@@ -385,8 +395,13 @@ body .nav-connexion .nav-link:hover {
     padding: 0 2rem !important;
     display: flex !important;
     justify-content: space-between !important;
-    align-items: center;
-    position: relative;
+    align-items: center !important;
+    position: relative !important;
+    
+    /* Stabilisation supplémentaire */
+    box-sizing: border-box !important;
+    min-height: 60px !important;
+    will-change: auto !important;
 }
 
 .nav-logo {
@@ -401,6 +416,56 @@ body .nav-connexion .nav-link:hover {
     max-width: 200px !important;
     z-index: 2 !important;
 }
+
+/* === STABILISATION ANTI-DÉPLACEMENT === */
+/* Empêcher tous les déplacements lors des clics/hover */
+.nav-menu,
+.nav-connexion,
+.nav-link,
+.connexion-link,
+.nav-menu a,
+.nav-connexion a,
+.nav-connexion button {
+    /* Empêcher les déplacements lors des interactions */
+    will-change: auto !important;
+    transform: none !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    
+    /* Maintenir la position stable */
+    position: relative !important;
+    
+    /* Désactiver les transitions perturbantes */
+    transition: color 0.2s ease !important;
+}
+
+/* Hover effects SANS déplacement */
+.nav-link:hover,
+.connexion-link:hover,
+.nav-menu a:hover {
+    /* Seulement changer la couleur/fond, jamais la position */
+    color: var(--color-accent) !important;
+    background-color: rgba(0, 168, 255, 0.1) !important;
+    
+    /* Forcer aucun déplacement */
+    transform: none !important;
+    will-change: auto !important;
+}
+
+/* États focus/active SANS déplacement */
+.nav-link:focus,
+.connexion-link:focus,
+.nav-link:active,
+.connexion-link:active,
+.nav-menu a:focus,
+.nav-menu a:active {
+    transform: none !important;
+    will-change: auto !important;
+    outline: 1px solid var(--color-accent) !important;
+    outline-offset: 2px !important;
+}
+
+/* === FIN STABILISATION === */
 
 .nav-menu {
     display: flex;
