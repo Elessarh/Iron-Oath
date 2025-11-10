@@ -263,10 +263,15 @@ class HDVSupabaseManager {
             // S'assurer que Supabase est initialisé
             const ready = await this.ensureInitialized();
             if (!ready) {
+                console.error('❌ Supabase non disponible pour sauvegarder l\'historique');
                 throw new Error('Supabase non disponible');
             }
 
             console.log('💾 Sauvegarde transaction dans l\'historique:', transaction);
+
+            // Obtenir l'utilisateur actuel pour vérifier
+            const currentUser = await this.getCurrentUser();
+            console.log('👤 Utilisateur actuel:', currentUser);
 
             // Préparer les données de la transaction pour l'historique
             const historyData = {
@@ -293,6 +298,12 @@ class HDVSupabaseManager {
 
             if (error) {
                 console.error('❌ Erreur Supabase historique:', error);
+                console.error('❌ Détails erreur:', {
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint,
+                    code: error.code
+                });
                 throw error;
             }
 

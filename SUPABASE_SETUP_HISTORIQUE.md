@@ -1,5 +1,14 @@
 # Configuration de la table purchase_history dans Supabase
 
+## Note importante
+
+La table s'appelle `purchase_history` mais elle stocke **à la fois les achats ET les ventes**. Le nom "purchase" fait référence aux "transactions commerciales" en général. Chaque transaction enregistre :
+- Le **vendeur** (celui qui vend l'item)
+- L'**acheteur** (celui qui achète l'item)
+- Les détails complets de la transaction
+
+Cette table permet donc de garder un historique complet de toutes les transactions commerciales de l'HDV.
+
 ## Instructions pour créer la table dans Supabase
 
 Pour que le système d'historique d'achat fonctionne, vous devez créer une nouvelle table dans votre base de données Supabase.
@@ -146,6 +155,7 @@ const history = await window.hdvSupabaseManager.getUserPurchaseHistory(userId);
 ✅ **Suppression d'ordres** : Les joueurs peuvent maintenant supprimer leurs ordres depuis :
 - La place de marché (bouton 🗑️ Supprimer visible uniquement sur leurs propres ordres)
 - L'onglet "Mes Ordres" (bouton 🗑️ en haut à droite de chaque ordre)
+- L'onglet "Mes Ordres" (bouton "🗑️ Supprimer l'ordre" sous chaque ordre pour faciliter la suppression rapide)
 
 ✅ **Bouton Vendu/Acheté** : Quand un joueur clique sur ce bouton :
 1. Une modal s'ouvre pour demander à qui l'item a été vendu/acheté
@@ -153,17 +163,68 @@ const history = await window.hdvSupabaseManager.getUserPurchaseHistory(userId);
 3. L'ordre est automatiquement supprimé de l'HDV
 4. L'historique est accessible pour les deux parties (vendeur ET acheteur)
 
+✅ **Onglet Historique** : Un nouvel onglet "📜 Historique" affiche :
+- Toutes vos transactions finalisées (achats et ventes)
+- Les détails de chaque transaction (item, quantité, prix, autre partie)
+- Un code couleur : 🔴 pour les ventes, 🔵 pour les achats
+- L'historique est synchronisé entre Supabase et localStorage (fallback)
+
 ✅ **Fallback localStorage** : Si Supabase n'est pas disponible, les données sont sauvegardées localement
 
-## Prochaines étapes (optionnel)
+## Comment accéder à votre historique
 
-Pour afficher l'historique d'achat aux utilisateurs, vous pouvez :
+1. Connectez-vous à votre compte
+2. Allez sur la page HDV
+3. Cliquez sur l'onglet **"📜 Historique"**
+4. Vous verrez toutes vos transactions finalisées avec :
+   - Le type de transaction (vente en rouge, achat en bleu)
+   - L'item échangé avec son image
+   - Le nom de l'autre partie (acheteur ou vendeur)
+   - La quantité et le prix total
+   - La date et l'heure de la transaction
 
-1. Créer un nouvel onglet "Historique" dans l'HDV
-2. Utiliser la fonction `getUserPurchaseHistory()` pour charger les données
-3. Afficher les transactions passées avec filtres par date, type, etc.
+## Déboguer les problèmes de sauvegarde
 
-Exemple de code pour afficher l'historique :
+Si vous cliquez sur "Vendu/Acheté" et que la transaction ne s'affiche pas dans la base de données :
+
+1. **Vérifiez que la table existe** : Allez dans Supabase > Table Editor > purchase_history
+2. **Vérifiez la console du navigateur** (F12) pour voir les messages d'erreur détaillés
+3. **Messages à chercher** :
+   - ✅ "Transaction sauvegardée dans l'historique" = succès
+   - ❌ "Erreur Supabase historique" = problème avec la table ou les permissions
+   - ⚠️ "Échec sauvegarde historique Supabase" = fallback sur localStorage
+
+4. **Erreurs courantes** :
+   - La table `purchase_history` n'existe pas → Exécutez le script SQL ci-dessous
+   - Problème de permissions RLS → Vérifiez les politiques de sécurité
+   - Type de données incorrect → Vérifiez que tous les champs de la table sont corrects
+
+5. **Vérification rapide** :
+   - Dans la console navigateur, tapez : `window.hdvSupabaseManager.isSupabaseAvailable()`
+   - Si retourne `true` : Supabase est connecté
+   - Si retourne `false` : Problème de connexion Supabase
+
+## Prochaines étapes
+
+La fonctionnalité d'historique est maintenant **entièrement implémentée** ! 
+
+Pour l'utiliser :
+1. Créez la table `purchase_history` dans Supabase (voir script SQL ci-dessus)
+2. Créez un ordre d'achat ou de vente dans l'HDV
+3. Quand vous finalisez la transaction avec "Vendu/Acheté", entrez le nom de l'autre partie
+4. Consultez l'onglet "📜 Historique" pour voir toutes vos transactions
+
+### Fonctionnalités disponibles dans l'historique :
+
+✅ Affichage de toutes les transactions finalisées
+✅ Filtrage automatique par utilisateur
+✅ Code couleur (vente/achat)
+✅ Détails complets (item, quantité, prix, autre partie)
+✅ Synchronisation Supabase + localStorage
+✅ Bouton d'actualisation
+✅ Interface responsive
+
+### Exemple de code pour afficher l'historique (déjà implémenté) :
 
 ```javascript
 async loadPurchaseHistory() {

@@ -76,6 +76,7 @@
                 <div class="hdv-tabs">
                     <button class="hdv-tab active" data-tab="marketplace">💰 Place du Marché</button>
                     <button class="hdv-tab" data-tab="my-orders">📋 Mes Ordres</button>
+                    <button class="hdv-tab" data-tab="history">📜 Historique</button>
                     <button class="hdv-tab" data-tab="create-order">💎 Créer un Ordre</button>
                     <button class="hdv-tab mailbox-tab" onclick="if(window.mailboxSystem && window.mailboxSystem.openMailbox) { window.mailboxSystem.openMailbox(); } else { alert('Système de messagerie en cours de chargement...'); }">
                         📬 Boîte Mail
@@ -156,6 +157,21 @@
                             <div class="empty-state">
                                 <p>🏷️ Vous n'avez aucun ordre actif</p>
                                 <p>Créez votre premier ordre pour commencer à échanger !</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Historique des Transactions -->
+                    <div id="history" class="hdv-panel">
+                        <div class="history-header">
+                            <h3>📜 Historique des Transactions</h3>
+                            <button class="refresh-btn" onclick="hdvSystem.loadPurchaseHistory()">🔄 Actualiser</button>
+                        </div>
+                        
+                        <div id="history-list" class="history-list">
+                            <div class="empty-state">
+                                <p>📜 Aucune transaction dans l'historique</p>
+                                <p>Vos achats et ventes finalisés apparaîtront ici</p>
                             </div>
                         </div>
                     </div>

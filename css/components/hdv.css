@@ -479,6 +479,143 @@
     font-size: 1.5rem;
 }
 
+/* Historique des transactions */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.history-header h3 {
+    font-family: var(--font-title);
+    color: var(--color-accent);
+    font-size: 1.5rem;
+}
+
+.history-list {
+    width: 100%;
+}
+
+.history-container {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+.history-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(0, 168, 255, 0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.history-card.vente {
+    border-color: rgba(255, 107, 107, 0.4);
+}
+
+.history-card.achat {
+    border-color: rgba(52, 152, 219, 0.4);
+}
+
+.history-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 168, 255, 0.2);
+}
+
+.history-header-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0, 168, 255, 0.2);
+}
+
+.history-type {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.history-type.vente {
+    color: #ff6b6b;
+}
+
+.history-type.achat {
+    color: #3498db;
+}
+
+.history-date {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: normal;
+    margin-left: 0.5rem;
+}
+
+.history-time {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.history-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.25rem;
+}
+
+.history-item-info h5 {
+    margin: 0 0 0.25rem 0;
+    color: white;
+    font-size: 1rem;
+}
+
+.history-item-info .item-category {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.history-details {
+    display: grid;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0, 168, 255, 0.1);
+}
+
+.history-party,
+.history-quantity,
+.history-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.history-party strong,
+.history-quantity strong,
+.history-price strong {
+    color: var(--color-accent);
+}
+
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;

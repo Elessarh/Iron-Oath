@@ -604,6 +604,9 @@ class HDVSystem {
             case 'my-orders':
                 await this.loadMyOrders();
                 break;
+            case 'history':
+                await this.loadPurchaseHistory();
+                break;
             case 'create-order':
                 this.resetCreateOrderForm();
                 break;
@@ -703,6 +706,9 @@ class HDVSystem {
                                     <button class="btn btn-success btn-small" onclick="hdvSystem.openFinalizeModal('${order.id}', '${order.item.name}', '${order.type}')" title="Transaction terminée">
                                         ✅ Vendu/Acheté
                                     </button>
+                                    <button class="btn btn-danger btn-small" onclick="hdvSystem.deleteOrder('${order.id}')" title="Supprimer cet ordre sans historique" style="background: #e74c3c; margin-top: 0.5rem;">
+                                        🗑️ Supprimer l'ordre
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -767,6 +773,127 @@ class HDVSystem {
             isOwner: isOwner
         });
         return isOwner;
+    }
+
+    // Charger l'historique des transactions
+    async loadPurchaseHistory() {
+        const historyList = document.getElementById('history-list');
+        if (!historyList) return;
+
+        const userInfo = this.getCurrentUserInfo();
+        if (!userInfo) {
+            historyList.innerHTML = `
+                <div class="empty-state">
+                    <h3>🔒 Connexion requise</h3>
+                    <p>Vous devez être connecté pour voir votre historique</p>
+                </div>
+            `;
+            return;
+        }
+
+        try {
+            let history = [];
+
+            // Essayer de charger depuis Supabase d'abord
+            if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
+                try {
+                    console.log('📥 Chargement historique depuis Supabase...');
+                    history = await window.hdvSupabaseManager.getUserPurchaseHistory(userInfo.id);
+                    console.log('✅ Historique chargé:', history);
+                } catch (supabaseError) {
+                    console.warn('⚠️ Échec chargement Supabase, fallback localStorage:', supabaseError);
+                }
+            }
+
+            // Fallback vers localStorage
+            if (history.length === 0) {
+                const localHistory = localStorage.getItem('hdv_purchase_history');
+                if (localHistory) {
+                    history = JSON.parse(localHistory);
+                    // Filtrer pour l'utilisateur actuel
+                    history = history.filter(t => 
+                        t.sellerId === userInfo.id || t.buyerId === userInfo.id ||
+                        t.seller_id === userInfo.id || t.buyer_id === userInfo.id
+                    );
+                }
+            }
+
+            if (history.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📜 Historique vide</h3>
+                        <p>Aucune transaction finalisée pour le moment</p>
+                        <p>Les transactions que vous finalisez via "Vendu/Acheté" apparaîtront ici</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Afficher l'historique
+            historyList.innerHTML = `
+                <div class="history-header">
+                    <h3>📜 Historique des Transactions (${history.length})</h3>
+                    <button class="refresh-btn" onclick="hdvSystem.loadPurchaseHistory()">
+                        🔄 Actualiser
+                    </button>
+                </div>
+                <div class="history-container">
+                    ${history.map(transaction => {
+                        const isSeller = transaction.seller_id === userInfo.id || transaction.sellerId === userInfo.id;
+                        const otherParty = isSeller ? 
+                            (transaction.buyer_name || transaction.buyerName) : 
+                            (transaction.seller_name || transaction.sellerName);
+                        const transactionType = isSeller ? 'vente' : 'achat';
+                        const transactionIcon = isSeller ? '🔴' : '🔵';
+                        
+                        return `
+                            <div class="history-card ${transactionType}">
+                                <div class="history-header-card">
+                                    <span class="history-type ${transactionType}">
+                                        ${transactionIcon} ${transactionType.toUpperCase()}
+                                        <span class="history-date">${new Date(transaction.created_at || transaction.timestamp).toLocaleDateString('fr-FR')}</span>
+                                    </span>
+                                    <span class="history-time">${new Date(transaction.created_at || transaction.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                                
+                                <div class="history-content">
+                                    <div class="history-item">
+                                        <img src="../assets/items/${transaction.item_image || transaction.itemImage}" 
+                                             alt="${transaction.item_name || transaction.itemName}" 
+                                             onerror="this.src='../assets/items/default.png'">
+                                        <div class="history-item-info">
+                                            <h5>${transaction.item_name || transaction.itemName}</h5>
+                                            <span class="item-category">${transaction.item_category || transaction.itemCategory || 'Catégorie inconnue'}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="history-details">
+                                        <div class="history-party">
+                                            <span>${isSeller ? 'Acheteur' : 'Vendeur'}: <strong>${otherParty}</strong></span>
+                                        </div>
+                                        <div class="history-quantity">
+                                            <span>Quantité: <strong>${transaction.quantity}</strong></span>
+                                        </div>
+                                        <div class="history-price">
+                                            <span>Prix total: <strong>${transaction.total_price || transaction.totalPrice} cols</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        } catch (error) {
+            console.error('❌ Erreur chargement historique:', error);
+            historyList.innerHTML = `
+                <div class="empty-state">
+                    <h3>❌ Erreur</h3>
+                    <p>Impossible de charger l'historique</p>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 
     // Supprimer un ordre depuis le marketplace
