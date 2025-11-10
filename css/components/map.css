@@ -198,22 +198,23 @@
     line-height: 1.2;
 }
 
-/* Mode icône seulement - masquer le texte */
-.toggles-grid.icons-only .toggle-text {
-    display: none;
+/* Mode icône seulement - masquer le texte complètement */
+.toggles-grid .toggle-text {
+    display: none !important;
 }
 
-.toggles-grid.icons-only .toggle-label {
+.toggles-grid .toggle-label {
     min-height: 60px;
     padding: 0.8rem;
+    justify-content: center;
 }
 
-.toggles-grid.icons-only .toggle-icon {
+.toggles-grid .toggle-icon {
     width: 40px;
     height: 40px;
 }
 
-.toggles-grid.icons-only .toggle-icon img {
+.toggles-grid .toggle-icon img {
     width: 32px;
     height: 32px;
 }
