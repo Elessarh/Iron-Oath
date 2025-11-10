@@ -117,6 +117,12 @@ class QuestSystem {
             section.style.display = 'none';
         });
 
+        // Masquer tous les groupes de quêtes secondaires (titres inclus)
+        const allSecondaryGroups = document.querySelectorAll('.secondary-quest-group');
+        allSecondaryGroups.forEach(group => {
+            group.style.display = 'none';
+        });
+
         // Calculer les indices de début et fin
         const startIndex = (this.currentPage - 1) * this.questsPerPage;
         const endIndex = startIndex + this.questsPerPage;
@@ -124,17 +130,29 @@ class QuestSystem {
         // Afficher uniquement les quêtes de la page actuelle
         const questsToShow = this.filteredQuests.slice(startIndex, endIndex);
         
-        // Garder une trace des sections à afficher
+        // Garder une trace des sections et groupes à afficher
         const sectionsToShow = new Set();
+        const groupsToShow = new Set();
         
         questsToShow.forEach(quest => {
             quest.element.style.display = 'block';
             sectionsToShow.add(quest.section);
+            
+            // Trouver le groupe parent (secondary-quest-group) si il existe
+            const parentGroup = quest.element.closest('.secondary-quest-group');
+            if (parentGroup) {
+                groupsToShow.add(parentGroup);
+            }
         });
         
         // Afficher les sections nécessaires
         sectionsToShow.forEach(section => {
             section.style.display = 'block';
+        });
+
+        // Afficher les groupes nécessaires (avec leurs titres)
+        groupsToShow.forEach(group => {
+            group.style.display = 'block';
         });
 
         // Masquer les quêtes non affichées
