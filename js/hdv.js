@@ -1,6 +1,14 @@
 // HDV.js - Système complet de marketplace pour Iron Oath
 class HDVSystem {
     constructor() {
+        // Cache pour améliorer les performances
+        this.cache = {
+            orders: null,
+            myOrders: null,
+            lastUpdate: null,
+            cacheTimeout: 30000 // 30 secondes
+        };
+
         // Attendre un peu que le système d'auth soit chargé
         setTimeout(async () => {
             // Vérification de l'authentification
@@ -746,9 +754,8 @@ class HDVSystem {
             localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
             localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
 
-            // Sauvegarder en local en fallback
-            localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
-            localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
+            // Invalider le cache
+            this.cache.lastUpdate = null;
 
             // Recharger l'affichage
             this.loadMyOrders();
@@ -1279,66 +1286,122 @@ class HDVSystem {
             return;
         }
 
-        ordersList.innerHTML = `
-            <div class="marketplace-header">
-                <h3>🏪 Place du Marché (${orders.length} ordre${orders.length > 1 ? 's' : ''})</h3>
-                <p>💡 <strong>Astuce:</strong> Vous pouvez supprimer vos propres ordres en cliquant sur le bouton "🗑️ Supprimer"</p>
-            </div>
-            <div class="orders-grid">
-                ${orders.map(order => `
-                    <div class="order-card ${order.type}" data-order-id="${order.id}">
-                        <!-- Image de l'item -->
-                        <img src="../assets/items/${order.item.image}" 
-                             alt="${order.item.name}" 
-                             class="order-item-image"
-                             onerror="this.src='../assets/items/default.png'">
-                        
-                        <!-- Détails de l'ordre -->
-                        <div class="order-details">
-                            <h3 class="order-item-name">${order.item.name}</h3>
-                            <span class="item-category">${this.getItemCategory(order.item)}</span>
-                            <span class="item-rarity" style="color: ${this.getRarityColor(order.item)}">${this.getRarityDisplayName(order.item)}</span>
-                            
-                            <div class="order-meta">
-                                <div class="order-meta-item">
-                                    <span>${order.type === 'sell' ? '🔴' : '🔵'}</span>
-                                    <span>${order.type === 'sell' ? 'VENTE' : 'ACHAT'}</span>
-                                </div>
-                                <div class="order-meta-item">
-                                    <span>📦</span>
-                                    <span>Qté: ${order.quantity}</span>
-                                </div>
-                                <div class="order-meta-item">
-                                    <span>👤</span>
-                                    <span>${order.creator || order.seller || order.buyer || 'Aventurier Anonyme'}</span>
-                                </div>
-                                ${order.notes ? `
-                                <div class="order-meta-item">
-                                    <span>📝</span>
-                                    <span>${order.notes}</span>
-                                </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                        
-                        <!-- Prix et actions -->
-                        <div class="order-price-container">
-                            <div class="order-price">${order.price} cols</div>
-                            <div class="order-price-unit">/${order.quantity > 1 ? 'lot' : 'unité'}</div>
-                            
-                            <button class="contact-btn" onclick="hdvSystem.contactTrader('${order.creator || order.seller || order.buyer}', '${order.item.name}')">
-                                💬 Contacter
-                            </button>
-                            ${this.isMyOrder(order) ? `
-                                <button class="contact-btn" style="background: #e74c3c; margin-top: 0.5rem;" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
-                                    🗑️ Supprimer
-                                </button>
-                            ` : ''}
-                        </div>
+        // Optimisation : Utiliser DocumentFragment pour un rendu plus rapide
+        const fragment = document.createDocumentFragment();
+        
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'marketplace-header';
+        headerDiv.innerHTML = `
+            <h3>🏪 Place du Marché (${orders.length} ordre${orders.length > 1 ? 's' : ''})</h3>
+            <p>💡 <strong>Astuce:</strong> Vous pouvez supprimer vos propres ordres en cliquant sur le bouton "🗑️ Supprimer"</p>
+        `;
+        fragment.appendChild(headerDiv);
+
+        const ordersGrid = document.createElement('div');
+        ordersGrid.className = 'orders-grid';
+
+        // Limiter l'affichage initial à 20 ordres pour accélérer le rendu
+        const maxInitialDisplay = 20;
+        const ordersToDisplay = orders.slice(0, maxInitialDisplay);
+        const remainingOrders = orders.slice(maxInitialDisplay);
+
+        // Afficher les premiers ordres immédiatement
+        ordersToDisplay.forEach(order => {
+            ordersGrid.appendChild(this.createOrderCard(order));
+        });
+
+        fragment.appendChild(ordersGrid);
+        
+        // Vider et afficher
+        ordersList.innerHTML = '';
+        ordersList.appendChild(fragment);
+
+        // Charger les ordres restants progressivement (lazy loading)
+        if (remainingOrders.length > 0) {
+            setTimeout(() => {
+                const batchSize = 10;
+                let currentIndex = 0;
+
+                const loadNextBatch = () => {
+                    const batch = remainingOrders.slice(currentIndex, currentIndex + batchSize);
+                    const ordersGridElement = ordersList.querySelector('.orders-grid');
+                    
+                    if (ordersGridElement && batch.length > 0) {
+                        batch.forEach(order => {
+                            ordersGridElement.appendChild(this.createOrderCard(order));
+                        });
+                    }
+
+                    currentIndex += batchSize;
+
+                    if (currentIndex < remainingOrders.length) {
+                        requestAnimationFrame(loadNextBatch);
+                    }
+                };
+
+                loadNextBatch();
+            }, 100);
+        }
+    }
+
+    createOrderCard(order) {
+        const card = document.createElement('div');
+        card.className = `order-card ${order.type}`;
+        card.setAttribute('data-order-id', order.id);
+
+        card.innerHTML = `
+            <!-- Image de l'item -->
+            <img src="../assets/items/${order.item.image}" 
+                 alt="${order.item.name}" 
+                 class="order-item-image"
+                 onerror="this.src='../assets/items/default.png'"
+                 loading="lazy">
+            
+            <!-- Détails de l'ordre -->
+            <div class="order-details">
+                <h3 class="order-item-name">${order.item.name}</h3>
+                <span class="item-category">${this.getItemCategory(order.item)}</span>
+                <span class="item-rarity" style="color: ${this.getRarityColor(order.item)}">${this.getRarityDisplayName(order.item)}</span>
+                
+                <div class="order-meta">
+                    <div class="order-meta-item">
+                        <span>${order.type === 'sell' ? '🔴' : '🔵'}</span>
+                        <span>${order.type === 'sell' ? 'VENTE' : 'ACHAT'}</span>
                     </div>
-                `).join('')}
+                    <div class="order-meta-item">
+                        <span>📦</span>
+                        <span>Qté: ${order.quantity}</span>
+                    </div>
+                    <div class="order-meta-item">
+                        <span>👤</span>
+                        <span>${order.creator || order.seller || order.buyer || 'Aventurier Anonyme'}</span>
+                    </div>
+                    ${order.notes ? `
+                    <div class="order-meta-item">
+                        <span>📝</span>
+                        <span>${order.notes}</span>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <!-- Prix et actions -->
+            <div class="order-price-container">
+                <div class="order-price">${order.price} cols</div>
+                <div class="order-price-unit">/${order.quantity > 1 ? 'lot' : 'unité'}</div>
+                
+                <button class="contact-btn" onclick="hdvSystem.contactTrader('${order.creator || order.seller || order.buyer}', '${order.item.name}')">
+                    💬 Contacter
+                </button>
+                ${this.isMyOrder(order) ? `
+                    <button class="contact-btn" style="background: #e74c3c; margin-top: 0.5rem;" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
+                        🗑️ Supprimer
+                    </button>
+                ` : ''}
             </div>
         `;
+
+        return card;
     }
 
     // Ouvrir le sélecteur d'items avec images
@@ -1522,6 +1585,9 @@ class HDVSystem {
                 console.log('✅ Ordre sauvegardé localement');
             }
 
+            // Invalider le cache
+            this.cache.lastUpdate = null;
+
             this.showNotification('✅ Ordre créé avec succès !', 'success');
             this.resetCreateOrderForm();
             
@@ -1548,23 +1614,70 @@ class HDVSystem {
 
     async loadOrdersFromStorage() {
         try {
-            console.log('📥 Chargement des ordres depuis Supabase...');
+            // 1. Charger depuis localStorage IMMÉDIATEMENT pour affichage rapide
+            const localOrders = localStorage.getItem('hdv_orders');
+            const localMyOrders = localStorage.getItem('hdv_my_orders');
+            
+            if (localOrders) {
+                this.orders = JSON.parse(localOrders);
+                this.myOrders = localMyOrders ? JSON.parse(localMyOrders) : [];
+                console.log('⚡ Affichage rapide depuis localStorage:', this.orders.length, 'ordres');
+                
+                // Mettre à jour l'affichage immédiatement
+                if (this.currentTab === 'marketplace') {
+                    this.displayOrders(this.orders);
+                }
+            }
+
+            // 2. Vérifier le cache en mémoire
+            const now = Date.now();
+            if (this.cache.orders && this.cache.lastUpdate && (now - this.cache.lastUpdate < this.cache.cacheTimeout)) {
+                console.log('📦 Utilisation du cache mémoire (frais)');
+                return;
+            }
+
+            // 3. Charger depuis Supabase en arrière-plan pour mise à jour
+            console.log('� Mise à jour depuis Supabase en arrière-plan...');
             
             if (!window.hdvSupabaseManager || !window.hdvSupabaseManager.isSupabaseAvailable()) {
-                console.error('❌ HDV Supabase Manager non disponible');
-                // Fallback vers localStorage en cas de problème
-                this.loadOrdersFromLocalStorage();
+                console.warn('⚠️ HDV Supabase Manager non disponible, utilisation données locales');
                 return;
             }
 
             const { orders, myOrders } = await window.hdvSupabaseManager.loadOrdersFromSupabase();
-            this.orders = orders;
-            this.myOrders = myOrders;
             
-            console.log(`✅ Chargés depuis Supabase: ${orders.length} ordres, ${myOrders.length} mes ordres`);
+            // Vérifier si les données ont changé
+            const hasChanged = JSON.stringify(orders) !== JSON.stringify(this.orders);
+            
+            if (hasChanged) {
+                console.log('🆕 Nouvelles données détectées, mise à jour...');
+                this.orders = orders;
+                this.myOrders = myOrders;
+                
+                // Mettre à jour localStorage
+                localStorage.setItem('hdv_orders', JSON.stringify(orders));
+                localStorage.setItem('hdv_my_orders', JSON.stringify(myOrders));
+                
+                // Mettre à jour le cache
+                this.cache.orders = orders;
+                this.cache.myOrders = myOrders;
+                this.cache.lastUpdate = now;
+                
+                // Rafraîchir l'affichage si on est sur le marketplace
+                if (this.currentTab === 'marketplace') {
+                    this.displayOrders(this.orders);
+                }
+            } else {
+                console.log('✅ Données à jour depuis Supabase');
+                // Mettre à jour le cache quand même
+                this.cache.orders = orders;
+                this.cache.myOrders = myOrders;
+                this.cache.lastUpdate = now;
+            }
+            
         } catch (error) {
-            console.error('❌ Erreur chargement Supabase, fallback localStorage:', error);
-            this.loadOrdersFromLocalStorage();
+            console.error('❌ Erreur chargement:', error);
+            // En cas d'erreur, on garde les données locales déjà chargées
         }
     }
 
