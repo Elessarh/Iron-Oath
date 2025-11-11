@@ -130,6 +130,9 @@ function checkAuthState() {
                 loginLink.classList.remove('show');
                 loginLink.classList.remove('js-visible');
             }
+            
+            // Vérifier et afficher le lien Dashboard pour les admins
+            checkAndShowDashboardLink();
         } else {
             // Utilisateur non connecté - Afficher le bouton connexion et masquer les infos user
             console.log('👤 Utilisateur non connecté - affichage du bouton connexion');
@@ -154,6 +157,48 @@ function checkAuthState() {
         console.error('Erreur checkAuthState:', error);
     } finally {
         isCheckingAuthState = false;
+    }
+}
+
+// ========== GESTION DU LIEN DASHBOARD POUR ADMINS ==========
+async function checkAndShowDashboardLink() {
+    try {
+        let dashboardLink = document.getElementById('dashboard-link');
+        
+        if (!dashboardLink) {
+            console.log('⚠️ Lien dashboard non trouvé dans le DOM');
+            return;
+        }
+        
+        // Vérifier le rôle de l'utilisateur
+        if (!currentUser) {
+            dashboardLink.style.display = 'none';
+            return;
+        }
+        
+        // Récupérer le profil depuis la table user_profiles
+        const { data: profile, error } = await supabase
+            .from('user_profiles')
+            .select('role')
+            .eq('id', currentUser.id)
+            .single();
+        
+        if (error) {
+            console.error('Erreur lors de la vérification du rôle admin:', error);
+            dashboardLink.style.display = 'none';
+            return;
+        }
+        
+        // Afficher le lien uniquement si l'utilisateur est admin
+        if (profile && profile.role === 'admin') {
+            dashboardLink.style.display = 'inline-block';
+            console.log('👑 Lien Dashboard affiché pour l\'admin');
+        } else {
+            dashboardLink.style.display = 'none';
+        }
+        
+    } catch (error) {
+        console.error('Erreur checkAndShowDashboardLink:', error);
     }
 }
 

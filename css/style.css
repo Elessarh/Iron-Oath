@@ -296,6 +296,64 @@ body .nav-connexion .user-info.js-visible {
     display: flex !important;
 }
 
+/* Styles spécifiques pour les liens Dashboard et Profil */
+body .nav-connexion a[href*="admin-dashboard"],
+body .nav-connexion a[href*="profil"] {
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    display: inline-block !important;
+}
+
+/* Lien Dashboard (admin) - Style orange */
+body .nav-connexion a[href*="admin-dashboard"] {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 107, 53, 0.1)) !important;
+    border: 2px solid rgba(255, 107, 53, 0.5) !important;
+    color: #ff6b35 !important;
+    box-shadow: 0 2px 10px rgba(255, 107, 53, 0.2) !important;
+}
+
+body .nav-connexion a[href*="admin-dashboard"]:hover {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.4), rgba(255, 107, 53, 0.2)) !important;
+    border-color: #ff6b35 !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Lien Profil - Style cyan */
+body .nav-connexion a[href*="profil"] {
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(78, 205, 196, 0.1)) !important;
+    border: 2px solid rgba(78, 205, 196, 0.5) !important;
+    color: #4ecdc4 !important;
+    box-shadow: 0 2px 10px rgba(78, 205, 196, 0.2) !important;
+}
+
+body .nav-connexion a[href*="profil"]:hover {
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.4), rgba(78, 205, 196, 0.2)) !important;
+    border-color: #4ecdc4 !important;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Lien actif (page courante) */
+body .nav-connexion a.active[href*="admin-dashboard"] {
+    background: linear-gradient(135deg, #ff6b35, #fa709a) !important;
+    color: white !important;
+    border-color: #ff6b35 !important;
+    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5) !important;
+}
+
+body .nav-connexion a.active[href*="profil"] {
+    background: linear-gradient(135deg, #4ecdc4, #44a3ff) !important;
+    color: white !important;
+    border-color: #4ecdc4 !important;
+    box-shadow: 0 4px 20px rgba(78, 205, 196, 0.5) !important;
+}
+
 body .nav-connexion .connexion-link:hover,
 body .nav-connexion .nav-link:hover {
     background: var(--color-accent) !important;
