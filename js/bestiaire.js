@@ -1,449 +1,962 @@
 ﻿// Données du bestiaire - Catalogue complet avec toutes les images
 const creaturesData = [
-    // Palier 1 - Créatures de base
+    // Palier 1 - Marécage putride
     {
         id: 1,
-        name: "Gobelin Guerrier",
-        level: 5,
-        category: "creature",
-        type: "Humanoïde",
-        hp: 45,
-        attack: 12,
-        defense: 10,
+        name: "Gorbel",
+        category: "boss",
+        type: "Créature",
+        hp: 1250,
         palier: 1,
         image: "../assets/mobs/Gorbel.png",
-        description: "Un gobelin armé d'une épée rouillée et d'un bouclier en bois. Agressif mais peu résistant.",
-        drops: ["Épée rouillée", "Cuir abîmé", "5-12 pièces d'or"],
-        abilities: ["Attaque rapide", "Esquive"],
-        location: "Plaines de Commencement"
+        description: "Un colosse gélatineux, maître des essaims de slimes. Il écrase tout sur son passage, lentement mais sûrement.",
+        drops: [
+            { name: "Gelée de Slime", rate: 30, image: "GeléedeSlime.png" },
+            { name: "Noyau de Slime", rate: 5, image: "NoyaudeSlime.png" },
+            { name: "Essence de Gorbel", rate: 1, image: "EssencedeGorbel.png" }
+        ],
+        location: "Marécage putride"
     },
     {
         id: 2,
         name: "Petit Slime",
-        level: 3,
         category: "creature",
         type: "Créature",
-        hp: 25,
-        attack: 8,
-        defense: 6,
+        hp: 80,
         palier: 1,
         image: "../assets/mobs/Petit Slime.png",
-        description: "Une petite créature gélatineuse qui rebondit joyeusement. Inoffensive mais agaçante.",
-        drops: ["Gelée de slime", "2-8 pièces d'or"],
-        abilities: ["Rebond", "Division"],
-        location: "Cavernes humides"
+        description: "Malgré sa petite taille, il bondit sans peur. Inoffensif en apparence mais têtu comme pas deux. Certains disent qu'il garde un secret au coeur mou.",
+        drops: [
+            { name: "Gelée de Slime", rate: 30, image: "GeléedeSlime.png" }
+        ],
+        location: "Marécage putride"
     },
     {
         id: 3,
-        name: "Loup Sinistre Blanc",
-        level: 8,
-        category: "elite",
-        type: "Bête",
-        hp: 80,
-        attack: 16,
-        defense: 12,
+        name: "Slime Guerrier",
+        category: "creature",
+        type: "Créature",
+        hp: 100,
         palier: 1,
-        image: "../assets/mobs/Loup Sinistre Blanc.png",
-        description: "Un loup au pelage blanc immaculé, chef de meute redoutable avec des yeux perçants.",
-        drops: ["Croc de loup", "Fourrure blanche", "15-25 pièces d'or"],
-        abilities: ["Hurlement", "Morsure sauvage", "Charge"],
-        location: "Forêt Enneigée"
+        image: "../assets/mobs/Guerrier Slime.avif",
+        description: "Né d'un amas magique de gelée ancienne, il a appris à manier l'arme comme un vrai geurrier. Il défend son territoire avec une rage inattendue.",
+        drops: [
+            { name: "Gelée de Slime", rate: 30, image: "GeléedeSlime.png" }
+        ],
+        location: "Marécage putride"
     },
     {
         id: 4,
-        name: "Loup Sinistre Brun",
-        level: 7,
+        name: "Slime Soigneur",
         category: "creature",
-        type: "Bête",
-        hp: 65,
-        attack: 14,
-        defense: 11,
+        type: "Créature",
+        hp: 150,
         palier: 1,
-        image: "../assets/mobs/Loup Sinistre Brun.png",
-        description: "Un loup au pelage brun, chasseur nocturne féroce des forêts sombres.",
-        drops: ["Croc de loup", "Fourrure brune", "12-20 pièces d'or"],
-        abilities: ["Morsure", "Furtivité", "Pistage"],
-        location: "Forêt des Plaines"
+        image: "../assets/mobs/Slime Soigneur.png",
+        description: "Ce slime irradie une énergie apaisante. Blessures mineures se referment à son passage. Il fuit le combat, mais sauve les siens dans l'ombre.",
+        drops: [
+            { name: "Gelée de Slime", rate: 30, image: "GeléedeSlime.png" },
+            { name: "Noyau de Slime", rate: 5, image: "NoyaudeSlime.png" }
+        ],
+        location: "Marécage putride"
     },
     {
         id: 5,
-        name: "Loup Sinistre Noir",
-        level: 10,
+        name: "Slime Magicien",
         category: "elite",
-        type: "Bête",
-        hp: 95,
-        attack: 18,
-        defense: 14,
+        type: "Créature",
+        hp: 120,
         palier: 1,
-        image: "../assets/mobs/Loup SInistre Noir.png",
-        description: "Le plus redoutable des loups, son pelage noir comme la nuit cache une force terrible.",
-        drops: ["Croc noir", "Fourrure sombre", "20-35 pièces d'or"],
-        abilities: ["Morsure fatale", "Ombre", "Hurlement terrifiant"],
-        location: "Forêt Maudite"
+        image: "../assets/mobs/Slime Magicien.png",
+        description: "Un slime imprégné d'énergies arcaniques anciennes. Ses attaques lancent des sorts chaotiques et imprévisibles.",
+        drops: [
+            { name: "Gelée de Slime", rate: 30, image: "GeléedeSlime.png" },
+            { name: "Noyau de Slime", rate: 5, image: "NoyaudeSlime.png" }
+        ],
+        location: "Marécage putride"
     },
 
-    // Palier 1 - Boss et créatures spéciales
+    // Palier 1 - Zone des Sangliers
     {
         id: 6,
-        name: "Bandit Assassin",
-        level: 12,
-        category: "elite",
-        type: "Humanoïde",
-        hp: 110,
-        attack: 22,
-        defense: 15,
+        name: "Sanglier",
+        category: "creature",
+        type: "Bête",
+        hp: 65,
         palier: 1,
-        image: "../assets/mobs/Bandit Assassin.png",
-        description: "Un assassin masqué aux lames empoisonnées, expert en combat furtif.",
-        drops: ["Lame empoisonnée", "Cape d'assassin", "30-50 pièces d'or"],
-        abilities: ["Attaque sournoise", "Poison", "Disparition"],
-        location: "Repaire des Bandits"
+        image: "../assets/mobs/Sangliers.png",
+        description: "Une bête sauvage issue des forêts du premier palier. Il charge sans relâche, animé d'une rage primitive.",
+        drops: [
+            { name: "Peau de Sanglier", rate: 65, image: "Peau de Sanglier.png" }
+        ],
+        location: "Zone des Sangliers"
     },
+
+    // Palier 1 - Bois Sacré
     {
         id: 7,
-        name: "Guerrier Déchu",
-        level: 15,
-        category: "boss",
-        type: "Mort-vivant",
-        hp: 200,
-        attack: 25,
-        defense: 20,
+        name: "Mage Sylvestre",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 90,
         palier: 1,
-        image: "../assets/mobs/Guerrier Déchu.png",
-        description: "Un ancien chevalier corrompu par les ténèbres, condamné à errer éternellement.",
-        drops: ["Épée maudite", "Armure corrompue", "Pierre d'âme", "75-150 pièces d'or"],
-        abilities: ["Frappe maudite", "Régénération sombre", "Cri d'outre-tombe"],
-        location: "Cimetière Abandonné"
+        image: "../assets/mobs/Mage Sylvestre.avif",
+        description: "Il canalise la magie des arbres anciens. Ses enchantements font fleurir ou pourrir tout ce qu'il touche.",
+        drops: [
+            { name: "Brindille Enchantée", rate: 30, image: "BrindilleEnchantées.png" },
+            { name: "Coeur de Bois", rate: 20, image: "CoeurdeBois.png" },
+            { name: "Tissu Spectral", rate: 30, image: "TissuSpectral.png" },
+            { name: "Bâton Sylvestre", rate: 2, image: null }
+        ],
+        location: "Bois Sacré"
     },
     {
         id: 8,
-        name: "Gardien Colossal",
-        level: 18,
-        category: "boss",
-        type: "Golem",
-        hp: 350,
-        attack: 30,
-        defense: 25,
+        name: "Mini Tréant",
+        category: "creature",
+        type: "Plante",
+        hp: 50,
         palier: 1,
-        image: "../assets/mobs/Gardien Colossal.avif",
-        description: "Un golem de pierre ancien, gardien millénaire d'un temple oublié.",
-        drops: ["Cœur de pierre", "Fragments runiques", "Gemme de gardien", "100-200 pièces d'or"],
-        abilities: ["Charge dévastatrice", "Peau de pierre", "Tremblement"],
-        location: "Temple Ancien"
+        image: "../assets/mobs/Mini Tréant.avif",
+        description: "Petit gardien de la forêt, il défend les lieux sacrés avec hargne. Sous ses racines courtes dort une volonté de fer.",
+        drops: [
+            { name: "Pousse de Sylve", rate: 40, image: "PoussedeSylve.png" },
+            { name: "Éclat de Bois Magique", rate: 30, image: "EclatdeBoisMagique.png" }
+        ],
+        location: "Bois Sacré"
     },
-
-    // Palier 2 - Créatures intermédiaires
     {
         id: 9,
-        name: "Gardien Déchu",
-        level: 20,
+        name: "Tréant Elite",
         category: "elite",
-        type: "Mort-vivant",
-        hp: 150,
-        attack: 28,
-        defense: 22,
-        palier: 2,
-        image: "../assets/mobs/Gardien-Déchu.png",
-        description: "Un gardien corrompu par une magie sombre, perdant lentement son humanité.",
-        drops: ["Armure corrompue", "Essence sombre", "40-70 pièces d'or"],
-        abilities: ["Corruption", "Résistance magique", "Drain de vie"],
-        location: "Sanctuaire Corrompu"
+        type: "Plante",
+        hp: 80,
+        palier: 1,
+        image: "../assets/mobs/Tréant Elite.avif",
+        description: "Ancien protecteur des forêts oubliées, ce tréant détient une puissance redoutable.",
+        drops: [
+            { name: "Écorce Sylvestre", rate: 40, image: "EcorceSylvestre.png" },
+            { name: "Corde d'arc Sylvestre", rate: 25, image: "CordedarcSylvestre.png" },
+            { name: "Arc Sylvestre", rate: 2, image: null }
+        ],
+        location: "Bois Sacré"
     },
     {
         id: 10,
-        name: "Guerrier Slime",
-        level: 22,
+        name: "Guerrier Tréant",
         category: "elite",
-        type: "Créature",
-        hp: 180,
-        attack: 24,
-        defense: 18,
-        palier: 2,
-        image: "../assets/mobs/Guerrier Slime.avif",
-        description: "Un slime qui a absorbé l'équipement d'un guerrier, devenant une menace redoutable.",
-        drops: ["Gelée renforcée", "Équipement digéré", "35-60 pièces d'or"],
-        abilities: ["Absorption", "Régénération", "Attaque acide"],
-        location: "Marécages Toxiques"
+        type: "Plante",
+        hp: 100,
+        palier: 1,
+        image: "../assets/mobs/Guerrier Tréant.avif",
+        description: "Forgé dans l'écorce et la magie, ce tréant veille sur les bois sacrés. Il frappe avec la force d'un vieux chêne, et la colère de la forêt.",
+        drops: [
+            { name: "Écorce de Titan", rate: 35, image: "EcorcedeTitan.png" },
+            { name: "Racine Ancestrale", rate: 10, image: "RacineAncestrale.png" },
+            { name: "Bouclier Sylvestre", rate: 3, image: null }
+        ],
+        location: "Bois Sacré"
     },
     {
         id: 11,
-        name: "Guerrier Tréant",
-        level: 25,
+        name: "Gardien Colossal",
         category: "boss",
-        type: "Plante",
-        hp: 400,
-        attack: 32,
-        defense: 28,
-        palier: 2,
-        image: "../assets/mobs/Guerrier Tréant.avif",
-        description: "Un ancien arbre animé par la magie, protecteur féroce de la forêt sacrée.",
-        drops: ["Bois enchanté", "Sève magique", "Graine de tréant", "120-250 pièces d'or"],
-        abilities: ["Racines entravantes", "Régénération naturelle", "Tempête de feuilles"],
-        location: "Forêt Sacrée"
-    },
-    {
-        id: 12,
-        name: "Héraut Déchu",
-        level: 28,
-        category: "boss",
-        type: "Démon",
-        hp: 450,
-        attack: 35,
-        defense: 30,
-        palier: 2,
-        image: "../assets/mobs/Héraut-Déchu.png",
-        description: "Un démon envoyé des abysses, héraut d'une invasion démoniaque imminente.",
-        drops: ["Corne démoniaque", "Essence infernale", "Parchemin maudit", "150-300 pièces d'or"],
-        abilities: ["Flammes infernales", "Invocation", "Terreur"], 
-        location: "Portail Démoniaque"
+        type: "Golem",
+        hp: 250,
+        palier: 1,
+        image: "../assets/mobs/Gardien Colossal.avif",
+        description: "Forgé dans la pierre et éveillé par la magie ancienne, il garde les terres oubliées contre toute intrusion. Ses pas seuls font trembler la forêt...",
+        drops: [
+            { name: "Mycélium Magique", rate: 5, image: "MycéliumMagique.png" }
+        ],
+        location: "Bois Sacré"
     },
 
-    // Palier 2 - Créatures spécialisées
+    // Palier 1 - Vallée des loups
+    {
+        id: 12,
+        name: "Loup Blanc",
+        category: "creature",
+        type: "Bête",
+        hp: 90,
+        palier: 1,
+        image: "../assets/mobs/Loup Sinistre Blanc.png",
+        description: "Gardien de la Vallée des Loups. Son hurlement glace le sang.",
+        drops: [
+            { name: "Fourrure de Loup", rate: 60, image: "FourruredeLoup.png" },
+            { name: "Crocs de Loup", rate: 30, image: "CrocsdeLoup.png" }
+        ],
+        location: "Vallée des loups"
+    },
     {
         id: 13,
-        name: "Mage Sylvestre",
-        level: 24,
-        category: "elite",
-        type: "Humanoïde",
-        hp: 120,
-        attack: 30,
-        defense: 16,
-        palier: 2,
-        image: "../assets/mobs/Mage Sylvestre.avif",
-        description: "Un mage elfe maîtrisant la magie de la nature, protecteur des bois anciens.",
-        drops: ["Bâton sylvestre", "Tome de nature", "Cristal végétal", "60-100 pièces d'or"],
-        abilities: ["Magie de nature", "Soins", "Invoquer racines"],
-        location: "Bosquet Enchanté"
+        name: "Loup Brun",
+        category: "creature",
+        type: "Bête",
+        hp: 450,
+        palier: 1,
+        image: "../assets/mobs/Loup Sinistre Brun.png",
+        description: "Gardien de la Vallée des Loups. Son hurlement donne une frénésie.",
+        drops: [
+            { name: "Fourrure de Loup", rate: 60, image: "FourruredeLoup.png" },
+            { name: "Crocs de Loup", rate: 30, image: "CrocsdeLoup.png" }
+        ],
+        location: "Vallée des loups"
     },
     {
         id: 14,
-        name: "Mini Tréant",
-        level: 16,
+        name: "Loup Noir",
         category: "creature",
-        type: "Plante",
+        type: "Bête",
         hp: 90,
-        attack: 18,
-        defense: 20,
-        palier: 2,
-        image: "../assets/mobs/Mini Tréant.avif",
-        description: "Une jeune pousse de tréant, encore petite mais déjà très résistante.",
-        drops: ["Jeune bois", "Feuilles magiques", "25-45 pièces d'or"],
-        abilities: ["Croissance rapide", "Photosynthèse", "Épines"],
-        location: "Pépinière Magique"
+        palier: 1,
+        image: "../assets/mobs/Loup SInistre Noir.png",
+        description: "Gardien de la Vallée des Loups. Son hurlement donne des frissons.",
+        drops: [
+            { name: "Fourrure de Loup", rate: 60, image: "FourruredeLoup.png" },
+            { name: "Crocs de Loup", rate: 30, image: "CrocsdeLoup.png" }
+        ],
+        location: "Vallée des loups"
     },
-
-    // Palier 3 - Créatures avancées
     {
         id: 15,
-        name: "Faucheuse Déchu",
-        level: 35,
+        name: "Albal",
         category: "boss",
-        type: "Mort-vivant",
-        hp: 600,
-        attack: 40,
-        defense: 35,
-        palier: 3,
-        image: "../assets/mobs/Faucheuse-Déchu.png",
-        description: "Une faucheuse corrompue, autrefois guide des âmes, maintenant leur geôlière.",
-        drops: ["Faux de l'âme", "Essence de mort", "Sablier éternel", "200-400 pièces d'or"],
-        abilities: ["Fauche mortelle", "Drain d'âme", "Passage dans l'ombre"],
-        location: "Limbes Éternels"
-    },
-    {
-        id: 16,
-        name: "Soldat Déchu",
-        level: 30,
-        category: "elite",
-        type: "Mort-vivant",
-        hp: 250,
-        attack: 32,
-        defense: 28,
-        palier: 3,
-        image: "../assets/mobs/Soldat-Déchu.png",
-        description: "Un soldat d'élite tombé au combat, animé par une volonté de vengeance.",
-        drops: ["Armure de guerre", "Épée du soldat", "Médaille d'honneur", "80-150 pièces d'or"],
-        abilities: ["Formation de combat", "Rage du tombé", "Résistance"],
-        location: "Champ de Bataille Maudit"
-    },
-    {
-        id: 17,
-        name: "Slime Soigneur",
-        level: 26,
-        category: "creature",
-        type: "Créature",
-        hp: 150,
-        attack: 15,
-        defense: 25,
-        palier: 3,
-        image: "../assets/mobs/Slime Soigneur.png",
-        description: "Un slime aux propriétés curatives étonnantes, très recherché par les alchimistes.",
-        drops: ["Gelée curative", "Essence de vie", "50-85 pièces d'or"],
-        abilities: ["Soins", "Régénération", "Purification"],
-        location: "Source Sacrée"
-    },
-    {
-        id: 18,
-        name: "Slime Magicien",
-        level: 28,
-        category: "elite",
-        type: "Créature",
-        hp: 180,
-        attack: 35,
-        defense: 20,
-        palier: 3,
-        image: "../assets/mobs/Slime Magicien.png",
-        description: "Un slime qui a absorbé un grimoire magique, maîtrisant maintenant plusieurs sorts.",
-        drops: ["Gelée magique", "Parchemin de sort", "Cristal de mana", "70-120 pièces d'or"],
-        abilities: ["Boule de feu", "Téléportation", "Barrière magique"],
-        location: "Tour du Mage Fou"
+        type: "Bête",
+        hp: 500,
+        palier: 1,
+        image: "../assets/mobs/Loup SInistre Noir.png",
+        description: "Le chef alpha de la Vallée des Loups, une bête légendaire aux crocs acérés.",
+        drops: [
+            { name: "Fourrure de Loup", rate: 100, image: "FourruredeLoup.png" },
+            { name: "Crocs de Loup", rate: 70, image: "CrocsdeLoup.png" },
+            { name: "Crocs d'Albal", rate: 20, image: null }
+        ],
+        location: "Vallée des loups"
     },
 
-    // Créatures légendaires et uniques
+    // Anciens mobs conservés (paliers 2-3)
     {
-        id: 19,
+        id: 16,
         name: "Ika",
-        level: 40,
         category: "boss",
         type: "Léviathan",
         hp: 800,
-        attack: 45,
-        defense: 40,
-        palier: 3,
+        palier: 1,
         image: "../assets/mobs/Ika.avif",
         description: "Un kraken ancestral des profondeurs, gardien des secrets abyssaux.",
-        drops: ["Tentacule légendaire", "Perle des abysses", "Encre magique", "300-600 pièces d'or"],
-        abilities: ["Étreinte tentaculaire", "Vague dévastatrice", "Camouflage aquatique"],
+        drops: [
+            { name: "Tentacule légendaire", rate: null, image: null },
+            { name: "Perle des abysses", rate: null, image: null },
+            { name: "Encre magique", rate: null, image: null }
+        ],
         location: "Abysses Marins"
     },
     {
-        id: 20,
+        id: 17,
         name: "Narax",
-        level: 42,
         category: "boss",
         type: "Démon",
         hp: 850,
-        attack: 48,
-        defense: 42,
-        palier: 3,
+        palier: 1,
         image: "../assets/mobs/Narax.png",
         description: "Un archidémon des flammes éternelles, seigneur d'un royaume infernal.",
-        drops: ["Corne de Narak", "Flamme éternelle", "Grimoire infernal", "400-800 pièces d'or"],
-        abilities: ["Pluie de météores", "Téléportation infernale", "Aura de terreur"],
+        drops: [
+            { name: "Corne de Narak", rate: null, image: null },
+            { name: "Flamme éternelle", rate: null, image: null },
+            { name: "Grimoire infernal", rate: null, image: null }
+        ],
         location: "Cœur des Enfers"
     },
     {
-        id: 21,
+        id: 18,
         name: "Néphantes",
-        level: 38,
         category: "boss",
         type: "Araignée Géante",
         hp: 650,
-        attack: 42,
-        defense: 35,
-        palier: 3,
+        palier: 1,
         image: "../assets/mobs/Nephantes.gif",
         description: "Une araignée titanesque tisseuse de destins, gardienne des fils du temps.",
-        drops: ["Soie temporelle", "Venin de Néphantes", "Œuf d'araignée", "250-500 pièces d'or"],
-        abilities: ["Toile temporelle", "Poison paralysant", "Invocation d'araignées"],
+        drops: [
+            { name: "Soie temporelle", rate: null, image: null },
+            { name: "Venin de Néphantes", rate: null, image: null },
+            { name: "Œuf d'araignée", rate: null, image: null }
+        ],
         location: "Labyrinthe de Soie"
     },
     {
-        id: 22,
+        id: 19,
         name: "Ornstein",
-        level: 45,
         category: "boss",
         type: "Chevalier Dragon",
         hp: 950,
-        attack: 50,
-        defense: 45,
-        palier: 3,
+        palier: 1,
         image: "../assets/mobs/Ornstein.avif",
         description: "Le légendaire tueur de dragons, chevalier au service du soleil, maître de la lance sacrée.",
-        drops: ["Lance dracotueur", "Armure dorée", "Anneau solaire", "500-1000 pièces d'or"],
-        abilities: ["Frappe foudroyante", "Charge divine", "Invocation d'éclairs"],
+        drops: [
+            { name: "Lance dracotueur", rate: null, image: null },
+            { name: "Armure dorée", rate: null, image: null },
+            { name: "Anneau solaire", rate: null, image: null }
+        ],
         location: "Cathédrale du Soleil"
     },
-
-    // Créatures diverses
     {
-        id: 23,
+        id: 20,
         name: "Plante Dévoreuse",
-        level: 32,
         category: "elite",
         type: "Plante",
         hp: 280,
-        attack: 38,
-        defense: 25,
-        palier: 3,
+        palier: 1,
         image: "../assets/mobs/Plante Dévoreuse.avif",
         description: "Une plante carnivore géante qui attire ses proies avec des phéromones envoûtantes.",
-        drops: ["Nectar toxique", "Épines acérées", "Bulbe précieux", "90-170 pièces d'or"],
-        abilities: ["Phéromones", "Digestion acide", "Épines empoisonnées"],
+        drops: [
+            { name: "Nectar toxique", rate: null, image: null },
+            { name: "Épines acérées", rate: null, image: null },
+            { name: "Bulbe précieux", rate: null, image: null }
+        ],
         location: "Jungle Carnivore"
     },
     {
-        id: 24,
-        name: "Sangliers",
-        level: 14,
-        category: "creature",
-        type: "Bête",
-        hp: 85,
-        attack: 20,
-        defense: 16,
-        palier: 2,
-        image: "../assets/mobs/Sangliers.png",
-        description: "Des sangliers sauvages au tempérament agressif, protecteurs farouches de leur territoire.",
-        drops: ["Défense de sanglier", "Cuir épais", "Viande sauvage", "18-35 pièces d'or"],
-        abilities: ["Charge furieuse", "Peau épaisse", "Rage"],
-        location: "Forêt Sauvage"
-    },
-    {
-        id: 25,
+        id: 21,
         name: "Smoug",
-        level: 50,
         category: "boss",
         type: "Dragon",
         hp: 1200,
-        attack: 55,
-        defense: 50,
-        palier: 3,
+        palier: 1,
         image: "../assets/mobs/Smoug.png",
         description: "Le dragon ancien des montagnes, gardien d'un trésor légendaire accumulé sur des millénaires.",
-        drops: ["Écaille de dragon", "Trésor de Smoug", "Souffle de dragon", "800-1500 pièces d'or"],
-        abilities: ["Souffle de feu", "Vol majestueux", "Hypnose du trésor"],
+        drops: [
+            { name: "Écaille de dragon", rate: null, image: null },
+            { name: "Trésor de Smoug", rate: null, image: null },
+            { name: "Souffle de dragon", rate: null, image: null }
+        ],
         location: "Pic du Dragon"
     },
     {
-        id: 26,
+        id: 22,
         name: "Spirite de Glace",
-        level: 33,
         category: "elite",
         type: "Élémentaire",
         hp: 220,
-        attack: 36,
-        defense: 30,
-        palier: 3,
+        palier: 1,
         image: "../assets/mobs/Spirite de glace.png",
         description: "Des esprits élémentaires de glace, gardiens éternels des terres gelées du nord.",
-        drops: ["Cristal de glace", "Essence de froid", "Sceptre gelé", "85-160 pièces d'or"],
-        abilities: ["Blizzard", "Prison de glace", "Téléportation glaciale"],
+        drops: [
+            { name: "Cristal de glace", rate: null, image: null },
+            { name: "Essence de froid", rate: null, image: null },
+            { name: "Sceptre gelé", rate: null, image: null }
+        ],
         location: "Toundra Gelée"
+    },
+
+    // Palier 1 - Araignées
+    {
+        id: 23,
+        name: "Araignée Chasseuse",
+        category: "creature",
+        type: "Araignée",
+        hp: 75,
+        palier: 1,
+        image: "../assets/mobs/Araignée_chasseuse.png",
+        description: "Une araignée agile et rusée qui traque ses proies dans l'ombre. Ses pattes acérées percent les armures légères.",
+        drops: [
+            { name: "Soie d'araignée", rate: 50, image: null },
+            { name: "Venin mineur", rate: 25, image: null }
+        ],
+        location: "Cavernes Sombres"
+    },
+    {
+        id: 24,
+        name: "Araignée Empoisonnée",
+        category: "elite",
+        type: "Araignée",
+        hp: 95,
+        palier: 1,
+        image: "../assets/mobs/Araignée_empoisonnée.png",
+        description: "Une araignée dont le venin est mortel. Ses crochets distillent un poison qui paralyse ses victimes.",
+        drops: [
+            { name: "Soie d'araignée", rate: 60, image: null },
+            { name: "Venin puissant", rate: 40, image: null },
+            { name: "Glande à poison", rate: 15, image: null }
+        ],
+        location: "Cavernes Sombres"
+    },
+    {
+        id: 25,
+        name: "Araignée Étrangleuse",
+        category: "elite",
+        type: "Araignée",
+        hp: 110,
+        palier: 1,
+        image: "../assets/mobs/Araignée_étrangleuse.png",
+        description: "Cette araignée massive utilise sa toile pour étrangler ses proies. Son corps imposant cache une force redoutable.",
+        drops: [
+            { name: "Soie renforcée", rate: 55, image: null },
+            { name: "Crochets acérés", rate: 30, image: null },
+            { name: "Œuf d'araignée", rate: 10, image: null }
+        ],
+        location: "Cavernes Sombres"
+    },
+
+    // Palier 1 - Kobolds
+    {
+        id: 26,
+        name: "Kobold",
+        category: "creature",
+        type: "Humanoïde",
+        hp: 60,
+        palier: 1,
+        image: "../assets/mobs/Kobold.png",
+        description: "Un petit humanoïde rusé vivant dans les cavernes. Faible individuellement mais dangereux en groupe.",
+        drops: [
+            { name: "Pièce de cuivre", rate: 70, image: null },
+            { name: "Outil primitif", rate: 30, image: null }
+        ],
+        location: "Mines de Kobold"
     },
     {
         id: 27,
-        name: "Tréant Elite",
-        level: 36,
+        name: "Archer Kobold",
+        category: "creature",
+        type: "Humanoïde",
+        hp: 55,
+        palier: 1,
+        image: "../assets/mobs/Archer_kobold.png",
+        description: "Un kobold équipé d'un arc rudimentaire. Il préfère attaquer à distance depuis les hauteurs.",
+        drops: [
+            { name: "Flèche primitive", rate: 60, image: null },
+            { name: "Arc de bois", rate: 20, image: null }
+        ],
+        location: "Mines de Kobold"
+    },
+    {
+        id: 28,
+        name: "Guerrier Kobold",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 85,
+        palier: 1,
+        image: "../assets/mobs/Guerrier_kobold.png",
+        description: "Un kobold plus grand et mieux équipé que ses congénères. Il mène les groupes au combat.",
+        drops: [
+            { name: "Épée ébréchée", rate: 40, image: null },
+            { name: "Armure de cuir", rate: 25, image: null },
+            { name: "Pièce d'argent", rate: 50, image: null }
+        ],
+        location: "Mines de Kobold"
+    },
+    {
+        id: 29,
+        name: "Hallebardier Kobold",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 90,
+        palier: 1,
+        image: "../assets/mobs/Hallebardier_Kobold.png",
+        description: "Armé d'une hallebarde artisanale, ce kobold défend les passages stratégiques des mines.",
+        drops: [
+            { name: "Hallebarde primitive", rate: 35, image: null },
+            { name: "Casque en fer", rate: 20, image: null }
+        ],
+        location: "Mines de Kobold"
+    },
+    {
+        id: 30,
+        name: "Mineur Kobold",
+        category: "creature",
+        type: "Humanoïde",
+        hp: 70,
+        palier: 1,
+        image: "../assets/mobs/Mineur_Kobold.png",
+        description: "Un kobold mineur qui extrait des minerais. Plus résistant que la moyenne grâce à son travail.",
+        drops: [
+            { name: "Pioche usée", rate: 45, image: null },
+            { name: "Minerai de fer", rate: 55, image: null },
+            { name: "Gemme brute", rate: 15, image: null }
+        ],
+        location: "Mines de Kobold"
+    },
+    {
+        id: 31,
+        name: "Soldat Kobold",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 95,
+        palier: 1,
+        image: "../assets/mobs/Soldat_kobold.png",
+        description: "Un kobold entraîné au combat organisé. Il porte une armure fonctionnelle et se bat avec discipline.",
+        drops: [
+            { name: "Bouclier de fer", rate: 30, image: null },
+            { name: "Épée courte", rate: 35, image: null }
+        ],
+        location: "Mines de Kobold"
+    },
+    {
+        id: 32,
+        name: "Sorcier Kobold",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 80,
+        palier: 1,
+        image: "../assets/mobs/Sorcier_kobold.png",
+        description: "Un kobold qui a appris les rudiments de la magie. Ses sorts sont primitifs mais efficaces.",
+        drops: [
+            { name: "Bâton gravé", rate: 40, image: null },
+            { name: "Parchemin magique", rate: 25, image: null },
+            { name: "Cristal brut", rate: 20, image: null }
+        ],
+        location: "Mines de Kobold"
+    },
+
+    // Palier 1 - Squelettes
+    {
+        id: 33,
+        name: "Squelette",
+        category: "creature",
+        type: "Mort-vivant",
+        hp: 100,
+        palier: 1,
+        image: "../assets/mobs/squelette.png",
+        description: "Un guerrier défunt animé par la nécromancie. Ses os cliquettent dans la nuit éternelle.",
+        drops: [
+            { name: "Os ancien", rate: 60, image: null },
+            { name: "Poussière d'os", rate: 40, image: null }
+        ],
+        location: "Cimetière Maudit"
+    },
+    {
+        id: 34,
+        name: "Archer Squelette",
+        category: "creature",
+        type: "Mort-vivant",
+        hp: 90,
+        palier: 1,
+        image: "../assets/mobs/Archer_squelette.png",
+        description: "Un squelette armé d'un arc ancien. Ses flèches ne manquent jamais leur cible.",
+        drops: [
+            { name: "Os ancien", rate: 55, image: null },
+            { name: "Arc maudit", rate: 25, image: null },
+            { name: "Flèche spectrale", rate: 30, image: null }
+        ],
+        location: "Cimetière Maudit"
+    },
+    {
+        id: 35,
+        name: "Épéiste Squelette",
+        category: "elite",
+        type: "Mort-vivant",
+        hp: 120,
+        palier: 1,
+        image: "../assets/mobs/Epeiste_squelette.png",
+        description: "Un maître d'armes du passé, encore mortel malgré la mort. Sa lame danse avec une précision macabre.",
+        drops: [
+            { name: "Os renforcé", rate: 50, image: null },
+            { name: "Épée maudite", rate: 35, image: null },
+            { name: "Gemme d'âme", rate: 15, image: null }
+        ],
+        location: "Cimetière Maudit"
+    },
+    {
+        id: 36,
+        name: "Guerrier Squelette",
+        category: "elite",
+        type: "Mort-vivant",
+        hp: 130,
+        palier: 1,
+        image: "../assets/mobs/Guerrier_squelette.png",
+        description: "Un ancien guerrier ressuscité, vêtu d'une armure rouillée mais toujours fonctionnelle.",
+        drops: [
+            { name: "Armure ancienne", rate: 30, image: null },
+            { name: "Épée rouillée", rate: 40, image: null },
+            { name: "Os renforcé", rate: 50, image: null }
+        ],
+        location: "Cimetière Maudit"
+    },
+    {
+        id: 37,
+        name: "Hallebardier Squelette",
+        category: "elite",
+        type: "Mort-vivant",
+        hp: 135,
+        palier: 1,
+        image: "../assets/mobs/Hallebardier_squelette.png",
+        description: "Gardien éternel armé d'une hallebarde spectrale. Sa portée est redoutable.",
+        drops: [
+            { name: "Hallebarde maudite", rate: 35, image: null },
+            { name: "Os renforcé", rate: 55, image: null }
+        ],
+        location: "Cimetière Maudit"
+    },
+    {
+        id: 38,
+        name: "Tank Squelette",
+        category: "elite",
+        type: "Mort-vivant",
+        hp: 180,
+        palier: 1,
+        image: "../assets/mobs/Tank_squelette.png",
+        description: "Un colosse osseux recouvert d'une armure lourde. Pratiquement indestructible.",
+        drops: [
+            { name: "Armure lourde", rate: 40, image: null },
+            { name: "Bouclier massif", rate: 35, image: null },
+            { name: "Os de titan", rate: 25, image: null }
+        ],
+        location: "Cimetière Maudit"
+    },
+    {
+        id: 39,
+        name: "Sorcier Squelette",
+        category: "elite",
+        type: "Mort-vivant",
+        hp: 110,
+        palier: 1,
+        image: "../assets/mobs/Sorcier_squelette.png",
+        description: "Un nécromancien déchu qui maîtrise encore les arts sombres. Ses sorts drainent la vie.",
+        drops: [
+            { name: "Bâton nécromantique", rate: 30, image: null },
+            { name: "Grimoire maudit", rate: 20, image: null },
+            { name: "Essence noire", rate: 35, image: null }
+        ],
+        location: "Cimetière Maudit"
+    },
+
+    // Palier 1 - Déchus
+    {
+        id: 40,
+        name: "Soldat Déchu",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 140,
+        palier: 1,
+        image: "../assets/mobs/Soldat-Déchu.png",
+        description: "Un soldat corrompu par les ténèbres. Son âme est perdue mais son entraînement perdure.",
+        drops: [
+            { name: "Armure corrompue", rate: 35, image: null },
+            { name: "Essence sombre", rate: 40, image: null }
+        ],
+        location: "Terres Déchues"
+    },
+    {
+        id: 41,
+        name: "Gardien Déchu",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 160,
+        palier: 1,
+        image: "../assets/mobs/Gardien-Déchu.png",
+        description: "Autrefois protecteur de la lumière, maintenant serviteur des ombres. Sa force n'a fait que croître.",
+        drops: [
+            { name: "Bouclier des ténèbres", rate: 30, image: null },
+            { name: "Essence sombre", rate: 45, image: null },
+            { name: "Casque corrompu", rate: 25, image: null }
+        ],
+        location: "Terres Déchues"
+    },
+    {
+        id: 42,
+        name: "Guerrier Déchu",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 155,
+        palier: 1,
+        image: "../assets/mobs/Guerrier Déchu.png",
+        description: "Un champion tombé dans les ténèbres. Sa lame brise les espoirs comme elle brise les armures.",
+        drops: [
+            { name: "Épée des ombres", rate: 35, image: null },
+            { name: "Essence sombre", rate: 50, image: null }
+        ],
+        location: "Terres Déchues"
+    },
+    {
+        id: 43,
+        name: "Héraut Déchu",
         category: "boss",
+        type: "Humanoïde",
+        hp: 450,
+        palier: 1,
+        image: "../assets/mobs/Héraut-Déchu.png",
+        description: "Le commandant des armées déchues. Son aura corrompt tout ce qui l'entoure.",
+        drops: [
+            { name: "Couronne des ténèbres", rate: 15, image: null },
+            { name: "Essence pure des ombres", rate: 25, image: null },
+            { name: "Sceptre maudit", rate: 20, image: null }
+        ],
+        location: "Terres Déchues"
+    },
+    {
+        id: 44,
+        name: "Faucheuse Déchu",
+        category: "boss",
+        type: "Mort-vivant",
+        hp: 500,
+        palier: 1,
+        image: "../assets/mobs/Faucheuse-Déchu.png",
+        description: "La mort incarnée, corrompue par les ténèbres. Sa faux récolte les âmes des vivants.",
+        drops: [
+            { name: "Faux de la mort", rate: 10, image: null },
+            { name: "Cape spectrale", rate: 20, image: null },
+            { name: "Fragment d'âme", rate: 40, image: null }
+        ],
+        location: "Terres Déchues"
+    },
+
+    // Palier 1 - Autres créatures
+    {
+        id: 45,
+        name: "Golem de Glace",
+        category: "elite",
+        type: "Élémentaire",
+        hp: 200,
+        palier: 1,
+        image: "../assets/mobs/Golem_de_glace.png",
+        description: "Un colosse de glace animé par la magie ancienne. Son corps est dur comme le diamant.",
+        drops: [
+            { name: "Cristal de glace", rate: 50, image: null },
+            { name: "Cœur gelé", rate: 30, image: null },
+            { name: "Essence de froid", rate: 40, image: null }
+        ],
+        location: "Toundra Gelée"
+    },
+    {
+        id: 46,
+        name: "Ours Glacial",
+        category: "elite",
+        type: "Bête",
+        hp: 175,
+        palier: 1,
+        image: "../assets/mobs/Ours_Glacial.png",
+        description: "Un ours massif adapté au froid extrême. Sa fourrure blanche le rend quasi invisible dans la neige.",
+        drops: [
+            { name: "Fourrure d'ours", rate: 60, image: null },
+            { name: "Griffe glaciale", rate: 40, image: null },
+            { name: "Cœur d'ours", rate: 20, image: null }
+        ],
+        location: "Toundra Gelée"
+    },
+    {
+        id: 47,
+        name: "Plante Mutante",
+        category: "elite",
         type: "Plante",
+        hp: 150,
+        palier: 1,
+        image: "../assets/mobs/Plante_mutante.png",
+        description: "Une plante corrompue par la magie sauvage. Ses lianes empoisonnées étranglent ses victimes.",
+        drops: [
+            { name: "Sève toxique", rate: 50, image: null },
+            { name: "Épine vénéneuse", rate: 35, image: null },
+            { name: "Racine mutante", rate: 25, image: null }
+        ],
+        location: "Jungle Corrompue"
+    },
+    {
+        id: 48,
+        name: "Essaim d'Insectes",
+        category: "creature",
+        type: "Essaim",
+        hp: 85,
+        palier: 1,
+        image: "../assets/mobs/Essaim d'insectes.png",
+        description: "Un nuage bourdonnant d'insectes agressifs. Difficile à combattre, impossible à fuir.",
+        drops: [
+            { name: "Chitin d'insecte", rate: 65, image: null },
+            { name: "Venin d'insecte", rate: 30, image: null }
+        ],
+        location: "Marais Toxique"
+    },
+    {
+        id: 49,
+        name: "Farfadet",
+        category: "creature",
+        type: "Féérique",
+        hp: 60,
+        palier: 1,
+        image: "../assets/mobs/Farfadet.png",
+        description: "Une créature espiègle de la forêt enchantée. Méfiez-vous de sa magie illusoire.",
+        drops: [
+            { name: "Poussière de fée", rate: 45, image: null },
+            { name: "Aile de farfadet", rate: 25, image: null },
+            { name: "Gemme enchantée", rate: 15, image: null }
+        ],
+        location: "Forêt Enchantée"
+    },
+    {
+        id: 50,
+        name: "Cerf",
+        category: "creature",
+        type: "Bête",
+        hp: 70,
+        palier: 1,
+        image: "../assets/mobs/Cerf.png",
+        description: "Un cerf majestueux des forêts. Paisible mais rapide si menacé.",
+        drops: [
+            { name: "Bois de cerf", rate: 40, image: null },
+            { name: "Viande de cerf", rate: 70, image: null },
+            { name: "Peau de cerf", rate: 50, image: null }
+        ],
+        location: "Forêt Paisible"
+    },
+    {
+        id: 51,
+        name: "Bandit Assassin",
+        category: "elite",
+        type: "Humanoïde",
+        hp: 125,
+        palier: 1,
+        image: "../assets/mobs/Bandit Assassin.png",
+        description: "Un tueur à gages sans scrupules. Ses lames sont aussi silencieuses que mortelles.",
+        drops: [
+            { name: "Dague empoisonnée", rate: 40, image: null },
+            { name: "Cape sombre", rate: 30, image: null },
+            { name: "Bourse volée", rate: 60, image: null }
+        ],
+        location: "Repaire des Bandits"
+    },
+    {
+        id: 52,
+        name: "Poisson Requin",
+        category: "elite",
+        type: "Bête Aquatique",
+        hp: 165,
+        palier: 1,
+        image: "../assets/mobs/Poisson_requin.png",
+        description: "Un prédateur des profondeurs. Ses mâchoires peuvent broyer le métal.",
+        drops: [
+            { name: "Dent de requin", rate: 55, image: null },
+            { name: "Aileron de requin", rate: 35, image: null },
+            { name: "Écaille de requin", rate: 45, image: null }
+        ],
+        location: "Mer Profonde"
+    },
+
+    // Palier 1 - Boss légendaires
+    {
+        id: 53,
+        name: "Illfang",
+        category: "boss",
+        type: "Kobold Seigneur",
+        hp: 600,
+        palier: 1,
+        image: "../assets/mobs/illfang.png",
+        description: "Le roi des kobolds, un seigneur de guerre redoutable. Premier boss légendaire d'Aincrad.",
+        drops: [
+            { name: "Couronne de Kobold", rate: 15, image: null },
+            { name: "Hache du Roi", rate: 20, image: null },
+            { name: "Cape royale", rate: 25, image: null }
+        ],
+        location: "Palais Kobold"
+    },
+    {
+        id: 54,
+        name: "Jira",
+        category: "boss",
+        type: "Démon",
+        hp: 750,
+        palier: 1,
+        image: "../assets/mobs/Jira.png",
+        description: "Un démon ancien emprisonné dans les profondeurs. Sa rage est sans limites.",
+        drops: [
+            { name: "Corne démoniaque", rate: 20, image: null },
+            { name: "Sang maudit", rate: 30, image: null },
+            { name: "Grimoire démoniaque", rate: 15, image: null }
+        ],
+        location: "Cachot Infernal"
+    },
+    {
+        id: 55,
+        name: "Kamilia",
+        category: "boss",
+        type: "Mage",
+        hp: 650,
+        palier: 1,
+        image: "../assets/mobs/Kamilia.png",
+        description: "Une archimage corrompue. Ses sorts peuvent plier la réalité elle-même.",
+        drops: [
+            { name: "Bâton arcanique", rate: 15, image: null },
+            { name: "Robe enchantée", rate: 20, image: null },
+            { name: "Tome de magie", rate: 25, image: null }
+        ],
+        location: "Tour Arcanique"
+    },
+    {
+        id: 56,
+        name: "Léviathan",
+        category: "boss",
+        type: "Serpent de Mer",
+        hp: 900,
+        palier: 1,
+        image: "../assets/mobs/leviathan.png",
+        description: "Le serpent des mers éternelles. Son corps s'étend sur des centaines de mètres.",
+        drops: [
+            { name: "Écaille de Léviathan", rate: 25, image: null },
+            { name: "Perle des profondeurs", rate: 10, image: null },
+            { name: "Trident marin", rate: 15, image: null }
+        ],
+        location: "Abysses Marines"
+    },
+    {
+        id: 57,
+        name: "Priscilia",
+        category: "boss",
+        type: "Dragon-Humanoïde",
+        hp: 850,
+        palier: 1,
+        image: "../assets/mobs/priscilia.png",
+        description: "Une dragonne métamorphe, reine des dragons. Sa beauté cache une puissance dévastatrice.",
+        drops: [
+            { name: "Écaille de dragon", rate: 30, image: null },
+            { name: "Griffe de Priscilia", rate: 20, image: null },
+            { name: "Couronne draconique", rate: 10, image: null }
+        ],
+        location: "Nid du Dragon"
+    },
+    {
+        id: 58,
+        name: "Soul Knight",
+        category: "boss",
+        type: "Chevalier Maudit",
+        hp: 800,
+        palier: 1,
+        image: "../assets/mobs/soulknight.png",
+        description: "Un chevalier dont l'âme est liée à son armure pour l'éternité. Gardien immortel.",
+        drops: [
+            { name: "Armure d'âme", rate: 15, image: null },
+            { name: "Épée spectrale", rate: 20, image: null },
+            { name: "Heaume maudit", rate: 18, image: null }
+        ],
+        location: "Forteresse Oubliée"
+    },
+    {
+        id: 59,
+        name: "Yula",
+        category: "boss",
+        type: "Sorcière",
         hp: 700,
-        attack: 44,
-        defense: 38,
-        palier: 3,
-        image: "../assets/mobs/Tréant Elite.avif",
-        description: "Le plus ancien des tréants, sage millénaire et protecteur suprême de la forêt primordiale.",
-        drops: ["Cœur d'arbre ancien", "Bois millénaire", "Couronne de feuilles", "300-550 pièces d'or"],
-        abilities: ["Force de la nature", "Guérison forestière", "Armée d'arbres"],
-        location: "Cœur de la Forêt Primordiale"
+        palier: 1,
+        image: "../assets/mobs/Yula.png",
+        description: "La sorcière des marais, maîtresse des malédictions. Ses potions sont mortelles.",
+        drops: [
+            { name: "Chaudron magique", rate: 12, image: null },
+            { name: "Grimoire de malédiction", rate: 18, image: null },
+            { name: "Essence de sorcière", rate: 25, image: null }
+        ],
+        location: "Marais Maudit"
+    },
+    {
+        id: 60,
+        name: "Octana",
+        category: "boss",
+        type: "Pieuvre Géante",
+        hp: 780,
+        palier: 1,
+        image: "../assets/mobs/Octana.png",
+        description: "Une pieuvre colossale des profondeurs. Ses tentacules peuvent couler des navires entiers.",
+        drops: [
+            { name: "Tentacule géant", rate: 30, image: null },
+            { name: "Encre d'Octana", rate: 35, image: null },
+            { name: "Perle noire", rate: 15, image: null }
+        ],
+        location: "Fosse Océanique"
     }
 ];
 
@@ -672,7 +1185,6 @@ function renderCreatures() {
             <div class="creature-image-container">
                 <img src="${creature.image}" alt="${creature.name}" class="creature-image" 
                      onerror="this.src='../assets/Logo_3.png'; this.className='creature-image fallback';">
-                <div class="creature-level-badge">Niv. ${creature.level}</div>
             </div>
             
             <div class="creature-header">
@@ -687,15 +1199,8 @@ function renderCreatures() {
                 <div class="stat-row">
                     <div class="stat-item">
                         <span class="stat-icon">❤️</span>
+                        <span class="stat-label">PV</span>
                         <span class="stat-value">${creature.hp}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">⚔️</span>
-                        <span class="stat-value">${creature.attack}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">🛡️</span>
-                        <span class="stat-value">${creature.defense}</span>
                     </div>
                 </div>
             </div>
@@ -768,71 +1273,65 @@ function openCreatureModal(creatureId) {
         <div class="modal-content">
             <button class="modal-close">&times;</button>
             
-            <div class="creature-modal-header">
-                <div class="creature-modal-image">
-                    <img src="${creature.image}" alt="${creature.name}" 
-                         onerror="this.src='../assets/Logo_3.png'; this.className='fallback';">
-                    <div class="creature-level-overlay">Niveau ${creature.level}</div>
+            <div class="modal-header-section">
+                <div class="modal-left-column">
+                    <div class="creature-modal-image">
+                        <img src="${creature.image}" alt="${creature.name}" 
+                             onerror="this.src='../assets/Logo_3.png'; this.className='fallback';">
+                    </div>
+                    
+                    <div class="stat-card-modal">
+                        <div class="stat-icon">❤️</div>
+                        <div class="stat-info">
+                            <div class="stat-label">Points de Vie</div>
+                            <div class="stat-value">${creature.hp}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="creature-modal-info">
-                    <h2 class="creature-name">${creature.name}</h2>
-                    <div class="creature-badges">
-                        <span class="badge badge-${creature.category}">${getCategoryDisplay(creature.category)}</span>
-                        <span class="badge badge-type">${creature.type}</span>
-                        <span class="badge badge-palier">Palier ${creature.palier}</span>
+                
+                <div class="modal-right-column">
+                    <div class="creature-modal-info">
+                        <h2 class="creature-name-modal">${creature.name}</h2>
+                        <div class="creature-badges-modal">
+                            <span class="badge badge-${creature.category}">${getCategoryDisplay(creature.category)}</span>
+                            <span class="badge badge-type">${creature.type}</span>
+                            <span class="badge badge-palier">Palier ${creature.palier}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="creature-info-section">
+                        <div class="info-block">
+                            <h4 class="info-title">📖 Description</h4>
+                            <p class="info-content">${creature.description}</p>
+                        </div>
+                        
+                        <div class="info-block">
+                            <h4 class="info-title">📍 Localisation</h4>
+                            <p class="info-content">${creature.location}</p>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="creature-stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">❤️</div>
-                    <div class="stat-info">
-                        <div class="stat-label">Points de Vie</div>
-                        <div class="stat-value">${creature.hp}</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⚔️</div>
-                    <div class="stat-info">
-                        <div class="stat-label">Attaque</div>
-                        <div class="stat-value">${creature.attack}</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🛡️</div>
-                    <div class="stat-info">
-                        <div class="stat-label">Défense</div>
-                        <div class="stat-value">${creature.defense}</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="creature-section">
-                <h4 class="section-title">📖 Description</h4>
-                <p class="section-content">${creature.description}</p>
-            </div>
-            
-            <div class="creature-section">
-                <h4 class="section-title">📍 Localisation</h4>
-                <p class="section-content">${creature.location}</p>
-            </div>
-            
-            <div class="creature-section">
-                <h4 class="section-title">⚡ Capacités Spéciales</h4>
-                <div class="abilities-grid">
-                    ${creature.abilities.map(ability => `
-                        <span class="ability-tag">✨ ${ability}</span>
-                    `).join('')}
-                </div>
-            </div>
-            
-            <div class="creature-section">
-                <h4 class="section-title">💰 Butin Possible</h4>
-                <div class="drops-grid">
-                    ${creature.drops.map(drop => `
-                        <span class="drop-tag">🎁 ${drop}</span>
-                    `).join('')}
+            <div class="modal-footer-section">
+                <h4 class="section-title-footer">💰 Butin Possible</h4>
+                <div class="drops-grid-modal">
+                    ${creature.drops.map(drop => {
+                        const hasImage = drop.image !== null;
+                        const hasRate = drop.rate !== null;
+                        const imagePath = hasImage ? `../assets/items/Ressources/${drop.image}` : '../assets/Logo_3.png';
+                        const itemSlug = drop.name.toLowerCase().replace(/[\s']+/g, '-').replace(/[éèê]/g, 'e').replace(/à/g, 'a');
+                        
+                        return `
+                            <div class="drop-item-modal" onclick="navigateToItem('${itemSlug}', '${drop.name}')" title="Cliquer pour voir cet item">
+                                ${hasImage ? `<img src="${imagePath}" alt="${drop.name}" class="drop-icon" onerror="this.src='../assets/Logo_3.png'">` : '<span class="drop-icon-placeholder">🎁</span>'}
+                                <div class="drop-info">
+                                    <span class="drop-name">${drop.name}</span>
+                                    ${hasRate ? `<span class="drop-rate">${drop.rate}%</span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
             </div>
         </div>
@@ -862,5 +1361,14 @@ function getCategoryDisplay(category) {
     return categories[category] || category;
 }
 
+// Fonction pour naviguer vers la page items avec recherche de l'item
+function navigateToItem(itemSlug, itemName) {
+    // Stocker le nom de l'item dans le localStorage pour la recherche
+    localStorage.setItem('searchItemFromBestiaire', itemName);
+    // Rediriger vers la page items
+    window.location.href = 'items.html';
+}
+
 // Export pour utilisation globale
 window.openCreatureModal = openCreatureModal;
+window.navigateToItem = navigateToItem;

@@ -848,6 +848,24 @@
             // Aussi assigner à une variable globale pour compatibilité
             window.itemCardsSystem = window.itemCards;
             console.log('ItemCardsSystem initialisé:', window.itemCards); // Debug
+            
+            // Vérifier si on arrive depuis le bestiaire avec un item à rechercher
+            const searchItemName = localStorage.getItem('searchItemFromBestiaire');
+            if (searchItemName) {
+                // Supprimer de localStorage
+                localStorage.removeItem('searchItemFromBestiaire');
+                
+                // Attendre que tout soit chargé et rechercher l'item
+                setTimeout(() => {
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput) {
+                        searchInput.value = searchItemName;
+                        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        // Scroll vers les résultats
+                        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 500);
+            }
         });
 
         // Variable pour empêcher les conflits d'événements - VERSION SIMPLIFIÉE
