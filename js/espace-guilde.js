@@ -4,12 +4,27 @@
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('[GUILDE] Initialisation de l espace guilde...');
     
+    // Cacher le lien "Guilde" du menu (on est déjà sur la page)
+    hideGuildeLinkFromMenu();
+    
     // Attendre que Supabase et l'utilisateur soient prêts
     await waitForAuthAndUser();
     
     // Vérifier que l'utilisateur est membre ou admin
     await checkMemberAccess();
 });
+
+// Cacher le lien Guilde du menu (on est déjà sur cette page)
+function hideGuildeLinkFromMenu() {
+    const navMenu = document.getElementById('nav-menu');
+    if (navMenu) {
+        const guildeLink = navMenu.querySelector('a[href="espace-guilde.html"]');
+        if (guildeLink && guildeLink.parentElement) {
+            guildeLink.parentElement.style.display = 'none';
+            console.log('[OK] Lien Guilde cache du menu');
+        }
+    }
+}
 
 // Attendre que l'authentification soit prête
 function waitForAuthAndUser() {
@@ -100,6 +115,16 @@ async function loadGuildeData() {
 // ========== PLANNING ==========
 async function loadPlanning() {
     try {
+        // Utiliser le cache
+        const cacheKey = 'guild_planning';
+        const cached = window.cacheManager?.get(cacheKey);
+        
+        if (cached) {
+            displayPlanning(cached);
+            console.log('[OK] Planning charge depuis cache');
+            return;
+        }
+        
         // Récupérer les événements à venir
         const { data, error } = await supabase
             .from('guild_planning')
@@ -113,35 +138,51 @@ async function loadPlanning() {
             return;
         }
         
-        const container = document.getElementById('planning-list');
-        
-        if (!data || data.length === 0) {
-            container.innerHTML = '<div class="no-data">Aucun evenement planifie</div>';
-            return;
+        // Mettre en cache pour 2 minutes
+        if (window.cacheManager) {
+            window.cacheManager.set(cacheKey, data || []);
         }
         
-        container.innerHTML = data.map(event => `
-            <div class="planning-item">
-                <div class="item-title">${escapeHtml(event.titre)}</div>
-                <div class="item-date">${formatDate(event.date_event)} | Type: ${formatEventType(event.type_event)}</div>
-                ${event.description ? `<div class="item-description">${escapeHtml(event.description)}</div>` : ''}
-            </div>
-        `).join('');
-        
-        console.log('[OK] Planning charge:', data.length, 'evenements');
+        displayPlanning(data || []);
+        console.log('[OK] Planning charge:', (data || []).length, 'evenements');
         
     } catch (error) {
         console.error('[ERREUR]:', error);
     }
 }
 
-// ========== OBJECTIFS ==========
+function displayPlanning(data) {
+    const container = document.getElementById('planning-list');
+    
+    if (!data || data.length === 0) {
+        container.innerHTML = '<div class="no-data">Aucun evenement planifie</div>';
+        return;
+    }
+    
+    container.innerHTML = data.map(event => `
+        <div class="planning-item">
+            <div class="item-title">${escapeHtml(event.titre)}</div>
+            <div class="item-date">${formatDate(event.date_event)} | Type: ${formatEventType(event.type_event)}</div>
+            ${event.description ? `<div class="item-description">${escapeHtml(event.description)}</div>` : ''}
+        </div>
+    `).join('');
+}// ========== OBJECTIFS ==========
 async function loadObjectives() {
     try {
         // Obtenir le numéro de semaine actuel
         const now = new Date();
         const weekNumber = getWeekNumber(now);
         const year = now.getFullYear();
+        
+        // Utiliser le cache
+        const cacheKey = `guild_objectives_${year}_${weekNumber}`;
+        const cached = window.cacheManager?.get(cacheKey);
+        
+        if (cached) {
+            displayObjectives(cached);
+            console.log('[OK] Objectifs charges depuis cache');
+            return;
+        }
         
         // Récupérer les objectifs de la semaine
         const { data, error } = await supabase
@@ -156,33 +197,41 @@ async function loadObjectives() {
             return;
         }
         
-        const container = document.getElementById('objectives-list');
-        
-        if (!data || data.length === 0) {
-            container.innerHTML = '<div class="no-data">Aucun objectif defini pour cette semaine</div>';
-            return;
+        // Mettre en cache pour 5 minutes
+        if (window.cacheManager) {
+            window.cacheManager.set(cacheKey, data || []);
         }
         
-        container.innerHTML = data.map(obj => `
-            <div class="objective-item">
-                <div class="item-title">${escapeHtml(obj.titre)}</div>
-                <div class="item-description">${escapeHtml(obj.description || '')}</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${obj.progression}%">
-                        ${obj.progression}%
-                    </div>
-                </div>
-                <div style="color: #888; font-size: 0.85rem; margin-top: 5px;">
-                    Statut: ${formatStatus(obj.statut)}
-                </div>
-            </div>
-        `).join('');
-        
-        console.log('[OK] Objectifs charges:', data.length);
+        displayObjectives(data || []);
+        console.log('[OK] Objectifs charges:', (data || []).length);
         
     } catch (error) {
         console.error('[ERREUR]:', error);
     }
+}
+
+function displayObjectives(data) {
+    const container = document.getElementById('objectives-list');
+    
+    if (!data || data.length === 0) {
+        container.innerHTML = '<div class="no-data">Aucun objectif defini pour cette semaine</div>';
+        return;
+    }
+    
+    container.innerHTML = data.map(obj => `
+        <div class="objective-item">
+            <div class="item-title">${escapeHtml(obj.titre)}</div>
+            <div class="item-description">${escapeHtml(obj.description || '')}</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${obj.progression}%">
+                    ${obj.progression}%
+                </div>
+            </div>
+            <div style="color: #888; font-size: 0.85rem; margin-top: 5px;">
+                Statut: ${formatStatus(obj.statut)}
+            </div>
+        </div>
+    `).join('');
 }
 
 // ========== PRÉSENCE ==========

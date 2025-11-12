@@ -129,6 +129,7 @@ async function checkAdminAccess() {
         // Charger les données
         await loadUsers();
         await loadPresences();
+        await loadMembersForPresence(); // Charger la liste des membres pour le formulaire de présence
         
         // Initialiser les event listeners
         initializeEventListeners();
@@ -148,6 +149,17 @@ async function checkAdminAccess() {
 // Charger tous les utilisateurs
 async function loadUsers() {
     try {
+        // Utiliser le cache pour éviter les requêtes multiples
+        const cachedUsers = window.cacheManager?.get('all_users');
+        if (cachedUsers) {
+            allUsers = cachedUsers;
+            filteredUsers = allUsers;
+            updateStats();
+            displayUsers();
+            console.log(`📦 ${allUsers.length} utilisateurs chargés depuis le cache`);
+            return;
+        }
+
         const { data: users, error } = await supabase
             .from('user_profiles')
             .select('*')
@@ -161,6 +173,11 @@ async function loadUsers() {
         
         allUsers = users || [];
         filteredUsers = allUsers;
+        
+        // Mettre en cache pour 3 minutes
+        if (window.cacheManager) {
+            window.cacheManager.set('all_users', allUsers);
+        }
         
         console.log(`✅ ${allUsers.length} utilisateurs chargés`);
         
@@ -517,6 +534,11 @@ async function confirmRoleChange() {
         console.log('✅ Rôle modifié avec succès');
         alert('Rôle modifié avec succès !');
         
+        // Invalider le cache des utilisateurs
+        if (window.cacheManager) {
+            window.cacheManager.invalidate('all_users');
+        }
+        
         // Recharger les utilisateurs
         await loadUsers();
         
@@ -728,6 +750,8 @@ async function loadAdminPresence() {
 // Charger la liste des membres pour le formulaire de présence
 async function loadMembersForPresence() {
     try {
+        console.log('🔄 Chargement des membres pour le select présence...');
+        
         const { data, error } = await supabase
             .from('user_profiles')
             .select('id, username')
@@ -736,12 +760,21 @@ async function loadMembersForPresence() {
         
         if (error) throw error;
         
+        console.log('✅ Membres récupérés:', data?.length);
+        
         const select = document.getElementById('presence-user');
+        if (!select) {
+            console.error('❌ Select #presence-user introuvable !');
+            return;
+        }
+        
         select.innerHTML = '<option value="">Sélectionner un membre</option>' +
             data.map(user => `<option value="${user.id}">${escapeHtml(user.username)}</option>`).join('');
         
+        console.log('✅ Select mis à jour avec', data.length, 'membres');
+        
     } catch (error) {
-        console.error('Erreur chargement membres:', error);
+        console.error('❌ Erreur chargement membres:', error);
     }
 }
 

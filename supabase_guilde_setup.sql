@@ -239,3 +239,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+
+-- ========================================
+-- INDEX POUR OPTIMISATION DES PERFORMANCES
+-- ========================================
+
+-- Index pour guild_planning
+CREATE INDEX IF NOT EXISTS idx_guild_planning_date ON guild_planning(date_event);
+CREATE INDEX IF NOT EXISTS idx_guild_planning_type ON guild_planning(type_event);
+CREATE INDEX IF NOT EXISTS idx_guild_planning_created_by ON guild_planning(created_by);
+
+-- Index pour guild_objectives
+CREATE INDEX IF NOT EXISTS idx_guild_objectives_semaine ON guild_objectives(semaine_numero, annee);
+CREATE INDEX IF NOT EXISTS idx_guild_objectives_statut ON guild_objectives(statut);
+CREATE INDEX IF NOT EXISTS idx_guild_objectives_created_by ON guild_objectives(created_by);
+
+-- Index pour guild_presence
+CREATE INDEX IF NOT EXISTS idx_guild_presence_user_date ON guild_presence(user_id, date_presence);
+CREATE INDEX IF NOT EXISTS idx_guild_presence_date ON guild_presence(date_presence);
+CREATE INDEX IF NOT EXISTS idx_guild_presence_statut ON guild_presence(statut);
+
+-- Index pour user_profiles (optimisation des requêtes fréquentes)
+CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_created_at ON user_profiles(created_at);

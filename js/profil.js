@@ -60,6 +60,17 @@ async function loadProfilePage() {
         
         console.log('✅ Utilisateur connecté:', window.currentUser.email);
         
+        // Essayer de charger depuis le cache d'abord
+        const cacheKey = `user_profile_${window.currentUser.id}`;
+        const cachedProfile = window.cacheManager?.get(cacheKey);
+        
+        if (cachedProfile) {
+            console.log('📦 Profil chargé depuis le cache');
+            localUserProfile = cachedProfile;
+            displayProfile(cachedProfile);
+            return;
+        }
+        
         // Récupérer le profil depuis user_profiles
         const { data: profile, error } = await supabase
             .from('user_profiles')
@@ -81,6 +92,11 @@ async function loadProfilePage() {
         
         localUserProfile = profile;
         console.log('✅ Profil chargé:', profile);
+        
+        // Mettre en cache pour 5 minutes
+        if (window.cacheManager) {
+            window.cacheManager.set(cacheKey, profile);
+        }
         
         // Afficher le profil
         displayProfile(profile);
@@ -201,6 +217,12 @@ async function saveProfileChanges() {
         
         console.log('✅ Profil mis à jour');
         showSuccess('Modifications sauvegardées avec succès !');
+        
+        // Invalider le cache du profil
+        if (window.cacheManager) {
+            window.cacheManager.invalidate(`user_profile_${window.currentUser.id}`);
+            window.cacheManager.invalidate('all_users'); // Aussi invalider la liste complète
+        }
         
         // Recharger le profil
         await loadProfilePage();
