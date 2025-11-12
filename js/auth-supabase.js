@@ -112,7 +112,6 @@ function checkAuthState() {
         
         if (currentUser) {
             if (userInfo) {
-                userInfo.style.display = 'flex';
                 userInfo.classList.add('show');
                 userInfo.classList.add('js-visible');
                 if (usernameSpan) {
@@ -126,7 +125,6 @@ function checkAuthState() {
                 }
             }
             if (loginLink) {
-                loginLink.style.display = 'none';
                 loginLink.classList.remove('show');
                 loginLink.classList.remove('js-visible');
             }
@@ -137,18 +135,14 @@ function checkAuthState() {
             // Utilisateur non connecté - Afficher le bouton connexion et masquer les infos user
             console.log('👤 Utilisateur non connecté - affichage du bouton connexion');
             if (userInfo) {
-                userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
                 userInfo.classList.remove('js-visible');
             }
             if (loginLink) {
                 console.log('🔗 Affichage du bouton connexion');
-                loginLink.style.display = 'block';
-                loginLink.style.opacity = '1';
-                loginLink.style.visibility = 'visible';
                 loginLink.classList.add('show');
                 loginLink.classList.add('js-visible');
-                console.log('🔗 Style appliqué:', loginLink.style.display, loginLink.className);
+                console.log('🔗 Classes appliquées:', loginLink.className);
             } else {
                 console.error('❌ Bouton login-link non trouvé dans le DOM');
             }
@@ -170,8 +164,8 @@ async function checkAndShowDashboardLink() {
             return;
         }
         
-        // TOUJOURS cacher par défaut d'abord
-        dashboardLink.style.display = 'none';
+        // TOUJOURS retirer la classe visible par défaut
+        dashboardLink.classList.remove('visible');
         
         // Vérifier le rôle de l'utilisateur
         if (!currentUser) {
@@ -188,17 +182,17 @@ async function checkAndShowDashboardLink() {
         
         if (error) {
             console.error('Erreur lors de la vérification du rôle admin:', error);
-            dashboardLink.style.display = 'none';
+            dashboardLink.classList.remove('visible');
             console.log('🚫 Erreur profil - Dashboard caché');
             return;
         }
         
         // Afficher le lien uniquement si l'utilisateur est admin
         if (profile && profile.role === 'admin') {
-            dashboardLink.style.display = 'inline-block';
+            dashboardLink.classList.add('visible');
             console.log('👑 Lien Dashboard affiché pour l\'admin');
         } else {
-            dashboardLink.style.display = 'none';
+            dashboardLink.classList.remove('visible');
             console.log('🚫 Utilisateur non-admin (rôle: ' + (profile?.role || 'inconnu') + ') - Dashboard caché');
         }
         
@@ -206,7 +200,7 @@ async function checkAndShowDashboardLink() {
         console.error('Erreur checkAndShowDashboardLink:', error);
         const dashboardLink = document.getElementById('dashboard-link');
         if (dashboardLink) {
-            dashboardLink.style.display = 'none';
+            dashboardLink.classList.remove('visible');
         }
     }
 }
@@ -615,11 +609,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         setTimeout(() => {
             const loginLink = document.getElementById('login-link');
             if (loginLink) {
-                loginLink.style.display = 'block';
                 loginLink.classList.add('show');
                 loginLink.classList.add('js-visible');
             }
-        }, 1000);
+        }, 500);
         return;
     }
     
@@ -649,13 +642,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     setTimeout(() => {
         if (!currentUser) {
             const loginLink = document.getElementById('login-link');
-            if (loginLink && loginLink.style.display === 'none') {
-                loginLink.style.display = 'block';
+            if (loginLink) {
                 loginLink.classList.add('show');
                 loginLink.classList.add('js-visible');
             }
         }
-    }, 1000);
+    }, 500);
     
     supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
