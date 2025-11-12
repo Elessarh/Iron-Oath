@@ -1,62 +1,77 @@
 /* admin-dashboard.js - Gestion du dashboard administrateur */
 
-let currentUser = null;
+// Variables locales (currentUser est global depuis auth-supabase.js)
+let localCurrentUser = null;
 let currentUserProfile = null;
 let allUsers = [];
 let filteredUsers = [];
 let editingUserId = null;
 
+// Variables de pagination
+let currentPage = 1;
+const usersPerPage = 15;
+
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('📊 Initialisation du dashboard admin...');
     
-    // Attendre que auth-supabase.js soit chargé
-    await waitForAuth();
+    // Attendre que auth-supabase.js soit chargé ET que l'utilisateur soit connecté
+    await waitForAuthAndUser();
     
     // Vérifier les droits admin
     await checkAdminAccess();
 });
 
-// Attendre que l'authentification soit prête
-function waitForAuth() {
+// Attendre que l'authentification soit prête ET que l'utilisateur soit connecté
+function waitForAuthAndUser() {
     return new Promise((resolve) => {
+        let attempts = 0;
+        const maxAttempts = 100; // 10 secondes max
+        
         const checkAuth = setInterval(() => {
-            if (typeof supabase !== 'undefined' && supabase !== null) {
+            attempts++;
+            
+            // Vérifier que Supabase ET window.currentUser sont prêts
+            if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
+                console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
+                resolve();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkAuth);
+                console.error('❌ Timeout: utilisateur non connecté après 10s');
+                console.log('État:', {
+                    supabase: typeof supabase !== 'undefined',
+                    currentUser: window.currentUser
+                });
+                showError('Vous devez être connecté pour accéder au dashboard.');
+                setTimeout(() => {
+                    window.location.href = 'connexion.html';
+                }, 2000);
                 resolve();
             }
         }, 100);
-        
-        setTimeout(() => {
-            clearInterval(checkAuth);
-            resolve();
-        }, 10000);
     });
 }
 
 // Vérifier que l'utilisateur est admin
 async function checkAdminAccess() {
     try {
-        // Vérifier la session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError || !session) {
-            console.error('❌ Pas de session active');
+        // Utiliser la session globale depuis auth-supabase.js
+        if (!window.currentUser) {
+            console.error('❌ Pas d\'utilisateur connecté');
             showError('Vous devez être connecté pour accéder au dashboard.');
             setTimeout(() => {
                 window.location.href = 'connexion.html';
             }, 2000);
             return;
-        }
-        
-        currentUser = session.user;
-        console.log('✅ Utilisateur connecté:', currentUser.email);
+        }        localCurrentUser = window.currentUser;
+        console.log('✅ Utilisateur connecté:', localCurrentUser.email);
         
         // Récupérer le profil et vérifier le rôle
         const { data: profile, error } = await supabase
             .from('user_profiles')
             .select('*')
-            .eq('id', currentUser.id)
+            .eq('id', localCurrentUser.id)
             .single();
             
         if (error || !profile) {
@@ -130,25 +145,31 @@ function updateStats() {
     const totalUsers = allUsers.length;
     const admins = allUsers.filter(u => u.role === 'admin').length;
     const membres = allUsers.filter(u => u.role === 'membre').length;
-    const utilisateurs = allUsers.filter(u => u.role === 'utilisateur' || !u.role).length;
+    const joueurs = allUsers.filter(u => u.role === 'joueur' || !u.role).length;
     
     document.getElementById('stat-total-users').textContent = totalUsers;
     document.getElementById('stat-admins').textContent = admins;
     document.getElementById('stat-membres').textContent = membres;
-    document.getElementById('stat-utilisateurs').textContent = utilisateurs;
+    document.getElementById('stat-utilisateurs').textContent = joueurs;
 }
 
-// Afficher les utilisateurs dans le tableau
+// Afficher les utilisateurs dans le tableau (avec pagination)
 function displayUsers() {
     const tbody = document.getElementById('users-tbody');
     tbody.innerHTML = '';
     
     if (filteredUsers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888; padding: 30px;">Aucun utilisateur trouvé</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Aucun utilisateur trouvé</td></tr>';
+        updatePagination();
         return;
     }
     
-    filteredUsers.forEach(user => {
+    // Calculer les indices pour la pagination
+    const startIndex = (currentPage - 1) * usersPerPage;
+    const endIndex = Math.min(startIndex + usersPerPage, filteredUsers.length);
+    const usersToDisplay = filteredUsers.slice(startIndex, endIndex);
+    
+    usersToDisplay.forEach(user => {
         const tr = document.createElement('tr');
         
         // Pseudo
@@ -156,15 +177,24 @@ function displayUsers() {
         tdUsername.textContent = user.username || 'Inconnu';
         tr.appendChild(tdUsername);
         
-        // Email
-        const tdEmail = document.createElement('td');
-        tdEmail.textContent = user.email || '-';
-        tr.appendChild(tdEmail);
+        // Classe
+        const tdClasse = document.createElement('td');
+        tdClasse.textContent = user.classe || 'Guerrier';
+        tdClasse.style.fontWeight = '600';
+        tdClasse.style.color = getClasseColor(user.classe);
+        tr.appendChild(tdClasse);
+        
+        // Niveau
+        const tdNiveau = document.createElement('td');
+        tdNiveau.textContent = user.niveau || '1';
+        tdNiveau.style.fontWeight = '700';
+        tdNiveau.style.textAlign = 'center';
+        tr.appendChild(tdNiveau);
         
         // Rôle
         const tdRole = document.createElement('td');
         const roleBadge = document.createElement('span');
-        roleBadge.className = `role-badge role-${user.role || 'utilisateur'}`;
+        roleBadge.className = `role-badge role-${user.role || 'joueur'}`;
         roleBadge.textContent = getRoleLabel(user.role);
         tdRole.appendChild(roleBadge);
         tr.appendChild(tdRole);
@@ -185,7 +215,7 @@ function displayUsers() {
         tdActions.appendChild(btnEdit);
         
         // Bouton Supprimer (désactivé pour le compte actuel)
-        if (user.id !== currentUser.id) {
+        if (user.id !== localCurrentUser.id) {
             const btnDelete = document.createElement('button');
             btnDelete.className = 'action-btn btn-delete';
             btnDelete.textContent = 'Supprimer';
@@ -201,13 +231,39 @@ function displayUsers() {
 // Obtenir le label du rôle
 function getRoleLabel(role) {
     const labels = {
-        'utilisateur': 'Utilisateur',
+        'joueur': 'Joueur',
         'membre': 'Membre',
         'admin': 'Administrateur'
     };
-    return labels[role] || 'Utilisateur';
+    return labels[role] || 'Joueur';
 }
 
+// Obtenir la couleur de la classe
+function getClasseColor(classe) {
+    const colors = {
+        'Shaman': '#4ecdc4',
+        'Mage': '#667eea',
+        'Assassin': '#f5576c',
+        'Guerrier': '#ff6b35',
+        'Archer': '#45b7aa'
+    };
+    return colors[classe] || '#4ecdc4';
+}
+
+// Mettre à jour la pagination
+function updatePagination() {
+    const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+    const pageInfo = document.getElementById('page-info');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    // Afficher les informations de page
+    pageInfo.textContent = `Page ${currentPage} / ${totalPages || 1} (${filteredUsers.length} utilisateur${filteredUsers.length > 1 ? 's' : ''})`;
+    
+    // Activer/désactiver les boutons
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
+}
 // Formater une date
 function formatDate(dateString) {
     if (!dateString) return 'Inconnue';
@@ -222,13 +278,50 @@ function initializeEventListeners() {
     // Recherche
     const searchInput = document.getElementById('search-input');
     searchInput.addEventListener('input', (e) => {
+        currentPage = 1; // Reset à la page 1 lors d'une recherche
         filterUsers();
     });
     
     // Filtre par rôle
     const roleFilter = document.getElementById('role-filter');
     roleFilter.addEventListener('change', (e) => {
+        currentPage = 1;
         filterUsers();
+    });
+    
+    // Filtre par classe
+    const classeFilter = document.getElementById('classe-filter');
+    classeFilter.addEventListener('change', (e) => {
+        currentPage = 1;
+        filterUsers();
+    });
+    
+    // Filtre par niveau
+    const niveauFilter = document.getElementById('niveau-filter');
+    niveauFilter.addEventListener('change', (e) => {
+        currentPage = 1;
+        filterUsers();
+    });
+    
+    // Pagination
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    
+    prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayUsers();
+            updatePagination();
+        }
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayUsers();
+            updatePagination();
+        }
     });
 }
 
@@ -236,6 +329,8 @@ function initializeEventListeners() {
 function filterUsers() {
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
     const roleFilter = document.getElementById('role-filter').value;
+    const classeFilter = document.getElementById('classe-filter').value;
+    const niveauFilter = document.getElementById('niveau-filter').value;
     
     filteredUsers = allUsers.filter(user => {
         // Filtre de recherche
@@ -244,19 +339,32 @@ function filterUsers() {
             (user.email && user.email.toLowerCase().includes(searchTerm));
         
         // Filtre de rôle
-        const matchesRole = roleFilter === 'all' || user.role === roleFilter || (!user.role && roleFilter === 'utilisateur');
+        const matchesRole = roleFilter === 'all' || user.role === roleFilter || (!user.role && roleFilter === 'joueur');
         
-        return matchesSearch && matchesRole;
+        // Filtre de classe
+        const matchesClasse = classeFilter === 'all' || user.classe === classeFilter;
+        
+        // Filtre de niveau
+        let matchesNiveau = true;
+        if (niveauFilter !== 'all') {
+            const niveau = user.niveau || 1;
+            const [min, max] = niveauFilter.split('-').map(Number);
+            matchesNiveau = niveau >= min && niveau <= max;
+        }
+        
+        return matchesSearch && matchesRole && matchesClasse && matchesNiveau;
     });
     
+    currentPage = 1; // Reset à la page 1
     displayUsers();
+    updatePagination();
 }
 
 // Ouvrir le modal de modification de rôle
 function openRoleModal(user) {
     editingUserId = user.id;
     document.getElementById('modal-username').textContent = user.username || user.email;
-    document.getElementById('modal-role-select').value = user.role || 'utilisateur';
+    document.getElementById('modal-role-select').value = user.role || 'joueur';
     document.getElementById('role-modal').classList.add('active');
 }
 
@@ -309,18 +417,22 @@ function confirmDeleteUser(user) {
 // Supprimer un utilisateur
 async function deleteUser(userId) {
     try {
-        const { error } = await supabase
-            .from('user_profiles')
-            .delete()
-            .eq('id', userId);
-            
-        if (error) {
-            console.error('❌ Erreur suppression utilisateur:', error);
-            alert('Erreur lors de la suppression de l\'utilisateur.');
+        if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ? Cette action est irréversible.')) {
             return;
         }
         
-        console.log('✅ Utilisateur supprimé avec succès');
+        // Utiliser la fonction PostgreSQL pour suppression complète
+        const { data, error } = await supabase.rpc('delete_user_completely', {
+            user_id: userId
+        });
+            
+        if (error) {
+            console.error('❌ Erreur suppression utilisateur:', error);
+            alert('Erreur lors de la suppression de l\'utilisateur : ' + error.message);
+            return;
+        }
+        
+        console.log('✅ Utilisateur supprimé complètement (auth.users + user_profiles)');
         alert('Utilisateur supprimé avec succès !');
         
         // Recharger les utilisateurs
@@ -328,7 +440,7 @@ async function deleteUser(userId) {
         
     } catch (error) {
         console.error('❌ Erreur lors de la suppression:', error);
-        alert('Une erreur technique est survenue.');
+        alert('Une erreur technique est survenue : ' + error.message);
     }
 }
 

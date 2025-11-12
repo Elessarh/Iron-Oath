@@ -90,7 +90,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         
-        .role-utilisateur {
+        .role-joueur {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
@@ -114,6 +114,58 @@
         @keyframes pulse-admin {
             0%, 100% { box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5), 0 0 30px rgba(254, 225, 64, 0.3); }
             50% { box-shadow: 0 6px 25px rgba(255, 107, 53, 0.7), 0 0 40px rgba(254, 225, 64, 0.5); }
+        }
+        
+        .profile-select,
+        .profile-input {
+            padding: 8px 12px;
+            border: 2px solid #4ecdc4;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-select:hover,
+        .profile-input:hover {
+            border-color: #45b7aa;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .profile-select:focus,
+        .profile-input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.4);
+        }
+        
+        .profile-input {
+            width: 80px;
+            text-align: center;
+        }
+        
+        .save-profile-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        }
+        
+        .save-profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.5);
+        }
+        
+        .save-profile-btn:active {
+            transform: translateY(0);
         }
         
         .profil-stats {
@@ -260,13 +312,37 @@
                 <div class="info-row">
                     <span class="info-label">🎖️ Rôle</span>
                     <span class="info-value">
-                        <span id="profile-role" class="role-badge role-utilisateur">Utilisateur</span>
+                        <span id="profile-role" class="role-badge role-joueur">Joueur</span>
+                    </span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">⚔️ Classe</span>
+                    <span class="info-value">
+                        <select id="profile-classe" class="profile-select">
+                            <option value="Shaman">Shaman</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Assassin">Assassin</option>
+                            <option value="Guerrier" selected>Guerrier</option>
+                            <option value="Archer">Archer</option>
+                        </select>
+                    </span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">🔢 Niveau</span>
+                    <span class="info-value">
+                        <input type="number" id="profile-niveau" class="profile-input" min="1" max="100" value="1">
                     </span>
                 </div>
                 
                 <div class="info-row">
                     <span class="info-label">📅 Membre depuis</span>
                     <span class="info-value" id="profile-created">-</span>
+                </div>
+                
+                <div class="info-row" style="justify-content: center; margin-top: 20px;">
+                    <button id="save-profile-btn" class="save-profile-btn">💾 Sauvegarder les modifications</button>
                 </div>
             </div>
             

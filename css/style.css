@@ -306,7 +306,7 @@ body .nav-connexion a[href*="profil"] {
     font-size: 0.9rem !important;
     letter-spacing: 0.5px !important;
     transition: all 0.3s ease !important;
-    display: inline-block !important;
+    /* display: inline-block !important; RETIRÉ - Permet au JavaScript de contrôler la visibilité */
 }
 
 /* Lien Dashboard (admin) - Style orange */

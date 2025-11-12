@@ -7,7 +7,7 @@
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
-        CREATE TYPE user_role AS ENUM ('utilisateur', 'membre', 'admin');
+        CREATE TYPE user_role AS ENUM ('joueur', 'membre', 'admin');
     END IF;
 END $$;
 
@@ -20,7 +20,7 @@ BEGIN
         AND column_name = 'role'
     ) THEN
         ALTER TABLE user_profiles 
-        ADD COLUMN role user_role DEFAULT 'utilisateur';
+        ADD COLUMN role user_role DEFAULT 'joueur';
     END IF;
 END $$;
 
@@ -39,7 +39,7 @@ END $$;
 
 -- 4. Mettre à jour les utilisateurs existants sans rôle
 UPDATE user_profiles 
-SET role = 'utilisateur' 
+SET role = 'joueur' 
 WHERE role IS NULL;
 
 -- 5. Activer Row Level Security (RLS) sur user_profiles

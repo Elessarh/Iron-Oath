@@ -1,45 +1,56 @@
 /* profil.js - Gestion de la page profil utilisateur */
 
-let currentUser = null;
-let userProfile = null;
+// Variables locales (currentUser et userProfile sont globaux depuis auth-supabase.js)
+let localUserProfile = null;
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('📄 Initialisation de la page profil...');
     
-    // Attendre que auth-supabase.js soit chargé
-    await waitForAuth();
+    // Attendre que auth-supabase.js soit chargé ET que l'utilisateur soit connecté
+    await waitForAuthAndUser();
     
     // Charger le profil
-    await loadUserProfile();
+    await loadProfilePage();
 });
 
-// Attendre que l'authentification soit prête
-function waitForAuth() {
+// Attendre que l'authentification soit prête ET que l'utilisateur soit connecté
+function waitForAuthAndUser() {
     return new Promise((resolve) => {
+        let attempts = 0;
+        const maxAttempts = 100; // 10 secondes max
+        
         const checkAuth = setInterval(() => {
-            if (typeof supabase !== 'undefined' && supabase !== null) {
+            attempts++;
+            
+            // Vérifier que Supabase ET window.currentUser sont prêts
+            if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
+                console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
+                resolve();
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkAuth);
+                console.error('❌ Timeout: utilisateur non connecté après 10s');
+                console.log('État:', {
+                    supabase: typeof supabase !== 'undefined',
+                    currentUser: window.currentUser
+                });
+                showError('Vous devez être connecté pour voir votre profil.');
+                setTimeout(() => {
+                    window.location.href = 'connexion.html';
+                }, 2000);
                 resolve();
             }
         }, 100);
-        
-        // Timeout après 10 secondes
-        setTimeout(() => {
-            clearInterval(checkAuth);
-            resolve();
-        }, 10000);
     });
 }
 
-// Charger le profil de l'utilisateur connecté
-async function loadUserProfile() {
+// Charger le profil de l'utilisateur connecté (renommé pour éviter conflit avec auth-supabase.js)
+async function loadProfilePage() {
     try {
-        // Vérifier la session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError || !session) {
-            console.error('❌ Pas de session active');
+        // Double vérification
+        if (!window.currentUser) {
+            console.error('❌ Pas d\'utilisateur connecté (window.currentUser est null)');
             showError('Vous devez être connecté pour voir votre profil.');
             setTimeout(() => {
                 window.location.href = 'connexion.html';
@@ -47,14 +58,13 @@ async function loadUserProfile() {
             return;
         }
         
-        currentUser = session.user;
-        console.log('✅ Utilisateur connecté:', currentUser.email);
+        console.log('✅ Utilisateur connecté:', window.currentUser.email);
         
         // Récupérer le profil depuis user_profiles
         const { data: profile, error } = await supabase
             .from('user_profiles')
             .select('*')
-            .eq('id', currentUser.id)
+            .eq('id', window.currentUser.id)
             .single();
             
         if (error) {
@@ -69,7 +79,7 @@ async function loadUserProfile() {
             return;
         }
         
-        userProfile = profile;
+        localUserProfile = profile;
         console.log('✅ Profil chargé:', profile);
         
         // Afficher le profil
@@ -91,14 +101,18 @@ function displayProfile(profile) {
     
     // Remplir les informations
     document.getElementById('profile-username').textContent = profile.username || 'Inconnu';
-    document.getElementById('profile-email').textContent = currentUser.email || 'Inconnu';
+    document.getElementById('profile-email').textContent = window.currentUser.email || 'Inconnu';
     
     // Afficher le rôle avec le bon badge
     const roleBadge = document.getElementById('profile-role');
-    const role = profile.role || 'utilisateur';
+    const role = profile.role || 'joueur';
     
     roleBadge.textContent = getRoleLabel(role);
     roleBadge.className = 'role-badge role-' + role;
+    
+    // Afficher classe et niveau
+    document.getElementById('profile-classe').value = profile.classe || 'Guerrier';
+    document.getElementById('profile-niveau').value = profile.niveau || 1;
     
     // Formater la date de création
     if (profile.created_at) {
@@ -109,6 +123,12 @@ function displayProfile(profile) {
         document.getElementById('profile-created').textContent = 'Date inconnue';
     }
     
+    // Ajouter l'event listener pour le bouton de sauvegarde
+    const saveBtn = document.getElementById('save-profile-btn');
+    if (saveBtn) {
+        saveBtn.onclick = saveProfileChanges;
+    }
+    
     // Charger les statistiques (pour l'instant valeurs par défaut)
     loadStats();
 }
@@ -116,11 +136,50 @@ function displayProfile(profile) {
 // Obtenir le label du rôle en français
 function getRoleLabel(role) {
     const labels = {
-        'utilisateur': 'Utilisateur',
+        'joueur': 'Joueur',
         'membre': 'Membre',
         'admin': 'Administrateur'
     };
-    return labels[role] || 'Utilisateur';
+    return labels[role] || 'Joueur';
+}
+
+// Sauvegarder les modifications du profil
+async function saveProfileChanges() {
+    try {
+        const classe = document.getElementById('profile-classe').value;
+        const niveau = parseInt(document.getElementById('profile-niveau').value);
+        
+        // Valider le niveau
+        if (niveau < 1 || niveau > 100) {
+            showError('Le niveau doit être entre 1 et 100.');
+            return;
+        }
+        
+        // Mettre à jour le profil
+        const { error } = await supabase
+            .from('user_profiles')
+            .update({ 
+                classe: classe,
+                niveau: niveau
+            })
+            .eq('id', window.currentUser.id);
+        
+        if (error) {
+            console.error('❌ Erreur sauvegarde profil:', error);
+            showError('Impossible de sauvegarder vos modifications.');
+            return;
+        }
+        
+        console.log('✅ Profil mis à jour');
+        showSuccess('Modifications sauvegardées avec succès !');
+        
+        // Recharger le profil
+        await loadProfilePage();
+        
+    } catch (error) {
+        console.error('❌ Erreur lors de la sauvegarde:', error);
+        showError('Une erreur technique est survenue.');
+    }
 }
 
 // Charger les statistiques (à implémenter plus tard avec de vraies données)
@@ -140,12 +199,12 @@ function loadStats() {
 
 // Afficher un message d'erreur
 function showError(message) {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('profil-content').style.display = 'none';
-    
-    const errorDiv = document.getElementById('error-content');
-    errorDiv.style.display = 'block';
-    document.getElementById('error-text').textContent = message;
+    alert('❌ ' + message);
+}
+
+// Afficher un message de succès
+function showSuccess(message) {
+    alert('✅ ' + message);
 }
 
 // Fonction utilitaire pour formater les dates

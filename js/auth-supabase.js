@@ -170,9 +170,12 @@ async function checkAndShowDashboardLink() {
             return;
         }
         
+        // TOUJOURS cacher par défaut d'abord
+        dashboardLink.style.display = 'none';
+        
         // Vérifier le rôle de l'utilisateur
         if (!currentUser) {
-            dashboardLink.style.display = 'none';
+            console.log('🚫 Pas d\'utilisateur connecté - Dashboard caché');
             return;
         }
         
@@ -186,6 +189,7 @@ async function checkAndShowDashboardLink() {
         if (error) {
             console.error('Erreur lors de la vérification du rôle admin:', error);
             dashboardLink.style.display = 'none';
+            console.log('🚫 Erreur profil - Dashboard caché');
             return;
         }
         
@@ -195,10 +199,15 @@ async function checkAndShowDashboardLink() {
             console.log('👑 Lien Dashboard affiché pour l\'admin');
         } else {
             dashboardLink.style.display = 'none';
+            console.log('🚫 Utilisateur non-admin (rôle: ' + (profile?.role || 'inconnu') + ') - Dashboard caché');
         }
         
     } catch (error) {
         console.error('Erreur checkAndShowDashboardLink:', error);
+        const dashboardLink = document.getElementById('dashboard-link');
+        if (dashboardLink) {
+            dashboardLink.style.display = 'none';
+        }
     }
 }
 
@@ -283,10 +292,26 @@ async function registerUser(username, email, password, confirmPassword) {
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
             email: email,
             password: password,
+            options: {
+                data: {
+                    username: username
+                }
+            }
         });
         
         if (signUpError) {
             console.error('Erreur inscription Supabase:', signUpError);
+            
+            // Si l'utilisateur existe déjà dans auth.users
+            if (signUpError.message.includes('User already registered') || signUpError.message.includes('already been registered')) {
+                // NE PAS se connecter automatiquement, juste vérifier si le profil existe
+                // On ne connaît pas le vrai mot de passe de l'utilisateur existant
+                
+                showMessage('Ce compte existe déjà. Si c\'est votre compte, connectez-vous. Sinon, utilisez un autre email.');
+                setTimeout(() => showLoginForm(), 2000);
+                return false;
+            }
+            
             showMessage(`Erreur lors de l'inscription: ${signUpError.message}`);
             return false;
         }
@@ -332,7 +357,7 @@ async function registerUser(username, email, password, confirmPassword) {
             }
             
             setTimeout(() => {
-                showLoginForm();
+                window.location.href = '../index.html';
             }, 3000);
             
             return true;
@@ -428,6 +453,7 @@ async function loadUserProfile() {
         }
         
         userProfile = data;
+        window.userProfile = userProfile; // Mettre à jour immédiatement
         
         if (userProfile.username.includes('_') && userProfile.username.match(/.*_[a-z0-9]{4}$/)) {
             await autoCorrectUsername();
@@ -600,6 +626,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const session = await supabase.auth.getSession();
     if (session?.data?.session?.user) {
         currentUser = session.data.session.user;
+        window.currentUser = currentUser; // Mettre à jour immédiatement
         await loadUserProfile();
     }
     
@@ -608,6 +635,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
         currentUser = user;
+        window.currentUser = currentUser; // Mettre à jour immédiatement
         try {
             await loadUserProfile();
             checkAuthState();
