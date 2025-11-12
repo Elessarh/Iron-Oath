@@ -283,53 +283,18 @@ body .nav-connexion .user-info.js-visible {
     display: flex !important;
 }
 
-/* Styles spécifiques pour les liens Dashboard et Profil */
-body .nav-connexion a[href*="admin-dashboard"],
-body .nav-connexion a[href*="profil"] {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-    transition: all 0.2s ease;
-}
-
-/* ===== DASHBOARD - Gestion complète ===== */
-body .nav-connexion a[href*="admin-dashboard"] {
-    /* Caché par défaut */
-    display: none !important;
-    /* Styles visuels (orange) */
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 107, 53, 0.1));
-    border: 2px solid rgba(255, 107, 53, 0.5);
-    color: #ff6b35;
-    box-shadow: 0 2px 10px rgba(255, 107, 53, 0.2);
-}
-
-/* Dashboard visible pour les admins - FORCE l'affichage */
-body .nav-connexion a[href*="admin-dashboard"].visible {
-    display: inline-block !important;
-}
-
-body .nav-connexion a[href*="admin-dashboard"]:hover {
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.4), rgba(255, 107, 53, 0.2));
-    border-color: #ff6b35;
-    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
-    transform: translateY(-2px);
-}
-
 /* ===== PROFIL - Style cyan ===== */
 body .nav-connexion a[href*="profil"] {
-    background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(78, 205, 196, 0.1));
+    background: linear-gradient(135deg, #4ecdc4, #44a3ff);
     border: 2px solid rgba(78, 205, 196, 0.5);
-    color: #4ecdc4;
-    box-shadow: 0 2px 10px rgba(78, 205, 196, 0.2);
+    color: white;
+    box-shadow: 0 2px 10px rgba(78, 205, 196, 0.3);
 }
 
 body .nav-connexion a[href*="profil"]:hover {
-    background: linear-gradient(135deg, rgba(78, 205, 196, 0.4), rgba(78, 205, 196, 0.2));
+    background: linear-gradient(135deg, #5ed9d1, #55b0ff);
     border-color: #4ecdc4;
-    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.5);
     transform: translateY(-2px);
 }
 
@@ -346,6 +311,23 @@ body .nav-connexion a.active[href*="profil"] {
     color: white !important;
     border-color: #4ecdc4 !important;
     box-shadow: 0 4px 20px rgba(78, 205, 196, 0.5) !important;
+}
+
+/* Style pour le nom d'utilisateur cliquable */
+.username-link {
+    color: #4ecdc4;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.username-link:hover {
+    background: rgba(78, 205, 196, 0.1);
+    color: #5ed9d1;
+    transform: translateY(-1px);
 }
 
 body .nav-connexion .connexion-link:hover,

@@ -128,9 +128,6 @@ function checkAuthState() {
                 loginLink.classList.remove('show');
                 loginLink.classList.remove('js-visible');
             }
-            
-            // Vérifier et afficher le lien Dashboard pour les admins
-            checkAndShowDashboardLink();
         } else {
             // Utilisateur non connecté - Afficher le bouton connexion et masquer les infos user
             console.log('👤 Utilisateur non connecté - affichage du bouton connexion');
@@ -151,57 +148,6 @@ function checkAuthState() {
         console.error('Erreur checkAuthState:', error);
     } finally {
         isCheckingAuthState = false;
-    }
-}
-
-// ========== GESTION DU LIEN DASHBOARD POUR ADMINS ==========
-async function checkAndShowDashboardLink() {
-    try {
-        let dashboardLink = document.getElementById('dashboard-link');
-        
-        if (!dashboardLink) {
-            console.log('⚠️ Lien dashboard non trouvé dans le DOM');
-            return;
-        }
-        
-        // TOUJOURS retirer la classe visible par défaut
-        dashboardLink.classList.remove('visible');
-        
-        // Vérifier le rôle de l'utilisateur
-        if (!currentUser) {
-            console.log('🚫 Pas d\'utilisateur connecté - Dashboard caché');
-            return;
-        }
-        
-        // Récupérer le profil depuis la table user_profiles
-        const { data: profile, error } = await supabase
-            .from('user_profiles')
-            .select('role')
-            .eq('id', currentUser.id)
-            .single();
-        
-        if (error) {
-            console.error('Erreur lors de la vérification du rôle admin:', error);
-            dashboardLink.classList.remove('visible');
-            console.log('🚫 Erreur profil - Dashboard caché');
-            return;
-        }
-        
-        // Afficher le lien uniquement si l'utilisateur est admin
-        if (profile && profile.role === 'admin') {
-            dashboardLink.classList.add('visible');
-            console.log('👑 Lien Dashboard affiché pour l\'admin');
-        } else {
-            dashboardLink.classList.remove('visible');
-            console.log('🚫 Utilisateur non-admin (rôle: ' + (profile?.role || 'inconnu') + ') - Dashboard caché');
-        }
-        
-    } catch (error) {
-        console.error('Erreur checkAndShowDashboardLink:', error);
-        const dashboardLink = document.getElementById('dashboard-link');
-        if (dashboardLink) {
-            dashboardLink.classList.remove('visible');
-        }
     }
 }
 
@@ -599,6 +545,10 @@ function isLoggedIn() {
 
 function isAdmin() {
     return userProfile && userProfile.role === 'admin';
+}
+
+function isMemberOrAdmin() {
+    return userProfile && (userProfile.role === 'membre' || userProfile.role === 'admin');
 }
 
 // ========== INITIALISATION AUTOMATIQUE ==========

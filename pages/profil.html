@@ -8,238 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
-    
-    <style>
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
-        }
-        
-        .profil-container {
-            max-width: 900px;
-            margin: 100px auto 50px;
-            padding: 40px;
-            background: linear-gradient(135deg, rgba(30, 30, 45, 0.98), rgba(20, 20, 35, 0.98));
-            border-radius: 20px;
-            border: 2px solid rgba(78, 205, 196, 0.4);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 
-                        0 0 30px rgba(78, 205, 196, 0.1);
-        }
-        
-        .profil-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 25px;
-            border-bottom: 2px solid rgba(78, 205, 196, 0.3);
-        }
-        
-        .profil-header h1 {
-            color: #4ecdc4;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
-        }
-        
-        .profil-info {
-            display: grid;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        
-        .info-row {
-            display: flex;
-            align-items: center;
-            padding: 25px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
-            border-radius: 12px;
-            border-left: 5px solid #4ecdc4;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .info-row:hover {
-            transform: translateX(5px);
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(78, 205, 196, 0.08));
-            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.2);
-        }
-        
-        .info-label {
-            font-weight: 700;
-            color: #4ecdc4;
-            min-width: 180px;
-            font-size: 1.15rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .info-value {
-            color: #f0f0f0;
-            font-size: 1.15rem;
-            flex: 1;
-            font-weight: 500;
-        }
-        
-        .role-badge {
-            display: inline-block;
-            padding: 10px 24px;
-            border-radius: 25px;
-            font-weight: 700;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .role-joueur {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .role-membre {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-        }
-        
-        .role-admin {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: #1a1a2e;
-            font-weight: 800;
-            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5),
-                        0 0 30px rgba(254, 225, 64, 0.3);
-            animation: pulse-admin 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-admin {
-            0%, 100% { box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5), 0 0 30px rgba(254, 225, 64, 0.3); }
-            50% { box-shadow: 0 6px 25px rgba(255, 107, 53, 0.7), 0 0 40px rgba(254, 225, 64, 0.5); }
-        }
-        
-        .profile-select,
-        .profile-input {
-            padding: 8px 12px;
-            border: 2px solid #4ecdc4;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .profile-select:hover,
-        .profile-input:hover {
-            border-color: #45b7aa;
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .profile-select:focus,
-        .profile-input:focus {
-            outline: none;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 15px rgba(78, 205, 196, 0.4);
-        }
-        
-        .profile-input {
-            width: 80px;
-            text-align: center;
-        }
-        
-        .save-profile-btn {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-        }
-        
-        .save-profile-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.5);
-        }
-        
-        .save-profile-btn:active {
-            transform: translateY(0);
-        }
-        
-        .profil-stats {
-            margin-top: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(78, 205, 196, 0.08));
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            border: 2px solid rgba(78, 205, 196, 0.3);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: #4ecdc4;
-            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
-        }
-        
-        .stat-label {
-            color: #4ecdc4;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-        }
-        
-        .stat-value {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 800;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 2px 10px rgba(78, 205, 196, 0.3);
-        }
-        
-        .loading-spinner {
-            text-align: center;
-            padding: 60px;
-            color: #4ecdc4;
-            font-size: 1.3rem;
-        }
-        
-        .loading-spinner p {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .error-message {
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 107, 53, 0.1));
-            border: 3px solid #ff6b35;
-            color: #ff6b35;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            margin: 20px 0;
-            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
-        }
-        
-        .error-message h2 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/components/profil.css">
     
     <!-- Script anti-flash immédiat -->
     <script>
@@ -253,12 +22,12 @@
         });
     </script>
 </head>
-<body>
+<body class="profil-page">
     <!-- Header et Navigation -->
     <header class="header">
         <nav class="nav-container">
             <div class="nav-logo-container">
-                <a href="about.html">
+                <a href="../index.html">
                     <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
                 </a>
             </div>
@@ -272,9 +41,7 @@
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
-                    <a href="admin-dashboard.html" id="dashboard-link" style="display: none; margin-right: 15px; color: #ff6b35; font-weight: 600;">Dashboard</a>
-                    <a href="profil.html" class="active" style="margin-right: 15px; color: #4ecdc4; font-weight: 500;">Profil</a>
-                    <span id="username"></span>
+                    <a href="profil.html" id="username" class="username-link"></a>
                     <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
@@ -296,6 +63,14 @@
         <div id="profil-content" style="display: none;">
             <div class="profil-header">
                 <h1>Mon Profil</h1>
+                <!-- Bouton Dashboard pour admins uniquement -->
+                <a href="admin-dashboard.html" id="dashboard-btn" class="dashboard-btn" style="display: none;">
+                    🛡️ Accéder au Dashboard Admin
+                </a>
+                <!-- Bouton Guilde pour membres et admins -->
+                <a href="espace-guilde.html" id="guilde-btn" class="dashboard-btn" style="display: none;">
+                    🏛️ Espace Iron Oath
+                </a>
             </div>
             
             <div class="profil-info">

@@ -7,9 +7,34 @@ let allUsers = [];
 let filteredUsers = [];
 let editingUserId = null;
 
-// Variables de pagination
+// Variables de pagination et tri
 let currentPage = 1;
-const usersPerPage = 15;
+let usersPerPage = 15;
+let currentSortField = 'created_at';
+let currentSortDirection = 'desc'; // 'asc' ou 'desc'
+
+// Fonction de gestion des onglets du dashboard
+function switchDashboardTab(tabName) {
+    console.log('🔄 Changement d\'onglet vers:', tabName);
+    
+    // Retirer la classe active de tous les boutons et contenus
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Ajouter la classe active au bouton et contenu correspondants
+    const activeButton = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+    const activeContent = document.querySelector(`.tab-content[data-tab-content="${tabName}"]`);
+    
+    if (activeButton) activeButton.classList.add('active');
+    if (activeContent) activeContent.classList.add('active');
+    
+    // Sauvegarder l'onglet actif dans localStorage
+    localStorage.setItem('dashboardActiveTab', tabName);
+}
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async function() {
@@ -101,8 +126,18 @@ async function checkAdminAccess() {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('dashboard-content').style.display = 'block';
         
+        // Charger les données
+        await loadUsers();
+        await loadPresences();
+        
         // Initialiser les event listeners
         initializeEventListeners();
+        
+        // Restaurer l'onglet actif depuis localStorage
+        const savedTab = localStorage.getItem('dashboardActiveTab');
+        if (savedTab) {
+            switchDashboardTab(savedTab);
+        }
         
     } catch (error) {
         console.error('❌ Erreur lors de la vérification admin:', error);
@@ -264,6 +299,44 @@ function updatePagination() {
     prevBtn.disabled = currentPage <= 1;
     nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
 }
+
+// Trier les utilisateurs
+function sortUsers() {
+    filteredUsers.sort((a, b) => {
+        let aValue = a[currentSortField];
+        let bValue = b[currentSortField];
+        
+        // Gestion des valeurs null/undefined
+        if (aValue === null || aValue === undefined) aValue = '';
+        if (bValue === null || bValue === undefined) bValue = '';
+        
+        // Conversion en minuscules pour les strings
+        if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+        if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+        
+        // Tri numérique pour le niveau
+        if (currentSortField === 'niveau') {
+            aValue = parseInt(aValue) || 0;
+            bValue = parseInt(bValue) || 0;
+        }
+        
+        // Tri pour les dates
+        if (currentSortField === 'created_at') {
+            aValue = new Date(aValue).getTime();
+            bValue = new Date(bValue).getTime();
+        }
+        
+        // Comparaison
+        if (aValue < bValue) {
+            return currentSortDirection === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+            return currentSortDirection === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
+}
+
 // Formater une date
 function formatDate(dateString) {
     if (!dateString) return 'Inconnue';
@@ -301,6 +374,52 @@ function initializeEventListeners() {
     niveauFilter.addEventListener('change', (e) => {
         currentPage = 1;
         filterUsers();
+    });
+    
+    // Items per page
+    const itemsPerPageSelect = document.getElementById('items-per-page');
+    if (itemsPerPageSelect) {
+        itemsPerPageSelect.addEventListener('change', (e) => {
+            usersPerPage = parseInt(e.target.value);
+            currentPage = 1;
+            displayUsers();
+            updatePagination();
+        });
+    }
+    
+    // Event listeners pour les onglets du dashboard
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabName = button.getAttribute('data-tab');
+            switchDashboardTab(tabName);
+        });
+    });
+    
+    // Tri par colonnes
+    const sortableHeaders = document.querySelectorAll('.sortable');
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const sortField = header.getAttribute('data-sort');
+            
+            // Si on clique sur la même colonne, inverser la direction
+            if (currentSortField === sortField) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortField = sortField;
+                currentSortDirection = 'asc';
+            }
+            
+            // Mettre à jour les classes CSS
+            sortableHeaders.forEach(h => {
+                h.classList.remove('sorted-asc', 'sorted-desc');
+            });
+            header.classList.add(currentSortDirection === 'asc' ? 'sorted-asc' : 'sorted-desc');
+            
+            // Trier et afficher
+            sortUsers();
+            displayUsers();
+        });
     });
     
     // Pagination
@@ -354,6 +473,9 @@ function filterUsers() {
         
         return matchesSearch && matchesRole && matchesClasse && matchesNiveau;
     });
+    
+    // Trier les utilisateurs après filtrage
+    sortUsers();
     
     currentPage = 1; // Reset à la page 1
     displayUsers();
@@ -454,4 +576,474 @@ function showError(message) {
     document.getElementById('error-text').textContent = message;
 }
 
+// ========== GESTION DE LA GUILDE ==========
+
+// Basculer entre les onglets de gestion de guilde
+function switchGuildTab(tabName) {
+    // Masquer tous les contenus
+    document.querySelectorAll('.guild-tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    
+    // Retirer la classe active de tous les onglets
+    document.querySelectorAll('.guild-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Afficher le contenu sélectionné
+    document.getElementById(`guild-${tabName}-tab`).style.display = 'block';
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+    
+    // Charger les données de l'onglet
+    if (tabName === 'planning') {
+        loadAdminPlanning();
+    } else if (tabName === 'objectives') {
+        loadAdminObjectives();
+    } else if (tabName === 'presence') {
+        loadAdminPresence();
+        loadMembersForPresence();
+    }
+}
+
+// Charger les événements du planning (admin)
+async function loadAdminPlanning() {
+    try {
+        const { data, error } = await supabase
+            .from('guild_planning')
+            .select('*')
+            .order('date_event', { ascending: true });
+        
+        if (error) throw error;
+        
+        const container = document.getElementById('admin-planning-list');
+        
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p style="color: #888; text-align: center;">Aucun événement planifié</p>';
+            return;
+        }
+        
+        container.innerHTML = data.map(event => `
+            <div class="guild-item">
+                <div class="guild-item-header">
+                    <div class="guild-item-title">${escapeHtml(event.titre)}</div>
+                    <div class="guild-item-actions">
+                        <button class="btn-delete" onclick="deleteGuildItem('guild_planning', '${event.id}', 'planning')">🗑️ Supprimer</button>
+                    </div>
+                </div>
+                <div style="color: #ff6b35; margin: 5px 0;">📅 ${formatDate(event.date_event)} | ${formatEventType(event.type_event)}</div>
+                ${event.description ? `<div style="color: #ccc;">${escapeHtml(event.description)}</div>` : ''}
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Erreur chargement planning:', error);
+    }
+}
+
+// Charger les objectifs (admin)
+async function loadAdminObjectives() {
+    try {
+        const { data, error } = await supabase
+            .from('guild_objectives')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        const container = document.getElementById('admin-objectives-list');
+        
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p style="color: #888; text-align: center;">Aucun objectif défini</p>';
+            return;
+        }
+        
+        container.innerHTML = data.map(obj => `
+            <div class="guild-item">
+                <div class="guild-item-header">
+                    <div class="guild-item-title">${escapeHtml(obj.titre)}</div>
+                    <div class="guild-item-actions">
+                        <button class="btn-delete" onclick="deleteGuildItem('guild_objectives', '${obj.id}', 'objectives')">🗑️ Supprimer</button>
+                    </div>
+                </div>
+                <div style="color: #ccc; margin: 10px 0;">${escapeHtml(obj.description || '')}</div>
+                <div style="color: #888; font-size: 0.9rem;">Semaine ${obj.semaine_numero}/${obj.annee} | Statut: ${formatStatus(obj.statut)}</div>
+                <div style="margin-top: 10px;">
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 20px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #ff6b35, #f7931e); height: 100%; width: ${obj.progression}%; text-align: center; color: white; font-size: 0.8rem; line-height: 20px;">
+                            ${obj.progression}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Erreur chargement objectifs:', error);
+    }
+}
+
+// Charger les présences (admin)
+async function loadAdminPresence() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        
+        const { data, error } = await supabase
+            .from('guild_presence')
+            .select(`
+                *,
+                user_profiles!inner(username)
+            `)
+            .eq('date_presence', today)
+            .order('statut', { ascending: true });
+        
+        if (error) throw error;
+        
+        const container = document.getElementById('admin-presence-list');
+        
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p style="color: #888; text-align: center;">Aucune présence enregistrée aujourd\'hui</p>';
+            return;
+        }
+        
+        container.innerHTML = data.map(presence => `
+            <div class="guild-item">
+                <div class="guild-item-header">
+                    <div class="guild-item-title">${escapeHtml(presence.user_profiles.username)}</div>
+                    <div class="guild-item-actions">
+                        <button class="btn-delete" onclick="deleteGuildItem('guild_presence', '${presence.id}', 'presence')">🗑️ Supprimer</button>
+                    </div>
+                </div>
+                <div style="color: ${getStatusColor(presence.statut)}; font-weight: bold;">
+                    ${formatPresenceStatus(presence.statut)}
+                </div>
+                ${presence.commentaire ? `<div style="color: #ccc; margin-top: 5px;">${escapeHtml(presence.commentaire)}</div>` : ''}
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Erreur chargement présences:', error);
+    }
+}
+
+// Charger la liste des membres pour le formulaire de présence
+async function loadMembersForPresence() {
+    try {
+        const { data, error } = await supabase
+            .from('user_profiles')
+            .select('id, username')
+            .in('role', ['membre', 'admin'])
+            .order('username', { ascending: true });
+        
+        if (error) throw error;
+        
+        const select = document.getElementById('presence-user');
+        select.innerHTML = '<option value="">Sélectionner un membre</option>' +
+            data.map(user => `<option value="${user.id}">${escapeHtml(user.username)}</option>`).join('');
+        
+    } catch (error) {
+        console.error('Erreur chargement membres:', error);
+    }
+}
+
+// Supprimer un élément de guilde
+async function deleteGuildItem(table, id, type) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) return;
+    
+    try {
+        const { error } = await supabase
+            .from(table)
+            .delete()
+            .eq('id', id);
+        
+        if (error) throw error;
+        
+        alert('✅ Élément supprimé avec succès !');
+        
+        // Recharger la liste appropriée
+        if (type === 'planning') loadAdminPlanning();
+        else if (type === 'objectives') loadAdminObjectives();
+        else if (type === 'presence') loadAdminPresence();
+        
+    } catch (error) {
+        console.error('Erreur suppression:', error);
+        alert('❌ Erreur lors de la suppression');
+    }
+}
+
+// Event listeners pour les formulaires de guilde
+document.addEventListener('DOMContentLoaded', function() {
+    // Formulaire planning
+    const planningForm = document.getElementById('add-planning-form');
+    if (planningForm) {
+        planningForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const { error } = await supabase
+                    .from('guild_planning')
+                    .insert({
+                        titre: document.getElementById('planning-titre').value,
+                        description: document.getElementById('planning-description').value || null,
+                        date_event: document.getElementById('planning-date').value,
+                        type_event: document.getElementById('planning-type').value,
+                        created_by: window.currentUser.id
+                    });
+                
+                if (error) throw error;
+                
+                alert('✅ Événement ajouté au planning !');
+                planningForm.reset();
+                loadAdminPlanning();
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de l\'ajout');
+            }
+        });
+    }
+    
+    // Formulaire objectifs
+    const objectiveForm = document.getElementById('add-objective-form');
+    if (objectiveForm) {
+        objectiveForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const { error } = await supabase
+                    .from('guild_objectives')
+                    .insert({
+                        titre: document.getElementById('objective-titre').value,
+                        description: document.getElementById('objective-description').value,
+                        semaine_numero: parseInt(document.getElementById('objective-semaine').value),
+                        annee: parseInt(document.getElementById('objective-annee').value),
+                        statut: document.getElementById('objective-statut').value,
+                        progression: parseInt(document.getElementById('objective-progression').value),
+                        created_by: window.currentUser.id
+                    });
+                
+                if (error) throw error;
+                
+                alert('✅ Objectif créé !');
+                objectiveForm.reset();
+                loadAdminObjectives();
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la création');
+            }
+        });
+    }
+    
+    // Formulaire présence
+    const presenceForm = document.getElementById('add-presence-form');
+    if (presenceForm) {
+        presenceForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const userId = document.getElementById('presence-user').value;
+                const datePresence = document.getElementById('presence-date').value;
+                
+                // Vérifier si déjà existant
+                const { data: existing } = await supabase
+                    .from('guild_presence')
+                    .select('id')
+                    .eq('user_id', userId)
+                    .eq('date_presence', datePresence)
+                    .single();
+                
+                if (existing) {
+                    // Update
+                    const { error } = await supabase
+                        .from('guild_presence')
+                        .update({
+                            statut: document.getElementById('presence-statut').value,
+                            commentaire: document.getElementById('presence-commentaire').value || null
+                        })
+                        .eq('id', existing.id);
+                    
+                    if (error) throw error;
+                    alert('✅ Présence mise à jour !');
+                } else {
+                    // Insert
+                    const { error } = await supabase
+                        .from('guild_presence')
+                        .insert({
+                            user_id: userId,
+                            date_presence: datePresence,
+                            statut: document.getElementById('presence-statut').value,
+                            commentaire: document.getElementById('presence-commentaire').value || null
+                        });
+                    
+                    if (error) throw error;
+                    alert('✅ Présence enregistrée !');
+                }
+                
+                presenceForm.reset();
+                loadAdminPresence();
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de l\'enregistrement');
+            }
+        });
+    }
+});
+
+// Fonctions utilitaires pour la guilde
+function formatEventType(type) {
+    const types = {
+        'reunion': '🗣️ Réunion',
+        'raid': '⚔️ Raid',
+        'event': '🎉 Événement',
+        'pvp': '🗡️ PvP',
+        'construction': '🏗️ Construction',
+        'autre': '📌 Autre'
+    };
+    return types[type] || type;
+}
+
+function formatStatus(status) {
+    const statuses = {
+        'en_cours': '⏳ En cours',
+        'termine': '✅ Terminé',
+        'abandonne': '❌ Abandonné'
+    };
+    return statuses[status] || status;
+}
+
+function formatPresenceStatus(status) {
+    const statuses = {
+        'present': '✅ Présent',
+        'absent': '❌ Absent',
+        'en_mission': '🎯 En mission'
+    };
+    return statuses[status] || status;
+}
+
+function getStatusColor(status) {
+    const colors = {
+        'present': '#4caf50',
+        'absent': '#f44336',
+        'en_mission': '#ff9800'
+    };
+    return colors[status] || '#888';
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    return date.toLocaleDateString('fr-FR', options);
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ========== GESTION DES PRÉSENCES ==========
+
+async function loadPresences() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Récupérer tous les membres et admins
+        const { data: members, error: membersError } = await supabase
+            .from('user_profiles')
+            .select('*')
+            .in('role', ['membre', 'admin']);
+        
+        if (membersError) {
+            console.error('[ERREUR] Erreur chargement membres:', membersError);
+            return;
+        }
+        
+        // Récupérer les présences du jour
+        const { data: presences, error: presencesError } = await supabase
+            .from('guild_presence')
+            .select('*')
+            .eq('date_presence', today);
+        
+        if (presencesError) {
+            console.error('[ERREUR] Erreur chargement presences:', presencesError);
+            return;
+        }
+        
+        // Créer un map des présences par user_id
+        const presenceMap = {};
+        (presences || []).forEach(p => {
+            presenceMap[p.user_id] = p;
+        });
+        
+        // Compter les statistiques
+        let presents = 0;
+        let absents = 0;
+        let enMission = 0;
+        
+        // Créer le HTML du tableau
+        const tbody = document.getElementById('presence-tbody');
+        if (!tbody) return;
+        
+        if (!members || members.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">Aucun membre dans la guilde</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = members.map(member => {
+            const presence = presenceMap[member.id];
+            const statut = presence ? presence.statut : 'non-marque';
+            const heure = presence ? new Date(presence.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '-';
+            
+            // Compter les stats
+            if (statut === 'present') presents++;
+            else if (statut === 'absent') absents++;
+            else if (statut === 'en_mission') enMission++;
+            
+            return `
+                <tr>
+                    <td><strong>${escapeHtml(member.username || 'Inconnu')}</strong></td>
+                    <td>${escapeHtml(member.classe || '-')}</td>
+                    <td>Niv. ${member.niveau || 1}</td>
+                    <td>
+                        <span class="presence-badge ${statut}">
+                            ${getPresenceLabel(statut)}
+                        </span>
+                    </td>
+                    <td>${heure}</td>
+                </tr>
+            `;
+        }).join('');
+        
+        // Mettre à jour les statistiques
+        document.getElementById('stat-presents').textContent = presents;
+        document.getElementById('stat-absents').textContent = absents;
+        document.getElementById('stat-missions').textContent = enMission;
+        
+        console.log('[OK] Presences chargees:', { presents, absents, enMission });
+        
+    } catch (error) {
+        console.error('[ERREUR] Erreur chargement presences:', error);
+    }
+}
+
+function getPresenceLabel(statut) {
+    const labels = {
+        'present': 'Present',
+        'absent': 'Absent',
+        'en_mission': 'En mission',
+        'non-marque': 'Non marque'
+    };
+    return labels[statut] || statut;
+}
+
 console.log('✅ Module admin-dashboard.js chargé');
+

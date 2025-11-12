@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Guilde - Iron Oath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components/guilde.css">
+    
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+        }
+        
+        .guilde-container {
+            max-width: 1400px;
+            margin: 100px auto 50px;
+            padding: 20px;
+        }
+        
+        .guilde-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(255, 107, 53, 0.1));
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 53, 0.5);
+        }
+        
+        .guilde-header h1 {
+            color: #ff6b35;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+        }
+        
+        .guilde-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .guilde-section {
+            background: linear-gradient(135deg, rgba(30, 30, 45, 0.98), rgba(20, 20, 35, 0.98));
+            border-radius: 15px;
+            border: 2px solid rgba(78, 205, 196, 0.4);
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .section-title {
+            color: #4ecdc4;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .planning-item, .objective-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #4ecdc4;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .planning-item:hover, .objective-item:hover {
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .item-title {
+            color: #f0f0f0;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        
+        .item-date {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .item-description {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .presence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .presence-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .presence-card.present {
+            border: 2px solid #2ecc71;
+            background: rgba(46, 204, 113, 0.1);
+        }
+        
+        .presence-card.absent {
+            border: 2px solid #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+        
+        .presence-card.en-mission {
+            border: 2px solid #f39c12;
+            background: rgba(243, 156, 18, 0.1);
+        }
+        
+        .presence-username {
+            color: #f0f0f0;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .presence-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-present {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .status-absent {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .status-en-mission {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .appel-btn {
+            background: linear-gradient(135deg, #4ecdc4, #44a3ff);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .appel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.4);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #44a3ff);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #888;
+            padding: 30px;
+            font-style: italic;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #4ecdc4;
+            font-size: 1.2rem;
+        }
+    </style>
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        // Masquage immédiat des éléments de connexion pour éviter le flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfo = document.getElementById('user-info');
+            
+            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+                userInfo.classList.remove('js-visible');
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html">Accueil</a></li>
+                <li><a href="map.html">Carte</a></li>
+                <li><a href="bestiaire.html">Bestiaire</a></li>
+                <li><a href="items.html">Items</a></li>
+                <li><a href="hdv.html">HDV</a></li>
+                <li><a href="quetes.html">Quêtes</a></li>
+                <li><a href="espace-guilde.html" class="active">Guilde</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <a href="profil.html" id="username" class="username-link"></a>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="guilde-container">
+        <div id="loading" class="loading">
+            <p>⏳ Chargement de l'espace guilde...</p>
+        </div>
+        
+        <div id="guilde-content" style="display: none;">
+            <div class="guilde-header">
+                <h1>🛡️ Espace Guilde - Iron Oath</h1>
+                <p style="color: #f0f0f0; margin-top: 10px;">Espace réservé aux membres de la guilde</p>
+            </div>
+            
+            <div class="guilde-grid">
+                <!-- Section Planning -->
+                <div class="guilde-section">
+                    <h2 class="section-title">📅 Planning de la Semaine</h2>
+                    <div id="planning-list">
+                        <div class="no-data">Aucun événement planifié</div>
+                    </div>
+                </div>
+                
+                <!-- Section Objectifs -->
+                <div class="guilde-section">
+                    <h2 class="section-title">🎯 Objectifs de la Semaine</h2>
+                    <div id="objectives-list">
+                        <div class="no-data">Aucun objectif défini</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section Appel Quotidien -->
+            <div class="guilde-section">
+                <h2 class="section-title">Appel Quotidien</h2>
+                <div class="appel-actions">
+                    <button id="mark-presence-btn" class="appel-btn present-btn">Marquer ma presence</button>
+                    <button id="mark-absence-btn" class="appel-btn absent-btn">Declarer une absence</button>
+                </div>
+                <div id="presence-list" class="presence-grid">
+                    <div class="no-data">Chargement des presences...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="access-denied" style="display: none; text-align: center; padding: 100px 20px;">
+            <h2 style="color: #e74c3c; font-size: 2rem; margin-bottom: 20px;">❌ Accès Refusé</h2>
+            <p style="color: #f0f0f0; font-size: 1.2rem;">Cet espace est réservé aux membres de la guilde Iron Oath.</p>
+            <p style="color: #888; margin-top: 20px;">Contactez un administrateur pour obtenir le rôle "Membre".</p>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/auth-supabase.js"></script>
+    <script src="../js/espace-guilde.js"></script>
+    <script src="../js/navbar-mobile.js"></script>
+</body>
+</html>

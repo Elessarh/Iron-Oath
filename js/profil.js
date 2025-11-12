@@ -105,7 +105,7 @@ function displayProfile(profile) {
     
     // Afficher le rôle avec le bon badge
     const roleBadge = document.getElementById('profile-role');
-    const role = profile.role || 'joueur';
+    const role = (profile.role || 'joueur').trim(); // Nettoyer les espaces
     
     roleBadge.textContent = getRoleLabel(role);
     roleBadge.className = 'role-badge role-' + role;
@@ -113,6 +113,35 @@ function displayProfile(profile) {
     // Afficher classe et niveau
     document.getElementById('profile-classe').value = profile.classe || 'Guerrier';
     document.getElementById('profile-niveau').value = profile.niveau || 1;
+    
+    // Afficher le bouton Dashboard si admin
+    const dashboardBtn = document.getElementById('dashboard-btn');
+    console.log('[DEBUG] Role de l utilisateur:', role);
+    console.log('[DEBUG] Bouton dashboard:', dashboardBtn ? 'trouve' : 'non trouve');
+    
+    if (dashboardBtn) {
+        if (role === 'admin') {
+            console.log('[OK] Affichage bouton Dashboard (admin)');
+            dashboardBtn.style.setProperty('display', 'inline-block', 'important');
+        } else {
+            console.log('[INFO] Bouton Dashboard cache (role:', role, ')');
+            dashboardBtn.style.setProperty('display', 'none', 'important');
+        }
+    }
+    
+    // Afficher le bouton Guilde si membre ou admin
+    const guildeBtn = document.getElementById('guilde-btn');
+    console.log('[DEBUG] Bouton guilde:', guildeBtn ? 'trouve' : 'non trouve');
+    
+    if (guildeBtn) {
+        if (role === 'membre' || role === 'admin') {
+            console.log('[OK] Affichage bouton Guilde (membre/admin)');
+            guildeBtn.style.setProperty('display', 'inline-block', 'important');
+        } else {
+            console.log('[INFO] Bouton Guilde cache (role:', role, ')');
+            guildeBtn.style.setProperty('display', 'none', 'important');
+        }
+    }
     
     // Formater la date de création
     if (profile.created_at) {
@@ -129,8 +158,8 @@ function displayProfile(profile) {
         saveBtn.onclick = saveProfileChanges;
     }
     
-    // Charger les statistiques (pour l'instant valeurs par défaut)
-    loadStats();
+    // Charger les statistiques avec le vrai niveau
+    loadStats(profile);
 }
 
 // Obtenir le label du rôle en français
@@ -182,19 +211,16 @@ async function saveProfileChanges() {
     }
 }
 
-// Charger les statistiques (à implémenter plus tard avec de vraies données)
-function loadStats() {
-    // Pour l'instant, valeurs par défaut
-    // Ces données pourront être récupérées depuis d'autres tables plus tard
-    
+// Charger les statistiques avec les vraies données du profil
+function loadStats(profile) {
+    // Afficher le vrai niveau de l'utilisateur
     document.getElementById('stat-messages').textContent = '0';
     document.getElementById('stat-items').textContent = '0';
-    document.getElementById('stat-level').textContent = '1';
+    document.getElementById('stat-level').textContent = profile.niveau || 1;
     
     // TODO: Implémenter la récupération des vraies statistiques
     // - Compter les messages dans la table mailbox
     // - Compter les items possédés
-    // - Calculer le niveau basé sur l'activité
 }
 
 // Afficher un message d'erreur
