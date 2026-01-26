@@ -27,17 +27,15 @@
     <header class="header">
         <nav class="nav-container">
             <div class="nav-logo-container">
-                <a href="../index.html">
-                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
-                </a>
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
             </div>
             <ul class="nav-menu" id="nav-menu">
-                <li><a href="../index.html">Accueil</a></li>
-                <li><a href="map.html">Carte</a></li>
-                <li><a href="bestiaire.html">Bestiaire</a></li>
-                <li><a href="items.html">Items</a></li>
-                <li><a href="hdv.html">HDV</a></li>
-                <li><a href="quetes.html">Quêtes</a></li>
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
@@ -151,9 +149,13 @@
     </footer>
 
     <!-- Scripts -->
+    <!-- Chargement Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    
     <script src="../js/performance-monitor.js"></script>
     <script src="../js/cache-manager.js" defer></script>
     <script src="../js/navbar-mobile.js" defer></script>
+    <script src="../js/crypto-keys.js"></script>
     <script src="../js/auth-supabase.js"></script>
     <script src="../js/profil.js" defer></script>
 </body>

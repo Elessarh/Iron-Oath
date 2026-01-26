@@ -1,6 +1,7 @@
 /* auth-supabase.js - Système d'authentification Supabase pour Iron Oath */
 
-let supabase = null;
+// Utiliser var au lieu de let pour éviter les erreurs de re-déclaration lors des navigations
+var supabase = supabase || null;
 
 const ENCODED_SUPABASE_URL = 'aHR0cHM6Ly96aGJ1d3d2YWZicnJ4cHN1cGVidC5zdXBhYmFzZS5jbw==';
 const ENCODED_SUPABASE_KEY = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5wb1luVjNkM1poWm1KeWNuaHdjM1Z3WldKMElpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzTmpJME9URXhNVGdzSW1WNGNDSTZNakEzT0RBMk56RXhPSDAuRE4yVHNwTmRvWHdUUW9EaTFLczRYRk5KWlQwUW92bDBzNUNYOEtVRGlLaw==';
@@ -32,29 +33,44 @@ async function initSupabase() {
             throw new Error('Erreur de décodage des clés');
         }
         
-        if (typeof window.supabase === 'undefined') {
+        // Vérifier si Supabase est disponible (soit via window.supabase, soit via un CDN déjà chargé)
+        const supabaseLib = window.supabase || (window.supabasejs && window.supabasejs.supabase);
+        
+        if (!supabaseLib || typeof supabaseLib.createClient !== 'function') {
+            console.log('⏳ Chargement de la bibliothèque Supabase...');
             await new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
-                script.onload = resolve;
+                script.onload = () => {
+                    console.log('✅ Script Supabase chargé depuis jsdelivr');
+                    resolve();
+                };
                 script.onerror = () => {
+                    console.warn('⚠️ Échec jsdelivr, essai avec unpkg...');
                     const altScript = document.createElement('script');
                     altScript.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js';
-                    altScript.onload = resolve;
-                    altScript.onerror = () => reject(new Error('Impossible de charger Supabase'));
+                    altScript.onload = () => {
+                        console.log('✅ Script Supabase chargé depuis unpkg');
+                        resolve();
+                    };
+                    altScript.onerror = () => reject(new Error('Impossible de charger Supabase depuis aucun CDN'));
                     document.head.appendChild(altScript);
                 };
                 document.head.appendChild(script);
             });
             
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // Attendre que le script soit complètement initialisé
+            await new Promise(resolve => setTimeout(resolve, 200));
         }
         
-        if (!window.supabase || !window.supabase.createClient) {
-            throw new Error('Supabase non disponible après chargement');
+        // Récupérer la fonction createClient
+        const createClient = window.supabase?.createClient || window.supabasejs?.supabase?.createClient;
+        
+        if (!createClient || typeof createClient !== 'function') {
+            throw new Error('createClient non disponible après chargement');
         }
         
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log('✅ Client Supabase créé:', !!supabase);
         console.log('🔍 Client Supabase URL:', supabase.supabaseUrl);
         
@@ -102,7 +118,7 @@ function checkAuthState() {
             userInfo: !!userInfo,
             loginLink: !!loginLink,
             currentUser: !!currentUser,
-            userProfile: !!userProfile
+            userProfile: userProfile?.username
         });
         
         if (typeof window !== 'undefined') {
@@ -111,9 +127,14 @@ function checkAuthState() {
         }
         
         if (currentUser) {
+            // Utilisateur connecté
+            console.log('✅ Utilisateur connecté:', currentUser.email);
+            
             if (userInfo) {
+                userInfo.style.display = 'flex';
                 userInfo.classList.add('show');
                 userInfo.classList.add('js-visible');
+                
                 if (usernameSpan) {
                     let displayName = 'Joueur';
                     if (userProfile && userProfile.username) {
@@ -124,19 +145,25 @@ function checkAuthState() {
                     usernameSpan.textContent = displayName;
                 }
             }
+            
             if (loginLink) {
+                loginLink.style.display = 'none';
                 loginLink.classList.remove('show');
                 loginLink.classList.remove('js-visible');
             }
         } else {
-            // Utilisateur non connecté - Afficher le bouton connexion et masquer les infos user
+            // Utilisateur non connecté
             console.log('👤 Utilisateur non connecté - affichage du bouton connexion');
+            
             if (userInfo) {
+                userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
                 userInfo.classList.remove('js-visible');
             }
+            
             if (loginLink) {
                 console.log('🔗 Affichage du bouton connexion');
+                loginLink.style.display = 'block';
                 loginLink.classList.add('show');
                 loginLink.classList.add('js-visible');
                 console.log('🔗 Classes appliquées:', loginLink.className);
@@ -553,60 +580,70 @@ function isMemberOrAdmin() {
 
 // ========== INITIALISATION AUTOMATIQUE ==========
 document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 Démarrage de l\'initialisation auth...');
+    
     const supabaseReady = await initSupabase();
     if (!supabaseReady) {
-        console.error('Impossible d\'initialiser Supabase');
+        console.error('❌ Impossible d\'initialiser Supabase');
+        // Forcer l'affichage du bouton connexion si Supabase échoue
         setTimeout(() => {
             const loginLink = document.getElementById('login-link');
             if (loginLink) {
+                loginLink.style.display = 'block';
                 loginLink.classList.add('show');
                 loginLink.classList.add('js-visible');
+            }
+            const userInfo = document.getElementById('user-info');
+            if (userInfo) {
+                userInfo.style.display = 'none';
             }
         }, 500);
         return;
     }
     
-    const session = await supabase.auth.getSession();
-    if (session?.data?.session?.user) {
-        currentUser = session.data.session.user;
-        window.currentUser = currentUser; // Mettre à jour immédiatement
-        await loadUserProfile();
-    }
-    
-    checkAuthState();
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-        currentUser = user;
-        window.currentUser = currentUser; // Mettre à jour immédiatement
-        try {
+    // Vérifier la session actuelle
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.warn('⚠️ Erreur récupération session:', error);
+            currentUser = null;
+            userProfile = null;
+        } else if (session?.user) {
+            console.log('✅ Session trouvée pour:', session.user.email);
+            currentUser = session.user;
+            window.currentUser = currentUser;
             await loadUserProfile();
-            checkAuthState();
-        } catch (error) {
-            console.error('Erreur chargement profil initial:', error);
+        } else {
+            console.log('ℹ️ Aucune session active');
+            currentUser = null;
+            userProfile = null;
+            window.currentUser = null;
+            window.userProfile = null;
         }
+    } catch (error) {
+        console.error('❌ Erreur lors de la vérification de session:', error);
+        currentUser = null;
+        userProfile = null;
     }
     
+    // Mettre à jour l'UI une seule fois
     checkAuthState();
     
-    setTimeout(() => {
-        if (!currentUser) {
-            const loginLink = document.getElementById('login-link');
-            if (loginLink) {
-                loginLink.classList.add('show');
-                loginLink.classList.add('js-visible');
-            }
-        }
-    }, 500);
-    
+    // Écouter les changements d'authentification
     supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('🔄 État auth changé:', event);
+        
         if (event === 'SIGNED_IN' && session?.user) {
             currentUser = session.user;
+            window.currentUser = currentUser;
             await loadUserProfile();
             checkAuthState();
         } else if (event === 'SIGNED_OUT') {
             currentUser = null;
             userProfile = null;
+            window.currentUser = null;
+            window.userProfile = null;
             checkAuthState();
         }
     });

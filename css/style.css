@@ -246,41 +246,18 @@ body .nav-connexion .nav-link {
     min-width: 100px;
 }
 
-/* Prévention du flash du bouton connexion - géré par JavaScript */
+/* Bouton connexion masqué par défaut - contrôlé par JavaScript */
 body .nav-connexion .connexion-link,
 body .nav-connexion .nav-link.connexion-link {
-    opacity: 0 !important; /* Masqué par défaut */
-    visibility: hidden !important; /* Masqué par défaut */
-    /* SUPPRIMÉ: transition: opacity 0.3s ease, visibility 0.3s ease !important; */
-    display: none !important; /* Masqué par défaut - contrôlé par JS */
+    display: none; /* Masqué par défaut, géré par JS */
 }
 
-body .nav-connexion .connexion-link.show,
-body .nav-connexion .nav-link.connexion-link.show {
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: block !important;
-}
-
-/* Style pour forcer l'affichage quand activé par JavaScript */
-body .nav-connexion .connexion-link.js-visible,
-body .nav-connexion .nav-link.connexion-link.js-visible {
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: block !important;
-}
-
-/* Info utilisateur masquée par défaut - système renforcé */
+/* Info utilisateur masquée par défaut - contrôlée par JavaScript */
 body .nav-connexion .user-info {
-    display: none !important; /* Masquage initial absolu */
+    display: none; /* Masqué par défaut, géré par JS */
     align-items: center;
     gap: 30px;
     flex-shrink: 0;
-}
-
-body .nav-connexion .user-info.show,
-body .nav-connexion .user-info.js-visible {
-    display: flex !important;
 }
 
 /* ===== PROFIL - Style cyan ===== */

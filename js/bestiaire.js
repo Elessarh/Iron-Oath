@@ -240,17 +240,15 @@ const creaturesData = [
         id: 16,
         name: "Ika",
         category: "boss",
-        type: "Léviathan",
+        type: "Tortue Ancienne",
         hp: 800,
         palier: 1,
         image: "../assets/mobs/Ika.avif",
-        description: "Un kraken ancestral des profondeurs, gardien des secrets abyssaux.",
+        description: "Cette tortue ancienne erre lentement dans les recoins oubliés du monde. Sa carapace recèle les secrets d'âges passés.",
         drops: [
-            { name: "Tentacule légendaire", rate: null, image: null },
-            { name: "Perle des abysses", rate: null, image: null },
-            { name: "Encre magique", rate: null, image: null }
+            { name: "Carapace d'Ika", rate: 80, image: null }
         ],
-        location: "Abysses Marins"
+        location: "Archipel Ika"
     },
     {
         id: 17,
@@ -272,17 +270,16 @@ const creaturesData = [
         id: 18,
         name: "Néphantes",
         category: "boss",
-        type: "Araignée Géante",
-        hp: 650,
+        type: "Plante Carnivore",
+        hp: 150,
         palier: 1,
         image: "../assets/mobs/Nephantes.gif",
-        description: "Une araignée titanesque tisseuse de destins, gardienne des fils du temps.",
+        description: "Cette plante carnivore géante se nourrit de chair et de sang. Ses lianes s'enroulent sans bruit, avant de refermer son piège mortel. Même les aventuriers aguerris évitent ses racines traînantes.",
         drops: [
-            { name: "Soie temporelle", rate: null, image: null },
-            { name: "Venin de Néphantes", rate: null, image: null },
-            { name: "Œuf d'araignée", rate: null, image: null }
+            { name: "Spore Corrompu", rate: 50, image: null },
+            { name: "Fragments de Feuilles", rate: 45, image: null }
         ],
-        location: "Labyrinthe de Soie"
+        location: "Champ de Mizunari"
     },
     {
         id: 19,
@@ -305,16 +302,12 @@ const creaturesData = [
         name: "Plante Dévoreuse",
         category: "elite",
         type: "Plante",
-        hp: 280,
+        hp: 125,
         palier: 1,
         image: "../assets/mobs/Plante Dévoreuse.avif",
-        description: "Une plante carnivore géante qui attire ses proies avec des phéromones envoûtantes.",
-        drops: [
-            { name: "Nectar toxique", rate: null, image: null },
-            { name: "Épines acérées", rate: null, image: null },
-            { name: "Bulbe précieux", rate: null, image: null }
-        ],
-        location: "Jungle Carnivore"
+        description: "Discrète sous ses feuilles luxuriantes, le danger rôde au moindre faux pas... Ses racines enserrent ses proies, lentement, avant de les engloutir sans laisser de trace.",
+        drops: [],
+        location: "Donjon Geldorak"
     },
     {
         id: 21,
@@ -340,13 +333,12 @@ const creaturesData = [
         hp: 220,
         palier: 1,
         image: "../assets/mobs/Spirite de glace.png",
-        description: "Des esprits élémentaires de glace, gardiens éternels des terres gelées du nord.",
+        description: "Âme ancienne née des tempêtes hivernales, la Spirite de Glace veille sur les terres gelées. Elle murmure aux vents et glace les intrus, protégeant les secrets oubliés du givre éternel.",
         drops: [
-            { name: "Cristal de glace", rate: null, image: null },
-            { name: "Essence de froid", rate: null, image: null },
-            { name: "Sceptre gelé", rate: null, image: null }
+            { name: "Eclat Magique Glacial", rate: 35, image: null },
+            { name: "Poussière de givre", rate: 35, image: null }
         ],
-        location: "Toundra Gelée"
+        location: "Citadelle de glace"
     },
 
     // Palier 1 - Araignées
@@ -709,13 +701,12 @@ const creaturesData = [
         hp: 200,
         palier: 1,
         image: "../assets/mobs/Golem_de_glace.png",
-        description: "Un colosse de glace animé par la magie ancienne. Son corps est dur comme le diamant.",
+        description: "Forgé dans les profondeurs d'un glacier ancien, le Golem de Glace est une sentinelle implacable. Son corps de cristal givré repousse toute chaleur, et ses coups peuvent figer le sang en un instant.",
         drops: [
-            { name: "Cristal de glace", rate: 50, image: null },
-            { name: "Cœur gelé", rate: 30, image: null },
-            { name: "Essence de froid", rate: 40, image: null }
+            { name: "Peau Dur Glacial", rate: 30, image: null },
+            { name: "Poussière de givre", rate: 40, image: null }
         ],
-        location: "Toundra Gelée"
+        location: "Citadelle de glace"
     },
     {
         id: 46,
@@ -727,34 +718,28 @@ const creaturesData = [
         image: "../assets/mobs/Ours_Glacial.png",
         description: "Un ours massif adapté au froid extrême. Sa fourrure blanche le rend quasi invisible dans la neige.",
         drops: [
-            { name: "Fourrure d'ours", rate: 60, image: null },
-            { name: "Griffe glaciale", rate: 40, image: null },
-            { name: "Cœur d'ours", rate: 20, image: null }
+            { name: "Fragment de l'Âme de l'Ours", rate: 5, image: null }
         ],
-        location: "Toundra Gelée"
+        location: "Citadelle de glace"
     },
     {
         id: 47,
         name: "Plante Mutante",
         category: "elite",
         type: "Plante",
-        hp: 150,
+        hp: 2000,
         palier: 1,
         image: "../assets/mobs/Plante_mutante.png",
-        description: "Une plante corrompue par la magie sauvage. Ses lianes empoisonnées étranglent ses victimes.",
-        drops: [
-            { name: "Sève toxique", rate: 50, image: null },
-            { name: "Épine vénéneuse", rate: 35, image: null },
-            { name: "Racine mutante", rate: 25, image: null }
-        ],
-        location: "Jungle Corrompue"
+        description: "Entité rampante née des mines de Geldorak, Vyrmoss s'imprègne des spores et de la terre humide. Sa peau est couverte de mousse vivante, et son souffle corrompt tout ce qu'il touche.",
+        drops: [],
+        location: "Donjon Geldorak"
     },
     {
         id: 48,
         name: "Essaim d'Insectes",
         category: "creature",
         type: "Essaim",
-        hp: 85,
+        hp: 20,
         palier: 1,
         image: "../assets/mobs/Essaim d'insectes.png",
         description: "Un nuage bourdonnant d'insectes agressifs. Difficile à combattre, impossible à fuir.",
@@ -769,7 +754,7 @@ const creaturesData = [
         name: "Farfadet",
         category: "creature",
         type: "Féérique",
-        hp: 60,
+        hp: 250,
         palier: 1,
         image: "../assets/mobs/Farfadet.png",
         description: "Une créature espiègle de la forêt enchantée. Méfiez-vous de sa magie illusoire.",
@@ -788,45 +773,40 @@ const creaturesData = [
         hp: 70,
         palier: 1,
         image: "../assets/mobs/Cerf.png",
-        description: "Un cerf majestueux des forêts. Paisible mais rapide si menacé.",
+        description: "Majestueux et insaisissable, le Cerf des Montagnes habite les hauteurs glacées et les forêts enneigées. On raconte qu'il apparaît aux âmes pures, guidant les voyageurs égarés vers la sécurité.",
         drops: [
-            { name: "Bois de cerf", rate: 40, image: null },
-            { name: "Viande de cerf", rate: 70, image: null },
-            { name: "Peau de cerf", rate: 50, image: null }
+            { name: "Peau de Cerf des Montagnes", rate: 45, image: null }
         ],
-        location: "Forêt Paisible"
+        location: "Tolbana"
     },
     {
         id: 51,
         name: "Bandit Assassin",
         category: "elite",
         type: "Humanoïde",
-        hp: 125,
+        hp: 120,
         palier: 1,
         image: "../assets/mobs/Bandit Assassin.png",
-        description: "Un tueur à gages sans scrupules. Ses lames sont aussi silencieuses que mortelles.",
+        description: "Maître de l'ombre et des lames silencieuses, il ne laisse derrière lui que le vide... et une cible tombée.",
         drops: [
-            { name: "Dague empoisonnée", rate: 40, image: null },
-            { name: "Cape sombre", rate: 30, image: null },
-            { name: "Bourse volée", rate: 60, image: null }
+            { name: "Cuire Usé", rate: 30, image: null },
+            { name: "Petite Bourse", rate: 35, image: null }
         ],
-        location: "Repaire des Bandits"
+        location: "Montagne des bandits"
     },
     {
         id: 52,
         name: "Poisson Requin",
         category: "elite",
         type: "Bête Aquatique",
-        hp: 165,
+        hp: 500,
         palier: 1,
         image: "../assets/mobs/Poisson_requin.png",
-        description: "Un prédateur des profondeurs. Ses mâchoires peuvent broyer le métal.",
+        description: "Prédateur implacable des eaux profondes, le Poisson Requin traque silencieusement ses proies. Ses dents acérées peuvent trancher l'acier, et son instinct ne connaît ni pitié ni repos.",
         drops: [
-            { name: "Dent de requin", rate: 55, image: null },
-            { name: "Aileron de requin", rate: 35, image: null },
-            { name: "Écaille de requin", rate: 45, image: null }
+            { name: "Carapace de requin", rate: 40, image: null }
         ],
-        location: "Mer Profonde"
+        location: "Virelune"
     },
 
     // Palier 1 - Boss légendaires
@@ -883,16 +863,14 @@ const creaturesData = [
         name: "Léviathan",
         category: "boss",
         type: "Serpent de Mer",
-        hp: 900,
+        hp: 5000,
         palier: 1,
         image: "../assets/mobs/leviathan.png",
-        description: "Le serpent des mers éternelles. Son corps s'étend sur des centaines de mètres.",
+        description: "Serpent mythique glissant entre les courants profonds, Nymbréa incarne la grâce et la traîtrise des eaux calmes. Ses écailles scintillent comme des perles maudites.",
         drops: [
-            { name: "Écaille de Léviathan", rate: 25, image: null },
-            { name: "Perle des profondeurs", rate: 10, image: null },
-            { name: "Trident marin", rate: 15, image: null }
+            { name: "Coeur de Nautherion", rate: null, image: null }
         ],
-        location: "Abysses Marines"
+        location: "Virelune"
     },
     {
         id: 57,
