@@ -891,114 +891,160 @@ body .nav-connexion .logout-btn {
 /* Tablettes en mode portrait */
 @media (max-width: 768px) {
     .header {
-        padding: 0.4rem 0 !important;
-        min-height: 55px !important;
+        padding: 0 !important;
+        min-height: 60px !important;
         display: block !important;
         visibility: visible !important;
+        background: #0a0a1a !important;
     }
     
     .nav-container {
-        padding: 0 0.8rem !important;
-        min-height: 50px !important;
-        display: flex !important;
-        justify-content: space-between !important;
+        padding: 8px 10px !important;
+        min-height: 60px !important;
+        display: grid !important;
+        grid-template-columns: 70px 1fr auto auto !important;
+        grid-template-areas: "logo menu connexion hamburger" !important;
         align-items: center !important;
-        gap: 10px !important;
-        flex-wrap: nowrap !important;
-    }
-    
-    .hamburger {
-        display: flex !important;
-        order: 3 !important;
-        flex-shrink: 0 !important;
+        gap: 8px !important;
     }
     
     .nav-logo-container {
-        order: 1;
-        position: static !important;
-        transform: none !important;
-        flex-shrink: 0;
-        width: auto !important;
-        max-width: 100px !important;
+        grid-area: logo !important;
+        width: 70px !important;
+        flex-shrink: 0 !important;
     }
     
     .nav-logo-safe {
-        height: 32px !important;
-        max-width: 120px !important;
+        height: 35px !important;
+        width: auto !important;
+        max-width: 70px !important;
+        display: block !important;
+    }
+    
+    /* CACHER LE MENU DESKTOP SUR MOBILE */
+    body .nav-menu {
+        display: none !important;
+        grid-area: menu !important;
     }
     
     .nav-connexion {
-        order: 2;
-        position: static !important;
-        transform: none !important;
+        grid-area: connexion !important;
+        font-size: 0.7rem !important;
+        white-space: nowrap !important;
+        min-width: 0 !important;
+        max-width: none !important;
         flex-shrink: 1 !important;
-        font-size: 0.75rem;
-        min-width: auto !important;
-        width: auto !important;
-        max-width: 150px !important;
     }
     
     .nav-connexion .connexion-link,
     .nav-connexion .username-link {
-        font-size: 0.75rem !important;
-        padding: 0.3rem 0.6rem !important;
+        font-size: 0.7rem !important;
+        padding: 6px 10px !important;
+        display: inline-block !important;
+        background: rgba(78, 205, 196, 0.2) !important;
+        border: 1px solid #4ecdc4 !important;
+        border-radius: 5px !important;
+        color: #4ecdc4 !important;
     }
     
     .nav-connexion .logout-btn {
-        font-size: 0.7rem !important;
-        padding: 0.25rem 0.5rem !important;
+        font-size: 0.65rem !important;
+        padding: 4px 8px !important;
     }
     
-    body .nav-menu {
-        display: none !important;
-        position: fixed !important;
-        top: 55px !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: calc(100vh - 55px) !important;
-        background: rgba(10, 10, 26, 0.98) !important;
-        backdrop-filter: blur(20px) !important;
-        padding: 1.5rem 1rem !important;
+    /* HAMBURGER ULTRA VISIBLE */
+    .hamburger {
+        grid-area: hamburger !important;
+        display: flex !important;
         flex-direction: column !important;
+        justify-content: center !important;
         align-items: center !important;
-        gap: 1.5rem !important;
-        box-shadow: 0 4px 20px rgba(0, 168, 255, 0.3) !important;
-        border-top: 2px solid var(--color-accent) !important;
-        transform: translateX(-100%) !important;
-        transition: transform 0.3s ease-in-out !important;
-        overflow-y: auto !important;
-        z-index: 1000 !important;
-        margin: 0 !important;
+        width: 45px !important;
+        height: 45px !important;
+        background: rgba(78, 205, 196, 0.2) !important;
+        border: 2px solid #4ecdc4 !important;
+        border-radius: 8px !important;
+        padding: 8px !important;
+        gap: 5px !important;
+        flex-shrink: 0 !important;
     }
-
+    
+    .hamburger span {
+        width: 25px !important;
+        height: 3px !important;
+        background: #4ecdc4 !important;
+        display: block !important;
+        border-radius: 2px !important;
+    }
+    
+    .hamburger span {
+        width: 25px !important;
+        height: 3px !important;
+        background: #4ecdc4 !important;
+        display: block !important;
+        border-radius: 2px !important;
+    }
+    
+    /* MENU MOBILE FULL SCREEN */
     body .nav-menu.active {
         display: flex !important;
-        transform: translateX(0) !important;
+        position: fixed !important;
+        top: 60px !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: calc(100vh - 60px) !important;
+        background: rgba(10, 10, 26, 0.98) !important;
+        backdrop-filter: blur(20px) !important;
+        padding: 2rem 1rem !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 1rem !important;
+        z-index: 1000 !important;
+        margin: 0 !important;
+        list-style: none !important;
+        border-top: 2px solid #4ecdc4 !important;
+        transform: none !important;
+        animation: slideIn 0.3s ease !important;
     }
     
-    body .nav-menu li {
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    body .nav-menu.active li {
         width: 100%;
-        max-width: 300px;
+        max-width: 400px;
     }
     
-    body .nav-menu a {
+    body .nav-menu.active a {
         display: block;
-        padding: 0.8rem 1.5rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        font-size: 1rem;
         width: 100%;
-        text-align: center;
-        border: 1px solid transparent;
+        padding: 15px 20px !important;
+        background: rgba(78, 205, 196, 0.15) !important;
+        border: 2px solid #4ecdc4 !important;
+        border-radius: 10px !important;
+        color: #4ecdc4 !important;
+        font-size: 1.1rem !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
     }
     
-    body .nav-menu a:hover,
-    body .nav-menu a.active {
-        background: rgba(0, 168, 255, 0.2);
-        border-color: rgba(0, 168, 255, 0.5);
-        box-shadow: 0 0 15px rgba(0, 168, 255, 0.3);
-        transform: translateY(-2px);
+    body .nav-menu.active a:hover,
+    body .nav-menu.active a.active {
+        background: rgba(78, 205, 196, 0.3) !important;
+        transform: scale(1.02) !important;
     }
+}
     
     /* Overlay pour fermer le menu */
     .nav-overlay {
@@ -1023,65 +1069,62 @@ body .nav-connexion .logout-btn {
 /* Smartphones */
 @media (max-width: 480px) {
     .header {
-        padding: 0.3rem 0 !important;
-        min-height: 50px !important;
+        min-height: 55px !important;
     }
     
     .nav-container {
-        padding: 0 0.5rem !important;
-        min-height: 45px !important;
+        padding: 5px 8px !important;
+        min-height: 55px !important;
+        grid-template-columns: 60px 1fr auto auto !important;
+        gap: 5px !important;
     }
     
     .nav-logo-container {
-        max-width: 80px !important;
+        width: 60px !important;
     }
     
     .nav-logo-safe {
-        height: 28px !important;
-        max-width: 80px !important;
+        height: 30px !important;
+        max-width: 60px !important;
     }
     
     .nav-connexion {
         font-size: 0.65rem !important;
-        max-width: 120px !important;
     }
     
     .nav-connexion .connexion-link,
     .nav-connexion .username-link {
         font-size: 0.65rem !important;
-        padding: 0.25rem 0.4rem !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
+        padding: 5px 8px !important;
     }
     
     .nav-connexion .logout-btn {
         font-size: 0.6rem !important;
-        padding: 0.2rem 0.35rem !important;
+        padding: 3px 6px !important;
     }
     
     .hamburger {
-        width: 25px !important;
-        height: 25px !important;
-        padding: 0.3rem !important;
+        width: 40px !important;
+        height: 40px !important;
+        padding: 6px !important;
     }
     
     .hamburger span {
-        width: 20px !important;
-        height: 2px !important;
+        width: 22px !important;
+        height: 2.5px !important;
     }
     
-    .nav-menu {
-        top: 50px;
-        height: calc(100vh - 50px);
-        padding: 1.2rem 0.5rem;
-        gap: 1.2rem;
+    body .nav-menu.active {
+        top: 55px !important;
+        height: calc(100vh - 55px) !important;
+        padding: 1.5rem 1rem !important;
     }
     
-    body .nav-menu a {
-        font-size: 0.9rem;
-        padding: 0.7rem 1.2rem;
+    body .nav-menu.active a {
+        padding: 12px 15px !important;
+        font-size: 1rem !important;
     }
+}
     
     .nav-overlay {
         top: 50px;
@@ -1092,38 +1135,35 @@ body .nav-connexion .logout-btn {
 /* Très petits écrans */
 @media (max-width: 320px) {
     .nav-container {
-        padding: 0 0.3rem !important;
-        gap: 5px !important;
+        padding: 4px 5px !important;
+        grid-template-columns: 50px 1fr auto auto !important;
+        gap: 4px !important;
     }
     
     .nav-logo-container {
-        max-width: 60px !important;
+        width: 50px !important;
     }
     
     .nav-logo-safe {
-        height: 24px !important;
-        max-width: 60px !important;
-    }
-    
-    .nav-connexion {
-        font-size: 0.6rem !important;
-        max-width: 100px !important;
+        height: 26px !important;
+        max-width: 50px !important;
     }
     
     .nav-connexion .connexion-link,
     .nav-connexion .username-link {
         font-size: 0.6rem !important;
-        padding: 0.2rem 0.3rem !important;
+        padding: 4px 6px !important;
     }
     
     .hamburger {
-        width: 22px !important;
-        height: 22px !important;
-        padding: 0.2rem !important;
+        width: 35px !important;
+        height: 35px !important;
+        padding: 5px !important;
     }
     
     .hamburger span {
-        width: 18px !important;
+        width: 20px !important;
+        height: 2px !important;
     }
     
     .hero-title {
