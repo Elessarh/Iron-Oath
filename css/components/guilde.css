@@ -419,11 +419,16 @@
 
 @media (max-width: 768px) {
     .guilde-header h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .guilde-header p {
-        font-size: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .guilde-container {
+        padding: 10px;
+        margin-top: 60px;
     }
     
     #planning-list,
@@ -440,7 +445,7 @@
     }
     
     .guilde-section h2 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
     
     .guilde-tabs {
@@ -449,8 +454,12 @@
     
     .guilde-tab-btn {
         min-width: 100%;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         padding: 12px 20px;
+    }
+    
+    .activity-wall-container {
+        padding: 1rem;
     }
 }
 

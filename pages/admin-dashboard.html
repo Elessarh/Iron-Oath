@@ -398,6 +398,115 @@
             to { opacity: 1; }
         }
         
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin: 60px auto 30px;
+                padding: 15px;
+            }
+            
+            .dashboard-header {
+                padding: 20px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .dashboard-header p {
+                font-size: 0.9rem;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-card .stat-number {
+                font-size: 2rem;
+            }
+            
+            .users-section {
+                padding: 20px;
+                overflow-x: auto;
+            }
+            
+            .users-table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .users-table {
+                font-size: 0.8rem;
+                min-width: 600px;
+            }
+            
+            .users-table th,
+            .users-table td {
+                padding: 8px 6px;
+                white-space: nowrap;
+            }
+            
+            .role-badge {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+            }
+            
+            .action-btn {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+            
+            .pagination-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .page-info {
+                font-size: 0.9rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .modal-content h2 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .users-table {
+                font-size: 0.7rem;
+            }
+            
+            .users-table th,
+            .users-table td {
+                padding: 6px 4px;
+            }
+            
+            .action-btn {
+                font-size: 0.7rem;
+                padding: 5px 10px;
+                margin: 2px;
+            }
+            
+            .pagination {
+                gap: 10px;
+            }
+        }
+        
         .modal-content {
             background: linear-gradient(135deg, rgba(30, 30, 45, 0.98), rgba(20, 20, 35, 0.98));
             padding: 40px;

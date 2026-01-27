@@ -483,15 +483,50 @@
 @media (max-width: 768px) {
     .dm-container {
         width: 100vw;
+        height: 100vh;
         right: 0;
-        border-radius: 15px 15px 0 0;
+        border-radius: 0;
     }
     
     .dm-sidebar {
-        width: 200px;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .dm-search-input {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    .dm-member-item {
+        padding: 10px 12px;
+        min-height: 50px;
+    }
+    
+    .dm-member-name {
+        font-size: 0.85rem;
     }
     
     .dm-message-content-wrapper {
-        max-width: 85%;
+        max-width: 90%;
+    }
+    
+    .dm-input {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dm-layout {
+        flex-direction: column;
+    }
+    
+    .dm-sidebar {
+        max-width: 100%;
+        width: 100%;
+        max-height: 30vh;
+        border-right: none;
+        border-bottom: 1px solid rgba(78, 205, 196, 0.2);
     }
 }

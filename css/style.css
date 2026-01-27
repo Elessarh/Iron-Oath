@@ -16,6 +16,10 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     background-color: var(--color-bg);
     color: var(--color-white);
@@ -23,6 +27,13 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     padding-top: 70px !important; /* Espace fixe pour la navbar */
+    max-width: 100vw;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 55px !important;
+    }
 }
 
 /* Arrière-plan spécial pour la page d'accueil */
@@ -132,6 +143,38 @@ select option {
     align-items: center;
     gap: 20px; /* Espacement entre les 3 sections */
     padding: 0 20px;
+}
+
+/* Hamburger menu */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+    z-index: 1001;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: #4ecdc4;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translateY(10px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translateY(-10px);
 }
 
 /* Navigation globale - style stable et centré */
@@ -835,15 +878,17 @@ body .nav-connexion .logout-btn {
 /* Tablettes en mode portrait */
 @media (max-width: 768px) {
     .header {
-        padding: 0.8rem 0;
+        padding: 0.4rem 0;
+        min-height: 55px;
     }
     
     .nav-container {
-        padding: 0 1rem;
-        /* Conserver le flexbox layout même sur mobile */
+        padding: 0 0.8rem;
+        min-height: 50px;
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
+        gap: 10px;
     }
     
     .hamburger {
@@ -852,7 +897,6 @@ body .nav-connexion .logout-btn {
     }
     
     .nav-logo-container {
-        /* Garder la cohérence avec le layout flexbox */
         order: 1;
         position: static !important;
         transform: none !important;
@@ -860,54 +904,8 @@ body .nav-connexion .logout-btn {
     }
     
     .nav-logo-safe {
-        height: 35px; /* Légèrement plus petit sur mobile */
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.3rem;
-    }
-    
-    .hero-description {
-        font-size: 1rem;
-    }
-    
-    .hero-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .hero-button {
-        width: 100%;
-        max-width: 300px;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-    
-    .stat-number {
-        font-size: 2.5rem;
-    }
-    
-    .features-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .section-title {
-        font-size: 1.8rem;
-    }
-    
-    .cta-section h2 {
-        font-size: 2rem;
-    }
-    
-    .cta-section p {
-        font-size: 1.1rem;
+        height: 32px !important;
+        max-width: 120px !important;
     }
     
     .nav-connexion {
@@ -915,26 +913,39 @@ body .nav-connexion .logout-btn {
         position: static !important;
         transform: none !important;
         flex-shrink: 0;
+        font-size: 0.75rem;
+    }
+    
+    .nav-connexion .connexion-link,
+    .nav-connexion .username-link {
+        font-size: 0.75rem !important;
+        padding: 0.3rem 0.6rem !important;
+    }
+    
+    .nav-connexion .logout-btn {
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.5rem !important;
     }
     
     .nav-menu {
         display: none;
         position: fixed;
-        top: 70px;
+        top: 55px;
         left: 0;
         width: 100%;
-        height: calc(100vh - 70px);
+        height: calc(100vh - 55px);
         background: rgba(10, 10, 26, 0.98);
         backdrop-filter: blur(20px);
-        padding: 2rem 1rem;
+        padding: 1.5rem 1rem;
         flex-direction: column;
         align-items: center;
-        gap: 2rem;
+        gap: 1.5rem;
         box-shadow: 0 4px 20px rgba(0, 168, 255, 0.3);
         border-top: 2px solid var(--color-accent);
         transform: translateX(-100%);
         transition: transform 0.3s ease-in-out;
         overflow-y: auto;
+        z-index: 1000;
     }
 
     .nav-menu.active {
@@ -942,18 +953,24 @@ body .nav-connexion .logout-btn {
         transform: translateX(0);
     }
     
-    .nav-link {
-        padding: 1rem 2rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        font-size: 1.1rem;
+    body .nav-menu li {
         width: 100%;
         max-width: 300px;
+    }
+    
+    body .nav-menu a {
+        display: block;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        width: 100%;
         text-align: center;
         border: 1px solid transparent;
     }
     
-    .nav-link:hover, .nav-link.active {
+    body .nav-menu a:hover,
+    body .nav-menu a.active {
         background: rgba(0, 168, 255, 0.2);
         border-color: rgba(0, 168, 255, 0.5);
         box-shadow: 0 0 15px rgba(0, 168, 255, 0.3);
@@ -964,12 +981,12 @@ body .nav-connexion .logout-btn {
     .nav-overlay {
         display: none;
         position: fixed;
-        top: 70px;
+        top: 55px;
         left: 0;
         width: 100%;
-        height: calc(100vh - 70px);
+        height: calc(100vh - 55px);
         background: rgba(0, 0, 0, 0.5);
-        z-index: 99;
+        z-index: 999;
         backdrop-filter: blur(2px);
         opacity: 0;
         transition: opacity 0.3s ease;
@@ -979,83 +996,54 @@ body .nav-connexion .logout-btn {
         display: block;
         opacity: 1;
     }
-    
-    .hero-title {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-    }
-    
-    .hero-button {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-    }
-}
 
 /* Smartphones */
 @media (max-width: 480px) {
     .header {
-        padding: 0.6rem 0;
+        padding: 0.3rem 0;
+        min-height: 50px;
     }
     
     .nav-container {
         padding: 0 0.5rem;
-    }
-    
-    .nav-menu {
-        top: 60px;
-        height: calc(100vh - 60px);
-        padding: 1.5rem 0.5rem;
-        gap: 1.5rem;
-    }
-    
-    .nav-link {
-        font-size: 1rem;
-        padding: 0.8rem 1.5rem;
-        max-width: 280px;
-    }
-    
-    .nav-overlay {
-        top: 60px;
-        height: calc(100vh - 60px);
-    }
-    
-    .hero-title {
-        font-size: 2rem;
-        line-height: 1.2;
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .hero-button {
-        padding: 0.7rem 1.2rem;
-        font-size: 0.9rem;
-        width: 100%;
-        max-width: 250px;
+        min-height: 45px;
     }
     
     .nav-logo-safe {
-        height: 35px !important;
-        max-width: 150px !important;
+        height: 28px !important;
+        max-width: 100px !important;
     }
     
-    .nav-logo {
-        height: 35px;
+    .nav-connexion {
+        font-size: 0.7rem;
     }
     
-    .nav-container {
-        padding: 0 0.5rem;
+    .nav-connexion .connexion-link,
+    .nav-connexion .username-link {
+        font-size: 0.7rem !important;
+        padding: 0.25rem 0.5rem !important;
     }
     
-    .header {
-        padding: 0.3rem 0;
+    .nav-connexion .logout-btn {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.4rem !important;
+    }
+    
+    .nav-menu {
+        top: 50px;
+        height: calc(100vh - 50px);
+        padding: 1.2rem 0.5rem;
+        gap: 1.2rem;
+    }
+    
+    body .nav-menu a {
+        font-size: 0.9rem;
+        padding: 0.7rem 1.2rem;
+    }
+    
+    .nav-overlay {
+        top: 50px;
+        height: calc(100vh - 50px);
     }
 }
 
