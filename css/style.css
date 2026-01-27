@@ -936,7 +936,37 @@ body .nav-connexion .logout-btn {
         flex-shrink: 1 !important;
     }
     
-    .nav-connexion .connexion-link,
+    /* Gestion de la visibilité connexion/user-info sur mobile */
+    .nav-connexion .connexion-link {
+        font-size: 0.7rem !important;
+        padding: 6px 10px !important;
+        display: inline-block !important;
+        background: rgba(78, 205, 196, 0.2) !important;
+        border: 1px solid #4ecdc4 !important;
+        border-radius: 5px !important;
+        color: #4ecdc4 !important;
+    }
+    
+    /* Cacher le bouton connexion quand l'utilisateur est connecté */
+    .nav-connexion .connexion-link[style*="display: none"],
+    .nav-connexion .connexion-link:not(.show):not(.js-visible) {
+        display: none !important;
+    }
+    
+    /* Afficher les infos utilisateur quand connecté */
+    .nav-connexion .user-info {
+        display: none !important;
+    }
+    
+    .nav-connexion .user-info.show,
+    .nav-connexion .user-info.js-visible,
+    .nav-connexion .user-info[style*="display: flex"] {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 8px !important;
+        align-items: center !important;
+    }
+    
     .nav-connexion .username-link {
         font-size: 0.7rem !important;
         padding: 6px 10px !important;
@@ -1093,6 +1123,11 @@ body .nav-connexion .logout-btn {
     
     .nav-connexion {
         font-size: 0.65rem !important;
+    }
+    
+    .nav-connexion .user-info {
+        flex-direction: row !important;
+        gap: 5px !important;
     }
     
     .nav-connexion .connexion-link,
