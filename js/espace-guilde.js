@@ -1,5 +1,32 @@
 /* espace-guilde.js - Gestion de l'espace guilde pour les membres */
 
+// Fonction pour changer d'onglet
+function switchGuildeTab(tabName) {
+    console.log('[GUILDE] Changement d\'onglet vers:', tabName);
+    
+    // Retirer la classe active de tous les boutons et contenus
+    document.querySelectorAll('.guilde-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelectorAll('.guilde-tab-content').forEach(content => {
+        content.classList.remove('active');
+        content.style.display = 'none';
+    });
+    
+    // Ajouter la classe active au bouton et contenu correspondants
+    const activeButton = document.querySelector(`.guilde-tab-btn[data-tab="${tabName}"]`);
+    const activeContent = document.querySelector(`.guilde-tab-content[data-tab-content="${tabName}"]`);
+    
+    if (activeButton) activeButton.classList.add('active');
+    if (activeContent) {
+        activeContent.classList.add('active');
+        activeContent.style.display = 'block';
+    }
+    
+    // Sauvegarder l'onglet actif dans localStorage
+    localStorage.setItem('guildeActiveTab', tabName);
+}
+
 // Attendre que l'auth soit prête
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('[GUILDE] Initialisation de l espace guilde...');
@@ -77,6 +104,12 @@ async function checkMemberAccess() {
         if (role === 'membre' || role === 'admin') {
             console.log('[OK] Acces autorise - Role:', role);
             await loadGuildeData();
+            
+            // Restaurer l'onglet actif depuis localStorage
+            const savedTab = localStorage.getItem('guildeActiveTab');
+            if (savedTab) {
+                switchGuildeTab(savedTab);
+            }
         } else {
             console.warn('[ATTENTION] Acces refuse - Role:', role);
             showAccessDenied();
@@ -104,7 +137,8 @@ async function loadGuildeData() {
     await Promise.all([
         loadPlanning(),
         loadObjectives(),
-        loadPresence()
+        loadPresence(),
+        loadActivityWall()
     ]);
     
     // Event listeners pour les boutons d'appel
@@ -434,3 +468,102 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+// ========== MUR D'ACTIVITÉ ==========
+async function loadActivityWall() {
+    try {
+        console.log('[GUILDE] Chargement du mur d\'activité...');
+        
+        // Utiliser le cache
+        const cacheKey = 'guild_activity_wall';
+        const cached = window.cacheManager?.get(cacheKey);
+        
+        if (cached) {
+            displayActivityWall(cached);
+            console.log('[OK] Mur d\'activité chargé depuis cache');
+            return;
+        }
+        
+        // Récupérer les activités (limitées aux 20 dernières)
+        const { data, error } = await supabase
+            .from('guild_activity_wall')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(20);
+        
+        if (error) {
+            console.error('[ERREUR] Erreur chargement activités:', error);
+            return;
+        }
+        
+        // Mettre en cache pour 1 minute
+        if (window.cacheManager) {
+            window.cacheManager.set(cacheKey, data || [], 60000);
+        }
+        
+        displayActivityWall(data || []);
+        console.log('[OK] Mur d\'activité chargé:', (data || []).length, 'publications');
+        
+    } catch (error) {
+        console.error('[ERREUR] Erreur mur d\'activité:', error);
+    }
+}
+
+function displayActivityWall(activities) {
+    const container = document.getElementById('activity-wall-content');
+    
+    if (!activities || activities.length === 0) {
+        container.innerHTML = `
+            <div class="no-activities">
+                <div class="no-activities-icon">📋</div>
+                <p class="no-activities-text">Aucune activité pour le moment</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = activities.map(activity => `
+        <div class="activity-post">
+            <div class="activity-post-header">
+                <div>
+                    <h3 class="activity-post-title">${escapeHtml(activity.titre)}</h3>
+                    <div class="activity-post-date">${formatActivityDate(activity.created_at)}</div>
+                </div>
+            </div>
+            <div class="activity-post-content">${escapeHtml(activity.contenu)}</div>
+            ${activity.image_url ? `<img src="${activity.image_url}" alt="Image" class="activity-post-image">` : ''}
+            <div class="activity-post-footer">
+                <span class="activity-post-author">Par ${escapeHtml(activity.author_name || 'Admin')}</span>
+                <span class="activity-post-type type-${activity.type || 'annonce'}">${formatActivityType(activity.type)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function formatActivityDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (minutes < 1) return 'À l\'instant';
+    if (minutes < 60) return `Il y a ${minutes} min`;
+    if (hours < 24) return `Il y a ${hours}h`;
+    if (days < 7) return `Il y a ${days}j`;
+    
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    return date.toLocaleDateString('fr-FR', options);
+}
+
+function formatActivityType(type) {
+    const types = {
+        'annonce': '📢 Annonce',
+        'evenement': '📅 Événement',
+        'info': 'ℹ️ Info',
+        'victoire': '🏆 Victoire'
+    };
+    return types[type] || '📢 Annonce';
+}
+

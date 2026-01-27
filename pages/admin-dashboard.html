@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components/activity-wall.css">
     
     <style>
         body {
@@ -915,6 +916,9 @@
                 <button class="tab-btn" data-tab="guild">
                     🏛️ Gestion Guilde
                 </button>
+                <button class="tab-btn" data-tab="activity">
+                    📢 Mur d'Activité
+                </button>
             </div>
             
             <!-- TAB: Appel Quotidien -->
@@ -1132,6 +1136,71 @@
             </div>
             </div>
             <!-- Fin TAB: Gestion Guilde -->
+            
+            <!-- TAB: Mur d'Activité -->
+            <div class="tab-content" data-tab-content="activity">
+                <div class="activity-admin-container">
+                    <div class="activity-admin-header">
+                        <h2 class="activity-admin-title">📢 Gestion du Mur d'Activité</h2>
+                        <p class="activity-admin-subtitle">Créez et gérez les publications affichées sur l'espace guilde</p>
+                    </div>
+                    
+                    <!-- Formulaire de création/édition -->
+                    <div class="activity-form">
+                        <h3 style="color: #ff6b35; margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">
+                            <span id="form-mode-title">Nouvelle Publication</span>
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label for="activity-title">Titre *</label>
+                            <input type="text" id="activity-title" placeholder="Titre de la publication" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="activity-type">Type *</label>
+                            <select id="activity-type" required>
+                                <option value="annonce">📢 Annonce</option>
+                                <option value="evenement">📅 Événement</option>
+                                <option value="info">ℹ️ Information</option>
+                                <option value="victoire">🏆 Victoire</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="activity-content">Contenu *</label>
+                            <textarea id="activity-content" placeholder="Contenu de la publication..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="activity-image">Image (optionnel)</label>
+                            <input type="file" id="activity-image" accept="image/*">
+                            <div id="image-preview-container" class="image-preview-container" style="display: none;">
+                                <img id="image-preview" class="image-preview" alt="Aperçu">
+                            </div>
+                        </div>
+                        
+                        <button class="btn-submit-activity" id="submit-activity-btn">
+                            <span id="submit-btn-text">Publier</span>
+                        </button>
+                        
+                        <button class="btn-submit-activity" id="cancel-edit-btn" 
+                                style="display: none; background: linear-gradient(135deg, #e74c3c, #c0392b); margin-top: 10px;">
+                            Annuler la modification
+                        </button>
+                    </div>
+                    
+                    <!-- Liste des activités -->
+                    <div class="activities-list">
+                        <h3 class="activities-list-header">Publications actuelles</h3>
+                        <div id="admin-activities-list">
+                            <div style="text-align: center; padding: 40px; color: #888;">
+                                Chargement des publications...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fin TAB: Mur d'Activité -->
         </div>
     </main>
 
@@ -1170,6 +1239,6 @@
     <script src="../js/navbar-mobile.js" defer></script>
     <script src="../js/crypto-keys.js"></script>
     <script src="../js/auth-supabase.js"></script>
-    <script src="../js/admin-dashboard.js" defer></script>
+    <script src="../js/admin-dashboard.js"></script>
 </body>
 </html>

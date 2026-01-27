@@ -32,6 +32,11 @@ function switchDashboardTab(tabName) {
     if (activeButton) activeButton.classList.add('active');
     if (activeContent) activeContent.classList.add('active');
     
+    // Charger les données spécifiques à l'onglet
+    if (tabName === 'activity') {
+        loadAdminActivities();
+    }
+    
     // Sauvegarder l'onglet actif dans localStorage
     localStorage.setItem('dashboardActiveTab', tabName);
 }
@@ -134,8 +139,13 @@ async function checkAdminAccess() {
         // Initialiser les event listeners
         initializeEventListeners();
         
-        // Restaurer l'onglet actif depuis localStorage
+        // Charger les activités si l'onglet est actif ou pré-charger
         const savedTab = localStorage.getItem('dashboardActiveTab');
+        if (savedTab === 'activity') {
+            await loadAdminActivities();
+        }
+        
+        // Restaurer l'onglet actif depuis localStorage
         if (savedTab) {
             switchDashboardTab(savedTab);
         }
@@ -1078,5 +1088,349 @@ function getPresenceLabel(statut) {
     return labels[statut] || statut;
 }
 
+// ========== GESTION DU MUR D'ACTIVITÉ ==========
+
+let editingActivityId = null;
+
+// Charger les activités dans l'admin
+async function loadAdminActivities() {
+    try {
+        console.log('[ADMIN] Chargement des activités...');
+        
+        const { data, error } = await supabase
+            .from('guild_activity_wall')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (error) {
+            console.error('[ERREUR] Erreur chargement activités:', error);
+            document.getElementById('admin-activities-list').innerHTML = 
+                '<div style="text-align: center; padding: 40px; color: #e74c3c;">Erreur de chargement</div>';
+            return;
+        }
+        
+        displayAdminActivities(data || []);
+        console.log('[OK] Activités chargées:', (data || []).length);
+        
+    } catch (error) {
+        console.error('[ERREUR]:', error);
+    }
+}
+
+function displayAdminActivities(activities) {
+    const container = document.getElementById('admin-activities-list');
+    
+    if (!activities || activities.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #888;">
+                Aucune publication. Créez votre première publication ci-dessus !
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = activities.map(activity => `
+        <div class="admin-activity-item" data-id="${activity.id}">
+            <div class="admin-activity-header">
+                <h4 class="admin-activity-title">${escapeHtml(activity.titre)}</h4>
+                <div class="admin-activity-actions">
+                    <button class="btn-edit-activity" onclick="editActivity('${activity.id}')">
+                        ✏️ Modifier
+                    </button>
+                    <button class="btn-delete-activity" onclick="deleteActivity('${activity.id}')">
+                        🗑️ Supprimer
+                    </button>
+                </div>
+            </div>
+            <p class="admin-activity-content">${escapeHtml(activity.contenu)}</p>
+            ${activity.image_url ? `<img src="${activity.image_url}" alt="Image" class="admin-activity-image">` : ''}
+            <div class="admin-activity-meta">
+                <span>📌 Type: ${formatActivityTypeAdmin(activity.type)}</span>
+                <span>👤 Par: ${escapeHtml(activity.author_name || 'Admin')}</span>
+                <span>📅 ${formatDateAdmin(activity.created_at)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function formatActivityTypeAdmin(type) {
+    const types = {
+        'annonce': 'Annonce',
+        'evenement': 'Événement',
+        'info': 'Information',
+        'victoire': 'Victoire'
+    };
+    return types[type] || 'Annonce';
+}
+
+function formatDateAdmin(dateString) {
+    const date = new Date(dateString);
+    const options = { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    return date.toLocaleDateString('fr-FR', options);
+}
+
+// Prévisualiser l'image
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('activity-image');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('image-preview');
+                    const container = document.getElementById('image-preview-container');
+                    preview.src = e.target.result;
+                    container.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Attacher les event listeners aux boutons
+    const submitBtn = document.getElementById('submit-activity-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.submitActivity();
+        });
+    }
+    
+    const cancelBtn = document.getElementById('cancel-edit-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', cancelEdit);
+    }
+});
+
+// Soumettre une activité (créer ou modifier)
+window.submitActivity = async function() {
+    try {
+        console.log('[ACTIVITY] Début de la soumission...');
+        const title = document.getElementById('activity-title').value.trim();
+        const type = document.getElementById('activity-type').value;
+        const content = document.getElementById('activity-content').value.trim();
+        const imageInput = document.getElementById('activity-image');
+        
+        if (!title || !content) {
+            alert('Veuillez remplir le titre et le contenu.');
+            return;
+        }
+        
+        const submitBtn = document.getElementById('submit-activity-btn');
+        submitBtn.disabled = true;
+        submitBtn.querySelector('#submit-btn-text').textContent = 'Publication en cours...';
+        
+        let imageUrl = null;
+        
+        // Upload de l'image si présente
+        if (imageInput.files.length > 0) {
+            const file = imageInput.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const filePath = `guild-activities/${fileName}`;
+            
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('iron-oath-storage')
+                .upload(filePath, file);
+            
+            if (uploadError) {
+                console.error('[ERREUR] Upload image:', uploadError);
+                alert('Erreur lors de l\'upload de l\'image. La publication sera créée sans image.');
+            } else {
+                const { data: urlData } = supabase.storage
+                    .from('iron-oath-storage')
+                    .getPublicUrl(filePath);
+                imageUrl = urlData.publicUrl;
+            }
+        }
+        
+        const activityData = {
+            titre: title,
+            type: type,
+            contenu: content,
+            image_url: imageUrl,
+            author_name: currentUserProfile?.username || localCurrentUser?.email || 'Admin'
+        };
+        
+        console.log('[ACTIVITY] Données à publier:', activityData);
+        console.log('[ACTIVITY] User actuel:', window.currentUser);
+        console.log('[ACTIVITY] Profile:', currentUserProfile);
+        
+        if (editingActivityId) {
+            // Mode édition
+            console.log('[ACTIVITY] Mode édition, ID:', editingActivityId);
+            const { data, error } = await supabase
+                .from('guild_activity_wall')
+                .update(activityData)
+                .eq('id', editingActivityId)
+                .select();
+            
+            if (error) {
+                console.error('[ERREUR] Modification activité:', error);
+                console.error('[ERREUR] Détails:', error.message, error.details, error.hint);
+                alert(`Erreur lors de la modification: ${error.message}`);
+                submitBtn.disabled = false;
+                submitBtn.querySelector('#submit-btn-text').textContent = 'Modifier';
+                return;
+            }
+            
+            console.log('[SUCCESS] Publication modifiée:', data);
+            alert('Publication modifiée avec succès !');
+        } else {
+            // Mode création
+            console.log('[ACTIVITY] Mode création');
+            const { data, error } = await supabase
+                .from('guild_activity_wall')
+                .insert([activityData])
+                .select();
+            
+            if (error) {
+                console.error('[ERREUR] Création activité:', error);
+                console.error('[ERREUR] Détails:', error.message, error.details, error.hint);
+                alert(`Erreur lors de la création: ${error.message}`);
+                submitBtn.disabled = false;
+                submitBtn.querySelector('#submit-btn-text').textContent = 'Publier';
+                return;
+            }
+            
+            console.log('[SUCCESS] Publication créée:', data);
+            
+            alert('Publication créée avec succès !');
+        }
+        
+        // Réinitialiser le formulaire
+        resetActivityForm();
+        
+        // Recharger la liste
+        await loadAdminActivities();
+        
+    } catch (error) {
+        console.error('[ERREUR]:', error);
+        alert('Une erreur est survenue.');
+        const submitBtn = document.getElementById('submit-activity-btn');
+        submitBtn.disabled = false;
+    }
+}
+
+// Éditer une activité
+async function editActivity(activityId) {
+    try {
+        const { data, error } = await supabase
+            .from('guild_activity_wall')
+            .select('*')
+            .eq('id', activityId)
+            .single();
+        
+        if (error || !data) {
+            console.error('[ERREUR] Récupération activité:', error);
+            alert('Impossible de charger l\'activité.');
+            return;
+        }
+        
+        // Remplir le formulaire
+        document.getElementById('activity-title').value = data.titre;
+        document.getElementById('activity-type').value = data.type;
+        document.getElementById('activity-content').value = data.contenu;
+        
+        // Afficher l'aperçu de l'image si elle existe
+        if (data.image_url) {
+            const preview = document.getElementById('image-preview');
+            const container = document.getElementById('image-preview-container');
+            preview.src = data.image_url;
+            container.style.display = 'block';
+        }
+        
+        // Passer en mode édition
+        editingActivityId = activityId;
+        document.getElementById('form-mode-title').textContent = 'Modifier la Publication';
+        document.getElementById('submit-btn-text').textContent = 'Modifier';
+        document.getElementById('cancel-edit-btn').style.display = 'block';
+        
+        // Scroller vers le formulaire
+        document.querySelector('.activity-form').scrollIntoView({ behavior: 'smooth' });
+        
+    } catch (error) {
+        console.error('[ERREUR]:', error);
+        alert('Une erreur est survenue.');
+    }
+}
+
+// Annuler l'édition
+function cancelEdit() {
+    resetActivityForm();
+}
+
+// Réinitialiser le formulaire
+function resetActivityForm() {
+    document.getElementById('activity-title').value = '';
+    document.getElementById('activity-type').value = 'annonce';
+    document.getElementById('activity-content').value = '';
+    document.getElementById('activity-image').value = '';
+    document.getElementById('image-preview-container').style.display = 'none';
+    
+    editingActivityId = null;
+    document.getElementById('form-mode-title').textContent = 'Nouvelle Publication';
+    document.getElementById('submit-btn-text').textContent = 'Publier';
+    document.getElementById('cancel-edit-btn').style.display = 'none';
+    
+    const submitBtn = document.getElementById('submit-activity-btn');
+    submitBtn.disabled = false;
+}
+
+// Supprimer une activité
+async function deleteActivity(activityId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette publication ?')) {
+        return;
+    }
+    
+    try {
+        // Récupérer l'activité pour supprimer l'image si elle existe
+        const { data: activity } = await supabase
+            .from('guild_activity_wall')
+            .select('image_url')
+            .eq('id', activityId)
+            .single();
+        
+        // Supprimer l'image du storage si elle existe
+        if (activity?.image_url) {
+            const imagePath = activity.image_url.split('/').pop();
+            await supabase.storage
+                .from('iron-oath-storage')
+                .remove([`guild-activities/${imagePath}`]);
+        }
+        
+        // Supprimer l'activité
+        const { error } = await supabase
+            .from('guild_activity_wall')
+            .delete()
+            .eq('id', activityId);
+        
+        if (error) {
+            console.error('[ERREUR] Suppression activité:', error);
+            alert('Erreur lors de la suppression.');
+            return;
+        }
+        
+        alert('Publication supprimée avec succès !');
+        await loadAdminActivities();
+        
+    } catch (error) {
+        console.error('[ERREUR]:', error);
+        alert('Une erreur est survenue.');
+    }
+}
+
+// Rendre les fonctions accessibles globalement pour les appels dynamiques depuis le HTML généré
+window.editActivity = editActivity;
+window.deleteActivity = deleteActivity;
+
 console.log('✅ Module admin-dashboard.js chargé');
+
 

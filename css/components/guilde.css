@@ -314,7 +314,106 @@
     color: #4ecdc4;
 }
 
+/* Système d'onglets pour l'espace guilde */
+.guilde-tabs-container {
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.guilde-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    background: rgba(26, 26, 26, 0.6);
+    padding: 10px;
+    border-radius: 12px;
+    border: 2px solid rgba(78, 205, 196, 0.3);
+}
+
+.guilde-tab-btn {
+    flex: 1;
+    min-width: 200px;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(78, 205, 196, 0.08));
+    border: 2px solid rgba(78, 205, 196, 0.3);
+    border-radius: 8px;
+    color: #4ecdc4;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.guilde-tab-btn:hover {
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.25), rgba(78, 205, 196, 0.15));
+    border-color: #4ecdc4;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+}
+
+.guilde-tab-btn.active {
+    background: linear-gradient(135deg, #4ecdc4, #44a3ff);
+    border-color: #4ecdc4;
+    color: white;
+    box-shadow: 0 5px 20px rgba(78, 205, 196, 0.4);
+}
+
+.guilde-tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.guilde-tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Layout deux colonnes */
+.guilde-two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.guilde-left-column,
+.guilde-right-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+}
+
+.guilde-left-column .activity-wall-container {
+    height: 100%;
+}
+
+.guilde-right-column .guilde-tabs-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 /* Responsive */
+@media (max-width: 1200px) {
+    .guilde-two-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
     .guilde-header h1 {
         font-size: 2rem;
@@ -340,4 +439,15 @@
     .guilde-section h2 {
         font-size: 1.5rem;
     }
+    
+    .guilde-tabs {
+        flex-direction: column;
+    }
+    
+    .guilde-tab-btn {
+        min-width: 100%;
+        font-size: 0.9rem;
+        padding: 12px 20px;
+    }
 }
+

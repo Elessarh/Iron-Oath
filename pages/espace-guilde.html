@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components/guilde.css">
+    <link rel="stylesheet" href="../css/components/activity-wall.css">
+    <link rel="stylesheet" href="../css/components/guild-chat.css">
+    <link rel="stylesheet" href="../css/components/guild-dm.css">
     
     <style>
         body {
@@ -266,33 +269,73 @@
                 <p style="color: #f0f0f0; margin-top: 10px;">Espace réservé aux membres de la guilde</p>
             </div>
             
-            <div class="guilde-grid">
-                <!-- Section Planning -->
-                <div class="guilde-section">
-                    <h2 class="section-title">📅 Planning de la Semaine</h2>
-                    <div id="planning-list">
-                        <div class="no-data">Aucun événement planifié</div>
+            <!-- Layout en deux colonnes -->
+            <div class="guilde-two-columns">
+                <!-- Colonne gauche: Mur d'Activité -->
+                <div class="guilde-left-column">
+                    <div class="activity-wall-container">
+                        <div class="activity-wall-header">
+                            <h2 class="activity-wall-title">📢 Mur d'Activité</h2>
+                        </div>
+                        <div id="activity-wall-content" class="activity-wall-content">
+                            <div class="no-activities">
+                                <div class="no-activities-icon">📋</div>
+                                <p class="no-activities-text">Aucune activité pour le moment</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Section Objectifs -->
-                <div class="guilde-section">
-                    <h2 class="section-title">🎯 Objectifs de la Semaine</h2>
-                    <div id="objectives-list">
-                        <div class="no-data">Aucun objectif défini</div>
+                <!-- Colonne droite: Onglets (Planning, Objectifs, Appel) -->
+                <div class="guilde-right-column">
+                    <!-- Système d'onglets pour les sections -->
+                    <div class="guilde-tabs-container">
+                        <div class="guilde-tabs">
+                            <button class="guilde-tab-btn active" data-tab="planning" onclick="switchGuildeTab('planning')">
+                                📅 Planning de la Semaine
+                            </button>
+                            <button class="guilde-tab-btn" data-tab="objectives" onclick="switchGuildeTab('objectives')">
+                                🎯 Objectifs de la Semaine
+                            </button>
+                            <button class="guilde-tab-btn" data-tab="presence" onclick="switchGuildeTab('presence')">
+                                📋 Appel Quotidien
+                            </button>
+                        </div>
+                        
+                        <!-- TAB: Planning -->
+                        <div class="guilde-tab-content active" data-tab-content="planning">
+                            <div class="guilde-section">
+                                <h2 class="section-title">📅 Planning de la Semaine</h2>
+                                <div id="planning-list">
+                                    <div class="no-data">Aucun événement planifié</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- TAB: Objectifs -->
+                        <div class="guilde-tab-content" data-tab-content="objectives" style="display: none;">
+                            <div class="guilde-section">
+                                <h2 class="section-title">🎯 Objectifs de la Semaine</h2>
+                                <div id="objectives-list">
+                                    <div class="no-data">Aucun objectif défini</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- TAB: Appel Quotidien -->
+                        <div class="guilde-tab-content" data-tab-content="presence" style="display: none;">
+                            <div class="guilde-section">
+                                <h2 class="section-title">📋 Appel Quotidien</h2>
+                                <div class="appel-actions">
+                                    <button id="mark-presence-btn" class="appel-btn present-btn">Marquer ma présence</button>
+                                    <button id="mark-absence-btn" class="appel-btn absent-btn">Déclarer une absence</button>
+                                </div>
+                                <div id="presence-list" class="presence-grid">
+                                    <div class="no-data">Chargement des présences...</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Section Appel Quotidien -->
-            <div class="guilde-section">
-                <h2 class="section-title">Appel Quotidien</h2>
-                <div class="appel-actions">
-                    <button id="mark-presence-btn" class="appel-btn present-btn">Marquer ma presence</button>
-                    <button id="mark-absence-btn" class="appel-btn absent-btn">Declarer une absence</button>
-                </div>
-                <div id="presence-list" class="presence-grid">
-                    <div class="no-data">Chargement des presences...</div>
                 </div>
             </div>
         </div>
@@ -304,6 +347,148 @@
         </div>
     </main>
 
+    <!-- Bouton flottant pour le chat -->
+    <button class="chat-float-button" id="chat-toggle-btn" style="display: none;">
+        💬
+        <span class="chat-badge" id="chat-badge" style="display: none;">0</span>
+    </button>
+
+    <!-- Chat unifié de la guilde -->
+    <div class="chat-container" id="guild-chat">
+        <div class="chat-header">
+            <h3 class="chat-title">💬 Chat de la Guilde</h3>
+            <div class="chat-header-actions">
+                <button class="chat-close-btn" id="chat-close-btn">✕</button>
+            </div>
+        </div>
+        
+        <!-- Onglets Chat -->
+        <div class="chat-tabs">
+            <button class="chat-tab-btn active" data-tab="general" id="tab-general-btn">
+                🌐 Général
+            </button>
+            <button class="chat-tab-btn" data-tab="private" id="tab-private-btn">
+                ✉️ Privés
+                <span class="tab-badge" id="tab-private-badge" style="display: none;">0</span>
+            </button>
+        </div>
+        
+        <!-- Contenu Chat Général -->
+        <div class="chat-tab-content active" id="chat-general-content">
+        <!-- Contenu Chat Général -->
+        <div class="chat-tab-content active" id="chat-general-content">
+            <div class="chat-replying-to" id="chat-replying-to">
+                <div class="replying-to-text">
+                    <div class="replying-to-label">Répondre à <span id="reply-to-author"></span></div>
+                    <div class="replying-to-preview" id="reply-to-preview"></div>
+                </div>
+                <button class="cancel-reply-btn" id="cancel-reply-btn">✕</button>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <div class="chat-loading">
+                    <div class="spinner"></div>
+                    <p>Chargement des messages...</p>
+                </div>
+            </div>
+            
+            <div class="chat-image-preview" id="chat-image-preview" style="display: none;"></div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input 
+                        type="file" 
+                        id="chat-image-input" 
+                        accept="image/*" 
+                        style="display: none;"
+                    >
+                    <button class="chat-image-btn" id="chat-image-btn" title="Joindre une image">
+                        📷
+                    </button>
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="chat-input" 
+                        placeholder="Écrivez votre message..."
+                        maxlength="500"
+                    >
+                    <button class="chat-send-btn" id="chat-send-btn">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenu Messages Privés -->
+        <div class="chat-tab-content" id="chat-private-content">
+            <div class="dm-layout">
+                <div class="dm-sidebar">
+                    <div class="dm-search-container">
+                        <input 
+                            type="text" 
+                            id="dm-search-input" 
+                            class="dm-search-input" 
+                            placeholder="🔍 Rechercher un membre..."
+                        >
+                    </div>
+                    <div class="dm-members-list" id="dm-members-list">
+                        <div class="dm-loading">Chargement...</div>
+                    </div>
+                </div>
+                
+                <div class="dm-chat-area" id="dm-chat-area">
+                    <div class="dm-placeholder" id="dm-placeholder">
+                        <div class="dm-placeholder-icon">✉️</div>
+                        <p>Sélectionnez un membre pour commencer une conversation privée</p>
+                    </div>
+                    
+                    <div class="dm-active-chat" id="dm-active-chat" style="display: none;">
+                        <div class="dm-chat-header">
+                            <div class="dm-recipient-info">
+                                <span class="dm-recipient-name" id="dm-recipient-name"></span>
+                                <span class="dm-recipient-status">En ligne</span>
+                            </div>
+                            <button class="dm-back-btn" id="dm-back-btn">← Retour</button>
+                        </div>
+                        
+                        <div class="dm-messages" id="dm-messages">
+                            <div class="dm-messages-loading">
+                                <div class="spinner"></div>
+                                <p>Chargement des messages...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="dm-image-preview" id="dm-image-preview" style="display: none;"></div>
+                        
+                        <div class="dm-input-container">
+                            <div class="dm-input-wrapper">
+                                <input 
+                                    type="file" 
+                                    id="dm-image-input" 
+                                    accept="image/*" 
+                                    style="display: none;"
+                                >
+                                <button class="dm-image-btn" id="dm-image-btn" title="Joindre une image">
+                                    📷
+                                </button>
+                                <input 
+                                    type="text" 
+                                    class="dm-input" 
+                                    id="dm-input" 
+                                    placeholder="Écrivez votre message privé..."
+                                    maxlength="500"
+                                >
+                                <button class="dm-send-btn" id="dm-send-btn">
+                                    ➤
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <!-- Chargement Supabase via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -313,6 +498,8 @@
     <script src="../js/crypto-keys.js"></script>
     <script src="../js/auth-supabase.js"></script>
     <script src="../js/espace-guilde.js" defer></script>
+    <script src="../js/guild-chat.js" defer></script>
+    <script src="../js/guild-dm.js" defer></script>
     <script src="../js/navbar-mobile.js" defer></script>
 </body>
 </html>
