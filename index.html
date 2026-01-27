@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=mobile-fix-001">
 </head>
 <body class="home-page">
     <!-- Écran de chargement supprimé -->
@@ -155,17 +155,6 @@
     
     <script src="js/crypto-keys.js"></script>
     <script src="js/auth-supabase.js?v=20251109f"></script>
-    <script>
-        // Écran de chargement supprimé - plus de gestion nécessaire
-
-        // Gestion du menu mobile
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
-        
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            hamburger.classList.toggle('active');
-        });
-    </script>
+    <script src="js/navbar-mobile.js" defer></script>
 </body>
 </html>
