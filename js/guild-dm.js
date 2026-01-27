@@ -1,5 +1,7 @@
 /* guild-dm.js - Gestion des messages privés de la guilde */
 
+console.log('✅ Module guild-dm.js chargé');
+
 let dmOpen = false;
 let currentRecipient = null;
 let selectedDmImage = null;
@@ -120,6 +122,14 @@ async function loadDmMembers() {
     try {
         console.log('[DM] Chargement de la liste des membres...');
         
+        const list = document.getElementById('dm-members-list');
+        if (!list) {
+            console.error('[DM] ERREUR: Élément dm-members-list non trouvé!');
+            return;
+        }
+        
+        console.log('[DM] Élément dm-members-list trouvé, requête Supabase...');
+        
         const { data: members, error } = await supabase
             .from('user_profiles')
             .select('id, username')
@@ -129,21 +139,18 @@ async function loadDmMembers() {
         
         if (error) {
             console.error('[DM] Erreur chargement membres:', error);
-            const list = document.getElementById('dm-members-list');
             list.innerHTML = '<div class="dm-loading" style="color: #e74c3c;">Erreur de chargement</div>';
             return;
         }
         
         console.log('[DM] Membres récupérés:', members);
         
-        const list = document.getElementById('dm-members-list');
-        
         if (!members || members.length === 0) {
             list.innerHTML = '<div class="dm-loading">Aucun membre disponible</div>';
             return;
         }
         
-        list.innerHTML = members.map(member => `
+        const html = members.map(member => `
             <div class="dm-member-item" data-member-id="${member.id}" onclick="openDMChat('${member.id}', '${escapeHtml(member.username)}')">
                 <div class="dm-member-avatar">👤</div>
                 <div class="dm-member-info">
@@ -153,11 +160,16 @@ async function loadDmMembers() {
             </div>
         `).join('');
         
-        console.log('[DM] Membres chargés:', members.length);
+        list.innerHTML = html;
+        
+        console.log('[DM] HTML injecté, membres chargés:', members.length);
+        console.log('[DM] Premier élément injecté:', list.firstElementChild);
     } catch (error) {
         console.error('[DM] Erreur:', error);
         const list = document.getElementById('dm-members-list');
-        list.innerHTML = '<div class="dm-loading" style="color: #e74c3c;">Erreur: ' + error.message + '</div>';
+        if (list) {
+            list.innerHTML = '<div class="dm-loading" style="color: #e74c3c;">Erreur: ' + error.message + '</div>';
+        }
     }
 }
 window.loadDmMembers = loadDmMembers;

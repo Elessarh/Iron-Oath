@@ -150,7 +150,8 @@
 .chat-tab-content {
     display: none;
     flex-direction: column;
-    height: calc(100% - 60px); /* hauteur totale moins les tabs */
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -226,10 +227,10 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 8px;
     min-height: 100px;
 }
 
@@ -255,10 +256,10 @@
 .chat-message {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    padding: 12px;
+    gap: 4px;
+    padding: 8px 10px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+    border-radius: 8px;
     border-left: 3px solid #4ecdc4;
     transition: all 0.3s ease;
     position: relative;
@@ -292,7 +293,7 @@
 .message-author {
     font-weight: 700;
     color: #4ecdc4;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
 .chat-message.own-message .message-author {
@@ -300,22 +301,22 @@
 }
 
 .message-time {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #888;
 }
 
 .message-content {
     color: #e0e0e0;
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: 0.88rem;
+    line-height: 1.4;
     word-wrap: break-word;
 }
 
 .message-image {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 8px;
-    margin-top: 10px;
+    max-width: 250px;
+    max-height: 180px;
+    border-radius: 6px;
+    margin-top: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -383,12 +384,12 @@
 }
 
 .message-image {
-    margin-top: 10px;
-    max-width: 100%;
-    max-height: 300px;
+    margin-top: 6px;
+    max-width: 250px;
+    max-height: 180px;
     height: auto;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: transform 0.3s ease;
     display: block;

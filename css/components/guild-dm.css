@@ -3,7 +3,8 @@
 /* Layout des DMs dans le chat */
 .dm-layout {
     display: flex;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
     width: 100%;
     overflow: hidden;
 }
@@ -82,8 +83,8 @@
 
 .dm-member-item {
     padding: 12px 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(78, 205, 196, 0.3);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(78, 205, 196, 0.4);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -92,6 +93,7 @@
     gap: 10px;
     position: relative;
     flex-shrink: 0;
+    min-height: 60px;
 }
 
 .dm-member-item:hover {
@@ -475,6 +477,15 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Debug - styles temporaires pour vérifier l'affichage */
+.dm-members-list {
+    background: rgba(255, 0, 0, 0.05) !important; /* Debug: fond rouge léger */
+}
+
+.dm-member-item {
+    border: 2px solid #4ecdc4 !important; /* Debug: bordure visible */
 }
 
 /* Responsive */
