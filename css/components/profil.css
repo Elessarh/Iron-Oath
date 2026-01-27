@@ -29,22 +29,22 @@
 .dashboard-btn {
     margin: 10px 15px !important;
     padding: 15px 35px !important;
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(255, 107, 53, 0.15)) !important;
-    border: 2px solid rgba(255, 107, 53, 0.6) !important;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.25), rgba(78, 205, 196, 0.15)) !important;
+    border: 2px solid rgba(78, 205, 196, 0.5) !important;
     border-radius: 12px !important;
-    color: #ff6b35 !important;
+    color: #4ecdc4 !important;
     font-weight: 700 !important;
     font-size: 1.1rem !important;
     text-decoration: none !important;
     transition: all 0.3s ease !important;
-    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.2) !important;
 }
 
 .dashboard-btn:hover {
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.5), rgba(255, 107, 53, 0.3)) !important;
-    border-color: #ff6b35 !important;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.35), rgba(78, 205, 196, 0.25)) !important;
+    border-color: #4ecdc4 !important;
     transform: translateY(-3px) !important;
-    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5) !important;
+    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3) !important;
 }
 
 .profil-info {
@@ -97,29 +97,27 @@
 }
 
 .role-joueur {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(78, 205, 196, 0.5)) !important;
     color: white !important;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3) !important;
 }
 
 .role-membre {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.5), rgba(78, 205, 196, 0.7)) !important;
     color: white !important;
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4) !important;
 }
 
 .role-admin {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
-    color: #1a1a2e !important;
+    background: linear-gradient(135deg, #4ecdc4 0%, #3ba89f 100%) !important;
+    color: white !important;
     font-weight: 800 !important;
-    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5),
-                0 0 30px rgba(254, 225, 64, 0.3) !important;
-    animation: pulse-admin 2s ease-in-out infinite !important;
+    box-shadow: 0 4px 20px rgba(78, 205, 196, 0.5) !important;
 }
 
 @keyframes pulse-admin {
-    0%, 100% { box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5), 0 0 30px rgba(254, 225, 64, 0.3); }
-    50% { box-shadow: 0 6px 25px rgba(255, 107, 53, 0.7), 0 0 40px rgba(254, 225, 64, 0.5); }
+    0%, 100% { box-shadow: 0 4px 20px rgba(78, 205, 196, 0.5); }
+    50% { box-shadow: 0 6px 25px rgba(78, 205, 196, 0.6); }
 }
 
 .profile-select,
