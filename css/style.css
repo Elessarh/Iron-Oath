@@ -896,8 +896,10 @@ body .nav-connexion .logout-btn {
 /* Tablettes en mode portrait */
 @media (max-width: 768px) {
     .header {
-        padding: 0.4rem 0;
-        min-height: 55px;
+        padding: 0.4rem 0 !important;
+        min-height: 55px !important;
+        display: block !important;
+        visibility: visible !important;
     }
     
     .nav-container {
@@ -921,6 +923,8 @@ body .nav-connexion .logout-btn {
         position: static !important;
         transform: none !important;
         flex-shrink: 0;
+        width: auto !important;
+        max-width: 100px !important;
     }
     
     .nav-logo-safe {
@@ -932,8 +936,11 @@ body .nav-connexion .logout-btn {
         order: 2;
         position: static !important;
         transform: none !important;
-        flex-shrink: 0;
+        flex-shrink: 1 !important;
         font-size: 0.75rem;
+        min-width: auto !important;
+        width: auto !important;
+        max-width: 150px !important;
     }
     
     .nav-connexion .connexion-link,
@@ -1021,33 +1028,52 @@ body .nav-connexion .logout-btn {
 /* Smartphones */
 @media (max-width: 480px) {
     .header {
-        padding: 0.3rem 0;
-        min-height: 50px;
+        padding: 0.3rem 0 !important;
+        min-height: 50px !important;
     }
     
     .nav-container {
-        padding: 0 0.5rem;
-        min-height: 45px;
+        padding: 0 0.5rem !important;
+        min-height: 45px !important;
+    }
+    
+    .nav-logo-container {
+        max-width: 80px !important;
     }
     
     .nav-logo-safe {
         height: 28px !important;
-        max-width: 100px !important;
+        max-width: 80px !important;
     }
     
     .nav-connexion {
-        font-size: 0.7rem;
+        font-size: 0.65rem !important;
+        max-width: 120px !important;
     }
     
     .nav-connexion .connexion-link,
     .nav-connexion .username-link {
-        font-size: 0.7rem !important;
-        padding: 0.25rem 0.5rem !important;
+        font-size: 0.65rem !important;
+        padding: 0.25rem 0.4rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
     
     .nav-connexion .logout-btn {
-        font-size: 0.65rem !important;
-        padding: 0.2rem 0.4rem !important;
+        font-size: 0.6rem !important;
+        padding: 0.2rem 0.35rem !important;
+    }
+    
+    .hamburger {
+        width: 25px !important;
+        height: 25px !important;
+        padding: 0.3rem !important;
+    }
+    
+    .hamburger span {
+        width: 20px !important;
+        height: 2px !important;
     }
     
     .nav-menu {
@@ -1070,16 +1096,47 @@ body .nav-connexion .logout-btn {
 
 /* Très petits écrans */
 @media (max-width: 320px) {
+    .nav-container {
+        padding: 0 0.3rem !important;
+        gap: 5px !important;
+    }
+    
+    .nav-logo-container {
+        max-width: 60px !important;
+    }
+    
+    .nav-logo-safe {
+        height: 24px !important;
+        max-width: 60px !important;
+    }
+    
+    .nav-connexion {
+        font-size: 0.6rem !important;
+        max-width: 100px !important;
+    }
+    
+    .nav-connexion .connexion-link,
+    .nav-connexion .username-link {
+        font-size: 0.6rem !important;
+        padding: 0.2rem 0.3rem !important;
+    }
+    
+    .hamburger {
+        width: 22px !important;
+        height: 22px !important;
+        padding: 0.2rem !important;
+    }
+    
+    .hamburger span {
+        width: 18px !important;
+    }
+    
     .hero-title {
         font-size: 1.8rem;
     }
     
     .hero-subtitle {
         font-size: 0.9rem;
-    }
-    
-    .nav-logo {
-        height: 30px;
     }
 }
 
