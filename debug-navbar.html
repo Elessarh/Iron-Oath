@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Navbar Mobile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1a2e;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding-top: 80px;
+        }
+        
+        /* NAVBAR ULTRA-SIMPLE */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #0a0a1a;
+            border-bottom: 2px solid #4ecdc4;
+            z-index: 1000;
+            padding: 10px 15px;
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 100%;
+        }
+        
+        .logo {
+            color: #4ecdc4;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: rgba(255, 0, 0, 0.3);
+            border: 2px solid red;
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .hamburger span {
+            width: 30px;
+            height: 4px;
+            background: #00ff00;
+            display: block;
+        }
+        
+        .menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+        
+        .menu a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(78, 205, 196, 0.2);
+            border-radius: 5px;
+        }
+        
+        .menu-mobile {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 60px);
+            background: rgba(10, 10, 26, 0.98);
+            flex-direction: column;
+            padding: 20px;
+            gap: 15px;
+            z-index: 999;
+        }
+        
+        .menu-mobile.active {
+            display: flex;
+        }
+        
+        .menu-mobile a {
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            background: rgba(78, 205, 196, 0.2);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex !important;
+            }
+            
+            .menu {
+                display: none !important;
+            }
+        }
+        
+        /* CONTENT */
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .info-box {
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid #4ecdc4;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+        
+        .debug {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: black;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            color: #4ecdc4;
+            border-top: 2px solid #4ecdc4;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">Iron Oath</div>
+            
+            <ul class="menu">
+                <li><a href="#">Accueil</a></li>
+                <li><a href="#">Profil</a></li>
+                <li><a href="#">Guilde</a></li>
+            </ul>
+            
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+    
+    <div class="menu-mobile" id="menu-mobile">
+        <a href="#">🏠 Accueil</a>
+        <a href="#">👤 Profil</a>
+        <a href="#">🏛️ Guilde</a>
+        <a href="#">🗺️ Map</a>
+        <a href="#">⚔️ Items</a>
+    </div>
+    
+    <div class="content">
+        <h1>Test Navigation Mobile</h1>
+        
+        <div class="info-box">
+            <h2>🔍 Instructions de Test</h2>
+            <p><strong>Sur mobile, vous devriez voir :</strong></p>
+            <ul style="text-align: left; padding-left: 20px; margin-top: 15px;">
+                <li>✅ Une navbar noire en haut avec bordure cyan</li>
+                <li>✅ Le logo "Iron Oath" à gauche</li>
+                <li>✅ Un bouton hamburger À DROITE (fond rouge, barres vertes)</li>
+                <li>✅ Les couleurs vives permettent de le voir facilement</li>
+            </ul>
+            
+            <p style="margin-top: 20px;"><strong>Au clic sur le hamburger :</strong></p>
+            <ul style="text-align: left; padding-left: 20px; margin-top: 10px;">
+                <li>✅ Un menu plein écran apparaît</li>
+                <li>✅ Avec 5 liens de navigation</li>
+            </ul>
+        </div>
+        
+        <div class="info-box">
+            <h2>📱 Informations Écran</h2>
+            <p>Largeur : <strong id="width">...</strong>px</p>
+            <p>Hamburger visible : <strong id="hamburger-visible">...</strong></p>
+            <p>Menu desktop visible : <strong id="menu-visible">...</strong></p>
+        </div>
+    </div>
+    
+    <div class="debug">
+        <strong>DEBUG:</strong> 
+        Largeur: <span id="debug-width"></span>px | 
+        Hamburger: <span id="debug-hamburger"></span> | 
+        Menu mobile: <span id="debug-menu"></span>
+    </div>
+    
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const menuMobile = document.getElementById('menu-mobile');
+        
+        // Toggle menu
+        hamburger.addEventListener('click', () => {
+            menuMobile.classList.toggle('active');
+            console.log('Menu toggled!', menuMobile.classList.contains('active'));
+        });
+        
+        // Update debug info
+        function updateDebug() {
+            const width = window.innerWidth;
+            const hamburgerStyle = window.getComputedStyle(hamburger);
+            const menuStyle = window.getComputedStyle(document.querySelector('.menu'));
+            
+            document.getElementById('width').textContent = width;
+            document.getElementById('debug-width').textContent = width;
+            
+            const hamburgerVisible = hamburgerStyle.display !== 'none';
+            const menuVisible = menuStyle.display !== 'none';
+            
+            document.getElementById('hamburger-visible').textContent = hamburgerVisible ? 'OUI ✅' : 'NON ❌';
+            document.getElementById('debug-hamburger').textContent = hamburgerVisible ? 'VISIBLE ✅' : 'CACHÉ ❌';
+            
+            document.getElementById('menu-visible').textContent = menuVisible ? 'OUI ✅' : 'NON ❌';
+            
+            document.getElementById('debug-menu').textContent = menuMobile.classList.contains('active') ? 'OUVERT ✅' : 'FERMÉ';
+        }
+        
+        updateDebug();
+        window.addEventListener('resize', updateDebug);
+        
+        // Observer menu changes
+        const observer = new MutationObserver(updateDebug);
+        observer.observe(menuMobile, { attributes: true, attributeFilter: ['class'] });
+    </script>
+</body>
+</html>

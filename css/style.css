@@ -447,13 +447,8 @@ body .nav-connexion .logout-btn {
     padding: 1rem 0 !important;
     margin: 0 !important;
     border-bottom: 1px solid rgba(0, 168, 255, 0.2) !important;
-    /* Suppression de la transition pour éviter les déplacements */
-    /* transition: transform 0.3s ease-in-out !important; */
-    
-    /* Stabilisation anti-déplacement */
-    will-change: auto !important;
-    transform: translateZ(0) !important; /* Force GPU rendering pour stabilité */
-    backface-visibility: hidden !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+    min-height: 60px !important;
 }
 
 /* Auto-hide navbar on scroll down (mobile only) */

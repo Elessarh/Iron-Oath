@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-002">
+    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-003">
     <link rel="stylesheet" href="../css/components/activity-wall.css">
     
     <style>
@@ -614,6 +614,24 @@
             margin-bottom: 30px;
             border-bottom: 2px solid rgba(78, 205, 196, 0.3);
             padding-bottom: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(78, 205, 196, 0.5) rgba(30, 30, 30, 0.3);
+        }
+        
+        .dashboard-tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .dashboard-tabs::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.3);
+            border-radius: 3px;
+        }
+        
+        .dashboard-tabs::-webkit-scrollbar-thumb {
+            background: rgba(78, 205, 196, 0.5);
+            border-radius: 3px;
         }
         
         .tab-btn {
@@ -627,6 +645,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border-radius: 8px 8px 0 0;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         
         .tab-btn:hover {
@@ -935,6 +955,98 @@
         .presence-badge.non-marque {
             background: #666;
             color: #ccc;
+        }
+        
+        /* === RESPONSIVE MOBILE === */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                margin-top: 80px;
+                padding: 15px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .dashboard-tabs {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                gap: 5px;
+            }
+            
+            .tab-btn {
+                padding: 12px 20px;
+                font-size: 0.85rem;
+                min-width: 140px;
+            }
+            
+            .presence-section,
+            .users-section,
+            .guild-management-section {
+                padding: 20px;
+            }
+            
+            .presence-header h2,
+            .users-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .guild-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+            
+            .guild-tab {
+                min-width: 120px;
+                font-size: 0.85rem;
+                padding: 10px 15px;
+            }
+            
+            .presence-list,
+            .users-list {
+                gap: 10px;
+            }
+            
+            .presence-item,
+            .user-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+            }
+            
+            .presence-item .presence-name,
+            .user-item .user-name {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-header {
+                padding: 25px 15px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .tab-btn {
+                padding: 10px 15px;
+                font-size: 0.75rem;
+                min-width: 120px;
+            }
+            
+            .stat-card h3 {
+                font-size: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
         }
     </style>
     

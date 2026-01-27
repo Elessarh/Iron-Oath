@@ -13,6 +13,33 @@
             color: white;
         }
         
+        /* FORCER LE HEADER À ÊTRE VISIBLE */
+        .header {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background: rgba(10, 10, 26, 0.98) !important;
+            border-bottom: 3px solid #4ecdc4 !important;
+        }
+        
+        /* FORCER LE HAMBURGER À ÊTRE VISIBLE SUR MOBILE */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex !important;
+                background: rgba(255, 0, 0, 0.3) !important; /* Rouge semi-transparent pour le voir */
+                border: 2px solid red !important;
+                padding: 10px !important;
+            }
+            
+            .hamburger span {
+                background: #00ff00 !important; /* Vert fluo pour les barres */
+                width: 30px !important;
+                height: 4px !important;
+                display: block !important;
+                margin: 3px 0 !important;
+            }
+        }
+        
         .test-content {
             padding: 100px 20px 20px;
             text-align: center;
