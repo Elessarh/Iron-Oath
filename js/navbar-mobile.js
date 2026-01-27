@@ -34,6 +34,14 @@ class MobileNavbar {
             });
         });
         
+        // Fermeture en cliquant sur le fond du menu (pas sur les liens)
+        this.navMenu.addEventListener('click', (e) => {
+            // Si on clique directement sur le menu (pas sur un lien)
+            if (e.target === this.navMenu) {
+                this.closeMenu();
+            }
+        });
+        
         // Auto-hide navbar on scroll (mobile only)
         if (window.innerWidth <= 768) {
             window.addEventListener('scroll', this.handleScroll.bind(this));
@@ -51,7 +59,9 @@ class MobileNavbar {
     }
     
     createOverlay() {
+        // OVERLAY DESACTIVE - Il bloquait les clics sur le menu
         // Créer l'overlay s'il n'existe pas
+        /* 
         let overlay = document.querySelector('.nav-overlay');
         if (!overlay) {
             overlay = document.createElement('div');
@@ -65,6 +75,15 @@ class MobileNavbar {
         this.overlay.addEventListener('click', () => {
             this.closeMenu();
         });
+        */
+        
+        // Créer un overlay factice pour éviter les erreurs
+        this.overlay = {
+            classList: {
+                add: () => {},
+                remove: () => {}
+            }
+        };
     }
     
     toggleMenu() {
@@ -79,24 +98,20 @@ class MobileNavbar {
         this.isMenuOpen = true;
         this.navMenu.classList.add('active');
         this.hamburger.classList.add('active');
-        this.overlay.classList.add('active');
+        // this.overlay.classList.add('active'); // Désactivé
         document.body.style.overflow = 'hidden'; // Empêcher le scroll du body
         
-        // Animation d'entrée
-        requestAnimationFrame(() => {
-            this.navMenu.style.transform = 'translateX(0)';
-        });
+        // Pas besoin de transform, le CSS gère l'animation
     }
     
     closeMenu() {
         this.isMenuOpen = false;
         this.navMenu.classList.remove('active');
         this.hamburger.classList.remove('active');
-        this.overlay.classList.remove('active');
+        // this.overlay.classList.remove('active'); // Désactivé
         document.body.style.overflow = ''; // Restaurer le scroll du body
         
-        // Animation de sortie
-        this.navMenu.style.transform = 'translateX(-100%)';
+        // Pas besoin de transform, le CSS gère l'animation
     }
     
     handleScroll() {

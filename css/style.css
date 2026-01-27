@@ -1000,12 +1000,13 @@ body .nav-connexion .logout-btn {
         align-items: center !important;
         justify-content: flex-start !important;
         gap: 1rem !important;
-        z-index: 1000 !important;
+        z-index: 9999 !important;
         margin: 0 !important;
         list-style: none !important;
         border-top: 2px solid #4ecdc4 !important;
         transform: none !important;
         animation: slideIn 0.3s ease !important;
+        pointer-events: auto !important;
     }
     
     @keyframes slideIn {
@@ -1048,22 +1049,24 @@ body .nav-connexion .logout-btn {
     
     /* Overlay pour fermer le menu */
     .nav-overlay {
-        display: none;
+        display: none !important;
         position: fixed;
         top: 55px;
         left: 0;
         width: 100%;
         height: calc(100vh - 55px);
         background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+        z-index: 998;
         backdrop-filter: blur(2px);
         opacity: 0;
         transition: opacity 0.3s ease;
+        pointer-events: none !important;
     }
     
     .nav-overlay.active {
-        display: block;
+        display: none !important;
         opacity: 1;
+        pointer-events: none !important;
     }
 
 /* Smartphones */
