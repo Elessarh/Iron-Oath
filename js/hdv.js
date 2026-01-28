@@ -1,30 +1,30 @@
-﻿// HDV.js - SystÃ¨me complet de marketplace pour Iron Oath
+// HDV.js - Système complet de marketplace pour Iron Oath
 class HDVSystem {
     constructor() {
-        // Cache pour amÃ©liorer les performances
+        // Cache pour améliorer les performances
         this.cache = {
             orders: null,
             myOrders: null,
             lastUpdate: null,
-            cacheTimeout: 60000 // 60 secondes - rÃ©duit les requÃªtes
+            cacheTimeout: 30000 // 30 secondes
         };
 
-        // Attendre un peu que le systÃ¨me d'auth soit chargÃ©
+        // Attendre un peu que le système d'auth soit chargé
         setTimeout(async () => {
-            // VÃ©rification de l'authentification
+            // Vérification de l'authentification
             const userInfo = this.getCurrentUserInfo();
             if (!userInfo) {
-                debugLog('âŒ Utilisateur non connectÃ©, redirection...');
+                console.log('❌ Utilisateur non connecté, redirection...');
                 this.redirectToLogin();
                 return;
             }
             
-            debugLog('âœ… Utilisateur connectÃ©:', userInfo.username);
+            console.log('✅ Utilisateur connecté:', userInfo.username);
             await this.initializeHDV();
         }, 500);
     }
 
-    // Initialiser le systÃ¨me HDV
+    // Initialiser le système HDV
     async initializeHDV() {
         this.currentTab = 'marketplace';
         this.selectedItem = null;
@@ -38,12 +38,12 @@ class HDVSystem {
         this.orders = [];
         this.myOrders = [];
         
-        // DonnÃ©es des catÃ©gories pour dÃ©duction
+        // Données des catégories pour déduction
         this.categoryMapping = {
-            'armes': ['BÃ¢ton', 'Ã‰pÃ©e', 'Arc', 'Dague', 'Marteau'],
-            'consommables': ['ClÃ©', 'Cristal', 'Parchemin', 'Potion', 'Sandwich', 'Viande'],
-            'ressources': ['Aile', 'Bonbon', 'Brindille', 'BÃ»che', 'Carapace', 'Cendre', 'Coeur', 'Corde', 'Corne', 'CriniÃ¨re', 'Crocs', 'DÃ©bris', 'Ã‰clat', 'Ã‰corce', 'Essence', 'Fil', 'Fourrure', 'Fragment', 'GelÃ©e', 'Griffe', 'Lingot', 'Minerai', 'MycÃ©lium', 'Noyau', 'Os', 'Peau', 'Bourse', 'PiÃ¨ce'],
-            'armures': ['Casque', 'Plastron', 'JambiÃ¨res', 'Bottes', 'Bouclier'],
+            'armes': ['Bâton', 'Épée', 'Arc', 'Dague', 'Marteau'],
+            'consommables': ['Clé', 'Cristal', 'Parchemin', 'Potion', 'Sandwich', 'Viande'],
+            'ressources': ['Aile', 'Bonbon', 'Brindille', 'Bûche', 'Carapace', 'Cendre', 'Coeur', 'Corde', 'Corne', 'Crinière', 'Crocs', 'Débris', 'Éclat', 'Écorce', 'Essence', 'Fil', 'Fourrure', 'Fragment', 'Gelée', 'Griffe', 'Lingot', 'Minerai', 'Mycélium', 'Noyau', 'Os', 'Peau', 'Bourse', 'Pièce'],
+            'armures': ['Casque', 'Plastron', 'Jambières', 'Bottes', 'Bouclier'],
             'accessoires': ['Anneau', 'Amulette', 'Collier', 'Bracelet'],
             'outils': ['Pioche', 'Hache', 'Pelle', 'Canne'],
             'runes': ['Rune'],
@@ -52,32 +52,32 @@ class HDVSystem {
         };
         
         this.categoryNames = {
-            'armes': 'âš”ï¸ Armes',
-            'consommables': 'ðŸ§ª Consommables', 
-            'ressources': 'ðŸ”§ Ressources',
-            'armures': 'ðŸ›¡ï¸ Armures',
-            'accessoires': 'ðŸ’ Accessoires',
-            'outils': 'â›ï¸ Outils',
-            'runes': 'âœ¨ Runes',
-            'familiers': 'ðŸ¾ Familiers',
-            'montures': 'ðŸŽ Montures'
+            'armes': '⚔️ Armes',
+            'consommables': '🧪 Consommables', 
+            'ressources': '🔧 Ressources',
+            'armures': '🛡️ Armures',
+            'accessoires': '💍 Accessoires',
+            'outils': '⛏️ Outils',
+            'runes': '✨ Runes',
+            'familiers': '🐾 Familiers',
+            'montures': '🐎 Montures'
         };
 
-        // SystÃ¨me de raretÃ© basÃ© sur les mots-clÃ©s
+        // Système de rareté basé sur les mots-clés
         this.rarityMapping = {
-            'legendaire': ['LÃ©gendaire', 'Mythique', 'Ã‰pique', 'Ultime', 'Divin', 'Titanesque', 'Shaman'],
-            'epique': ['Cristal', 'EnchantÃ©e', 'Magique', 'Arcanique', 'SupÃ©rieur', 'MaÃ®tre'],
-            'rare': ['RenforcÃ©', 'Soutien', 'Titan', 'Nautherion', 'Halloween', 'Overall'],
-            'peu_commun': ['Moyenne', 'PutrifiÃ©', 'Corrompu', 'Glacial', 'Martyr'],
-            'commun': ['BÃ»che', 'Minerai', 'Lingot', 'Viande', 'Sandwich', 'Peau', 'Os']
+            'legendaire': ['Légendaire', 'Mythique', 'Épique', 'Ultime', 'Divin', 'Titanesque', 'Shaman'],
+            'epique': ['Cristal', 'Enchantée', 'Magique', 'Arcanique', 'Supérieur', 'Maître'],
+            'rare': ['Renforcé', 'Soutien', 'Titan', 'Nautherion', 'Halloween', 'Overall'],
+            'peu_commun': ['Moyenne', 'Putrifié', 'Corrompu', 'Glacial', 'Martyr'],
+            'commun': ['Bûche', 'Minerai', 'Lingot', 'Viande', 'Sandwich', 'Peau', 'Os']
         };
 
         this.rarityNames = {
-            'legendaire': 'ðŸŒŸ LÃ©gendaire',
-            'epique': 'ðŸ”® Ã‰pique',
-            'rare': 'ðŸ’Ž Rare',
-            'peu_commun': 'ðŸ”· Peu commun',
-            'commun': 'âšª Commun'
+            'legendaire': '🌟 Légendaire',
+            'epique': '🔮 Épique',
+            'rare': '💎 Rare',
+            'peu_commun': '🔷 Peu commun',
+            'commun': '⚪ Commun'
         };
 
         this.rarityColors = {
@@ -88,7 +88,7 @@ class HDVSystem {
             'commun': '#ffffff'
         };
 
-        // Mapping des raretÃ©s anglaises vers franÃ§aises pour synchronisation avec l'onglet Items
+        // Mapping des raretés anglaises vers françaises pour synchronisation avec l'onglet Items
         this.rarityMapping_EN_FR = {
             'legendary': 'legendaire',
             'epic': 'epique', 
@@ -97,32 +97,32 @@ class HDVSystem {
             'common': 'commun'
         };
 
-        // Catalogue d'items (sera chargÃ© depuis le fichier items-catalog-hdv.js)
+        // Catalogue d'items (sera chargé depuis le fichier items-catalog-hdv.js)
         this.itemsCatalog = null;
         this.loadItemsCatalog();
         
-        // Charger les donnÃ©es sauvegardÃ©es (asynchrone)
+        // Charger les données sauvegardées (asynchrone)
         await this.loadOrdersFromStorage();
         
         this.initializeEventListeners();
         await this.loadMarketplace();
         
-        // DÃ©marrer l'auto-actualisation
+        // Démarrer l'auto-actualisation
         this.startAutoRefresh();
     }
 
     // Charger le catalogue d'items depuis la variable globale
     loadItemsCatalog() {
         try {
-            // Le catalogue d'items est dÃ©fini dans items-catalog-hdv.js
+            // Le catalogue d'items est défini dans items-catalog-hdv.js
             if (typeof itemsCatalog !== 'undefined') {
                 this.itemsCatalog = itemsCatalog;
-                debugLog('âœ… Catalogue d\'items chargÃ© avec', this.getTotalItemsCount(), 'items');
+                console.log('✅ Catalogue d\'items chargé avec', this.getTotalItemsCount(), 'items');
             } else {
-                debugWarn('âš ï¸ Catalogue d\'items non trouvÃ© - utilisation du systÃ¨me de dÃ©duction par dÃ©faut');
+                console.warn('⚠️ Catalogue d\'items non trouvé - utilisation du système de déduction par défaut');
             }
         } catch (error) {
-            debugWarn('âš ï¸ Erreur lors du chargement du catalogue d\'items:', error);
+            console.warn('⚠️ Erreur lors du chargement du catalogue d\'items:', error);
         }
     }
 
@@ -147,33 +147,33 @@ class HDVSystem {
         return null;
     }
 
-    // DÃ©duire la catÃ©gorie d'un item Ã  partir de son nom
+    // Déduire la catégorie d'un item à partir de son nom
     deduceItemCategory(itemName) {
-        if (!itemName) return 'CatÃ©gorie inconnue';
+        if (!itemName) return 'Catégorie inconnue';
         
         for (const [categoryKey, keywords] of Object.entries(this.categoryMapping)) {
             for (const keyword of keywords) {
                 if (itemName.toLowerCase().includes(keyword.toLowerCase())) {
-                    return this.categoryNames[categoryKey] || 'CatÃ©gorie inconnue';
+                    return this.categoryNames[categoryKey] || 'Catégorie inconnue';
                 }
             }
         }
         
-        return 'CatÃ©gorie inconnue';
+        return 'Catégorie inconnue';
     }
 
-    // Obtenir la catÃ©gorie d'un item (avec fallback)
+    // Obtenir la catégorie d'un item (avec fallback)
     getItemCategory(item) {
-        // Si l'item a dÃ©jÃ  une catÃ©gorie, l'utiliser
+        // Si l'item a déjà une catégorie, l'utiliser
         if (item.category) {
             return item.category;
         }
         
-        // Sinon, essayer de la dÃ©duire
+        // Sinon, essayer de la déduire
         return this.deduceItemCategory(item.name);
     }
 
-    // DÃ©duire la raretÃ© d'un item Ã  partir de son nom
+    // Déduire la rareté d'un item à partir de son nom
     deduceItemRarity(itemName) {
         if (!itemName) return 'commun';
         
@@ -188,57 +188,57 @@ class HDVSystem {
         return 'commun';
     }
 
-    // Obtenir la raretÃ© d'un item (avec fallback)
+    // Obtenir la rareté d'un item (avec fallback)
     getItemRarity(item) {
-        // Si l'item a dÃ©jÃ  une raretÃ© franÃ§aise, l'utiliser
+        // Si l'item a déjà une rareté française, l'utiliser
         if (item.rarity && this.rarityNames[item.rarity]) {
             return item.rarity;
         }
         
-        // Chercher d'abord dans le catalogue d'items pour avoir la raretÃ© officielle
+        // Chercher d'abord dans le catalogue d'items pour avoir la rareté officielle
         const catalogItem = this.findItemInCatalog(item.name);
         if (catalogItem && catalogItem.rarity) {
-            // Convertir la raretÃ© anglaise en franÃ§aise
+            // Convertir la rareté anglaise en française
             const frenchRarity = this.rarityMapping_EN_FR[catalogItem.rarity];
             if (frenchRarity) {
                 return frenchRarity;
             }
         }
         
-        // Si l'item a une raretÃ© anglaise, la convertir
+        // Si l'item a une rareté anglaise, la convertir
         if (item.rarity && this.rarityMapping_EN_FR[item.rarity]) {
             return this.rarityMapping_EN_FR[item.rarity];
         }
         
-        // En dernier recours, dÃ©duire la raretÃ© Ã  partir du nom
+        // En dernier recours, déduire la rareté à partir du nom
         return this.deduceItemRarity(item.name);
     }
 
-    // Obtenir le nom affichÃ© de la raretÃ©
+    // Obtenir le nom affiché de la rareté
     getRarityDisplayName(item) {
         const rarity = this.getItemRarity(item);
         return this.rarityNames[rarity] || this.rarityNames['commun'];
     }
 
-    // Obtenir la couleur de la raretÃ©
+    // Obtenir la couleur de la rareté
     getRarityColor(item) {
         const rarity = this.getItemRarity(item);
         return this.rarityColors[rarity] || this.rarityColors['commun'];
     }
 
-    // SystÃ¨me d'auto-actualisation optimisÃ©
+    // Système d'auto-actualisation optimisé
     startAutoRefresh() {
-        debugLog('ðŸ”„ DÃ©marrage auto-actualisation HDV intelligente (60s)');
+        console.log('🔄 Démarrage auto-actualisation HDV intelligente (60s)');
         
         // Variables pour l'optimisation
         this.lastUpdateTime = Date.now();
         this.isPageVisible = true;
         
-        // DÃ©tecter si la page est visible
+        // Détecter si la page est visible
         document.addEventListener('visibilitychange', () => {
             this.isPageVisible = !document.hidden;
             if (this.isPageVisible) {
-                debugLog('ï¿½ï¸ Page redevenue visible, actualisation immÃ©diate');
+                console.log('�️ Page redevenue visible, actualisation immédiate');
                 this.performOptimizedRefresh();
             }
         });
@@ -248,9 +248,9 @@ class HDVSystem {
             if (this.isPageVisible) {
                 this.performOptimizedRefresh();
             } else {
-                debugLog('ðŸ”„ Actualisation ignorÃ©e (page non visible)');
+                console.log('🔄 Actualisation ignorée (page non visible)');
             }
-        }, 60000); // Intervalle augmentÃ© Ã  60 secondes
+        }, 60000); // Intervalle augmenté à 60 secondes
         
         // Nettoyer l'intervalle si on quitte la page
         window.addEventListener('beforeunload', () => {
@@ -260,41 +260,41 @@ class HDVSystem {
         });
     }
     
-    // Actualisation optimisÃ©e avec cache intelligent
+    // Actualisation optimisée avec cache intelligent
     async performOptimizedRefresh() {
         const now = Date.now();
         
-        // Ã‰viter les actualisations trop frÃ©quentes (min 30 secondes)
+        // Éviter les actualisations trop fréquentes (min 30 secondes)
         if (now - this.lastUpdateTime < 30000) {
-            debugLog('ðŸ”„ Actualisation trop rÃ©cente, ignorÃ©e');
+            console.log('🔄 Actualisation trop récente, ignorée');
             return;
         }
         
-        debugLog('ðŸ”„ Auto-actualisation HDV optimisÃ©e...');
+        console.log('🔄 Auto-actualisation HDV optimisée...');
         this.lastUpdateTime = now;
         
         try {
             const previousOrderCount = this.orders.length;
             await this.loadOrdersFromStorage();
             
-            // Actualiser l'affichage seulement si les donnÃ©es ont changÃ©
+            // Actualiser l'affichage seulement si les données ont changé
             if (this.orders.length !== previousOrderCount) {
-                debugLog('ðŸ“Š DonnÃ©es modifiÃ©es, mise Ã  jour de l\'affichage');
+                console.log('📊 Données modifiées, mise à jour de l\'affichage');
                 await this.displayOrders(this.orders);
             } else {
-                debugLog('ðŸ“Š Aucun changement dÃ©tectÃ©, affichage conservÃ©');
+                console.log('📊 Aucun changement détecté, affichage conservé');
             }
         } catch (error) {
-            console.error('âŒ Erreur lors de l\'actualisation optimisÃ©e:', error);
+            console.error('❌ Erreur lors de l\'actualisation optimisée:', error);
         }
     }
 
-    // Rediriger vers la page de connexion si non connectÃ©
+    // Rediriger vers la page de connexion si non connecté
     redirectToLogin() {
         const loginUrl = '../pages/connexion.html';
         const currentUrl = window.location.href;
         
-        // Ã‰viter la boucle de redirection si on est dÃ©jÃ  sur la page de connexion
+        // Éviter la boucle de redirection si on est déjà sur la page de connexion
         if (!currentUrl.includes('connexion.html')) {
             this.showAuthError();
             setTimeout(() => {
@@ -303,9 +303,9 @@ class HDVSystem {
         }
     }
 
-    // DEBUG: MÃ©thode pour forcer l'accÃ¨s (temporaire)
+    // DEBUG: Méthode pour forcer l'accès (temporaire)
     forceAccess(username = 'TestUser') {
-        debugLog('ðŸ”§ Force access pour:', username);
+        console.log('🔧 Force access pour:', username);
         const fakeUser = {
             id: 'force_' + Date.now(),
             username: username,
@@ -315,18 +315,18 @@ class HDVSystem {
         location.reload();
     }
 
-    // DEBUG: MÃ©thode pour vÃ©rifier l'Ã©tat d'authentification
+    // DEBUG: Méthode pour vérifier l'état d'authentification
     checkAuthStatus() {
-        debugLog('=== Ã‰TAT AUTHENTIFICATION ===');
-        debugLog('window.getCurrentUser:', typeof window.getCurrentUser);
-        debugLog('localStorage currentUser:', localStorage.getItem('currentUser'));
-        debugLog('window.currentUser:', window.currentUser);
-        debugLog('Tokens:', {
+        console.log('=== ÉTAT AUTHENTIFICATION ===');
+        console.log('window.getCurrentUser:', typeof window.getCurrentUser);
+        console.log('localStorage currentUser:', localStorage.getItem('currentUser'));
+        console.log('window.currentUser:', window.currentUser);
+        console.log('Tokens:', {
             supabase: localStorage.getItem('supabase.auth.token'),
             authToken: localStorage.getItem('authToken'),
             token: localStorage.getItem('token')
         });
-        debugLog('getCurrentUserInfo():', this.getCurrentUserInfo());
+        console.log('getCurrentUserInfo():', this.getCurrentUserInfo());
     }
 
     // Afficher un message d'erreur d'authentification
@@ -335,8 +335,8 @@ class HDVSystem {
         authError.className = 'auth-error-overlay';
         authError.innerHTML = `
             <div class="auth-error-content">
-                <h2>ðŸ”’ AccÃ¨s Restreint</h2>
-                <p>Vous devez Ãªtre connectÃ© pour accÃ©der Ã  l'HÃ´tel des Ventes.</p>
+                <h2>🔒 Accès Restreint</h2>
+                <p>Vous devez être connecté pour accéder à l'Hôtel des Ventes.</p>
                 <p>Redirection vers la page de connexion...</p>
                 <div class="auth-error-loader"></div>
             </div>
@@ -360,18 +360,18 @@ class HDVSystem {
         document.body.appendChild(authError);
     }
 
-    // MÃ©thode helper pour rÃ©cupÃ©rer l'utilisateur connectÃ©
+    // Méthode helper pour récupérer l'utilisateur connecté
     getCurrentUserInfo() {
         try {
-            // DEBUG temporaire - Ã  supprimer aprÃ¨s correction
-            debugLog('ðŸ” HDV - VÃ©rification utilisateur...');
+            // DEBUG temporaire - à supprimer après correction
+            console.log('🔍 HDV - Vérification utilisateur...');
             
             // Essayer d'abord avec le profil Supabase (contient le username)
             if (window.getUserProfile) {
                 const profile = window.getUserProfile();
-                debugLog('ðŸŸ£ Supabase profile:', profile);
+                console.log('🟣 Supabase profile:', profile);
                 if (profile && profile.username) {
-                    debugLog('âœ… Profil Supabase trouvÃ©:', profile.username);
+                    console.log('✅ Profil Supabase trouvé:', profile.username);
                     return {
                         id: profile.id,
                         username: profile.username,
@@ -383,16 +383,16 @@ class HDVSystem {
             // Essayer avec getCurrentUser (objet Supabase brut)
             if (window.getCurrentUser) {
                 const user = window.getCurrentUser();
-                debugLog('ðŸ”µ Supabase user:', user);
+                console.log('🔵 Supabase user:', user);
                 if (user) {
-                    // Chercher username dans diffÃ©rentes propriÃ©tÃ©s possibles
+                    // Chercher username dans différentes propriétés possibles
                     const username = user.username || 
                                    user.user_metadata?.username || 
                                    user.user_metadata?.name ||
                                    user.email?.split('@')[0];
                     
                     if (username) {
-                        debugLog('âœ… Utilisateur Supabase trouvÃ©:', username);
+                        console.log('✅ Utilisateur Supabase trouvé:', username);
                         return {
                             id: user.id,
                             username: username,
@@ -402,9 +402,9 @@ class HDVSystem {
                 }
             }
             
-            // VÃ©rifier window.currentUserProfile si c'est diffÃ©rent
+            // Vérifier window.currentUserProfile si c'est différent
             if (window.currentUserProfile && window.currentUserProfile.username) {
-                debugLog('ðŸŸ£ CurrentUserProfile trouvÃ©:', window.currentUserProfile.username);
+                console.log('🟣 CurrentUserProfile trouvé:', window.currentUserProfile.username);
                 return {
                     id: window.currentUserProfile.id || 'profile_' + Date.now(),
                     username: window.currentUserProfile.username,
@@ -414,13 +414,13 @@ class HDVSystem {
             
             // Fallback vers localStorage
             const currentUserJSON = localStorage.getItem('currentUser');
-            debugLog('ðŸ’¾ localStorage currentUser:', currentUserJSON);
+            console.log('💾 localStorage currentUser:', currentUserJSON);
             
             if (currentUserJSON) {
                 const currentUser = JSON.parse(currentUserJSON);
-                debugLog('ðŸŸ¡ localStorage user:', currentUser);
+                console.log('🟡 localStorage user:', currentUser);
                 if (currentUser && (currentUser.username || currentUser.email)) {
-                    debugLog('âœ… Utilisateur localStorage trouvÃ©:', currentUser.username || currentUser.email);
+                    console.log('✅ Utilisateur localStorage trouvé:', currentUser.username || currentUser.email);
                     return {
                         id: currentUser.id || 'local_' + Date.now(),
                         username: currentUser.username || currentUser.email,
@@ -429,9 +429,9 @@ class HDVSystem {
                 }
             }
             
-            // Essayer avec le systÃ¨me d'authentification global
+            // Essayer avec le système d'authentification global
             if (window.currentUser && (window.currentUser.username || window.currentUser.email)) {
-                debugLog('ðŸŸ¢ Global currentUser trouvÃ©:', window.currentUser);
+                console.log('🟢 Global currentUser trouvé:', window.currentUser);
                 return {
                     id: window.currentUser.id || 'global_' + Date.now(),
                     username: window.currentUser.username || window.currentUser.email,
@@ -439,10 +439,10 @@ class HDVSystem {
                 };
             }
             
-            // Si on a un profil actif (d'aprÃ¨s les logs on voit "Elessarh" quelque part)
+            // Si on a un profil actif (d'après les logs on voit "Elessarh" quelque part)
             // Essayons de chercher dans d'autres variables globales
             if (window.userProfile && window.userProfile.username) {
-                debugLog('ðŸŸ¦ UserProfile trouvÃ©:', window.userProfile.username);
+                console.log('🟦 UserProfile trouvé:', window.userProfile.username);
                 return {
                     id: window.userProfile.id || 'userprofile_' + Date.now(),
                     username: window.userProfile.username,
@@ -450,23 +450,23 @@ class HDVSystem {
                 };
             }
             
-            // VÃ©rifier s'il y a un token d'authentification
+            // Vérifier s'il y a un token d'authentification
             const authToken = localStorage.getItem('supabase.auth.token') || 
                             localStorage.getItem('authToken') || 
                             localStorage.getItem('token');
             
             if (authToken) {
-                debugLog('ðŸ”‘ Token trouvÃ©, crÃ©ation utilisateur temporaire');
-                // Si on a un token mais pas d'info utilisateur, crÃ©er un utilisateur temporaire
+                console.log('🔑 Token trouvé, création utilisateur temporaire');
+                // Si on a un token mais pas d'info utilisateur, créer un utilisateur temporaire
                 return {
                     id: 'token_user_' + Date.now(),
-                    username: 'Utilisateur ConnectÃ©',
+                    username: 'Utilisateur Connecté',
                     email: ''
                 };
             }
             
-            debugLog('âŒ Aucun utilisateur trouvÃ©');
-            debugLog('Variables disponibles:', {
+            console.log('❌ Aucun utilisateur trouvé');
+            console.log('Variables disponibles:', {
                 getCurrentUser: typeof window.getCurrentUser,
                 getUserProfile: typeof window.getUserProfile,
                 currentUser: window.currentUser,
@@ -474,10 +474,10 @@ class HDVSystem {
                 userProfile: window.userProfile
             });
             
-            // Utilisateur non connectÃ© - rediriger vers la connexion
+            // Utilisateur non connecté - rediriger vers la connexion
             return null;
         } catch (error) {
-            console.error('âŒ Erreur rÃ©cupÃ©ration utilisateur:', error);
+            console.error('❌ Erreur récupération utilisateur:', error);
             return null;
         }
     }
@@ -512,7 +512,7 @@ class HDVSystem {
         const searchBtn = document.getElementById('search-btn');
         
         if (searchInput) {
-            // Recherche en temps rÃ©el
+            // Recherche en temps réel
             searchInput.addEventListener('input', (e) => {
                 this.filters.search = e.target.value.toLowerCase().trim();
                 this.applyFilters();
@@ -541,10 +541,10 @@ class HDVSystem {
             });
         });
 
-        // Initialisation du sÃ©lecteur d'items
+        // Initialisation du sélecteur d'items
         this.itemSelector = new ItemSelector();
         
-        // Bouton pour ouvrir le sÃ©lecteur d'items
+        // Bouton pour ouvrir le sélecteur d'items
         const openSelectorBtn = document.getElementById('open-item-selector');
         if (openSelectorBtn) {
             openSelectorBtn.addEventListener('click', () => {
@@ -552,7 +552,7 @@ class HDVSystem {
             });
         }
 
-        // Bouton pour changer l'item sÃ©lectionnÃ©
+        // Bouton pour changer l'item sélectionné
         const changeItemBtn = document.getElementById('change-item');
         if (changeItemBtn) {
             changeItemBtn.addEventListener('click', () => {
@@ -565,7 +565,7 @@ class HDVSystem {
         if (refreshBtn) {
             refreshBtn.addEventListener('click', async () => {
                 await this.loadMarketplace();
-                this.showNotification('ðŸ”„ MarchÃ© actualisÃ©', 'info');
+                this.showNotification('🔄 Marché actualisé', 'info');
             });
         }
 
@@ -582,7 +582,7 @@ class HDVSystem {
     }
 
     async switchTab(tabName) {
-        // Mise Ã  jour des onglets
+        // Mise à jour des onglets
         document.querySelectorAll('.hdv-tab').forEach(tab => {
             tab.classList.remove('active');
         });
@@ -592,7 +592,7 @@ class HDVSystem {
             tabElement.classList.add('active');
         }
 
-        // Mise Ã  jour des panneaux
+        // Mise à jour des panneaux
         document.querySelectorAll('.hdv-panel').forEach(panel => {
             panel.classList.remove('active');
         });
@@ -604,7 +604,7 @@ class HDVSystem {
 
         this.currentTab = tabName;
 
-        // Chargement spÃ©cifique selon l'onglet (maintenant asynchrone)
+        // Chargement spécifique selon l'onglet (maintenant asynchrone)
         switch (tabName) {
             case 'marketplace':
                 await this.loadMarketplace();
@@ -628,14 +628,14 @@ class HDVSystem {
         // Charger les ordres depuis le stockage (maintenant asynchrone)
         await this.loadOrdersFromStorage();
         
-        // Mettre Ã  jour le compteur d'ordres
+        // Mettre à jour le compteur d'ordres
         this.updateOrdersCount(this.orders.length);
         
         // Afficher tous les ordres dans le marketplace
         this.displayOrders(this.orders);
     }
 
-    // Mettre Ã  jour le compteur d'ordres
+    // Mettre à jour le compteur d'ordres
     updateOrdersCount(count) {
         const ordersCountEl = document.getElementById('orders-count');
         if (ordersCountEl) {
@@ -660,10 +660,10 @@ class HDVSystem {
         if (userOrders.length === 0) {
             myOrdersList.innerHTML = `
                 <div class="empty-state">
-                    <h3>ðŸ“‹ Vos Ordres</h3>
-                    <p>Vous n'avez pas encore crÃ©Ã© d'ordres.</p>
+                    <h3>📋 Vos Ordres</h3>
+                    <p>Vous n'avez pas encore créé d'ordres.</p>
                     <button class="btn btn-primary" onclick="hdvSystem.switchTab('create-order')">
-                        âž• CrÃ©er votre premier ordre
+                        ➕ Créer votre premier ordre
                     </button>
                 </div>
             `;
@@ -672,9 +672,9 @@ class HDVSystem {
 
         myOrdersList.innerHTML = `
             <div class="my-orders-header">
-                <h3>ðŸ“‹ Mes Ordres (${userOrders.length})</h3>
+                <h3>📋 Mes Ordres (${userOrders.length})</h3>
                 <button class="refresh-btn" onclick="hdvSystem.loadMyOrders()">
-                    ðŸ”„ Actualiser
+                    🔄 Actualiser
                 </button>
             </div>
             <div class="orders-container">
@@ -682,12 +682,12 @@ class HDVSystem {
                     <div class="order-card ${order.type} my-order">
                         <div class="order-header">
                             <span class="order-type ${order.type}">
-                                ${order.type === 'sell' ? 'ðŸ”´ VENTE' : 'ðŸ”µ ACHAT'}
+                                ${order.type === 'sell' ? '🔴 VENTE' : '🔵 ACHAT'}
                                 <span class="order-date">${this.formatOrderDate(order)}</span>
                             </span>
                             <span class="order-time">${this.formatTime(order.timestamp)}</span>
                             <button class="delete-order-btn" onclick="hdvSystem.deleteOrder(${order.id})" title="Supprimer cet ordre">
-                                ðŸ—‘ï¸
+                                🗑️
                             </button>
                         </div>
                         
@@ -702,20 +702,20 @@ class HDVSystem {
                             
                             <div class="order-details">
                                 <div class="order-quantity">
-                                    <span>QuantitÃ©: <strong>${order.quantity}</strong></span>
+                                    <span>Quantité: <strong>${order.quantity}</strong></span>
                                 </div>
                                 <div class="order-price">
                                     <span>Prix: <strong>${order.price} cols</strong></span>
                                 </div>
                                 <div class="order-status">
-                                    <span class="status-active">ðŸŸ¢ Actif</span>
+                                    <span class="status-active">🟢 Actif</span>
                                 </div>
                                 <div class="order-actions-my">
-                                    <button class="btn btn-success btn-small" onclick="hdvSystem.openFinalizeModal('${order.id}', '${order.item.name}', '${order.type}')" title="Transaction terminÃ©e">
-                                        âœ… Vendu/AchetÃ©
+                                    <button class="btn btn-success btn-small" onclick="hdvSystem.openFinalizeModal('${order.id}', '${order.item.name}', '${order.type}')" title="Transaction terminée">
+                                        ✅ Vendu/Acheté
                                     </button>
                                     <button class="btn btn-danger btn-small" onclick="hdvSystem.deleteOrder('${order.id}')" title="Supprimer cet ordre sans historique" style="background: #e74c3c; margin-top: 0.5rem;">
-                                        ðŸ—‘ï¸ Supprimer l'ordre
+                                        🗑️ Supprimer l'ordre
                                     </button>
                                 </div>
                             </div>
@@ -727,7 +727,7 @@ class HDVSystem {
     }
 
     async deleteOrder(orderId) {
-        if (!confirm('â“ ÃŠtes-vous sÃ»r de vouloir supprimer cet ordre ?')) return;
+        if (!confirm('❓ Êtes-vous sûr de vouloir supprimer cet ordre ?')) return;
 
         try {
             let orderDeleted = false;
@@ -735,18 +735,18 @@ class HDVSystem {
             // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    debugLog('ðŸ—‘ï¸ Suppression ordre de Supabase...');
+                    console.log('🗑️ Suppression ordre de Supabase...');
                     const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
                     if (success) {
-                        debugLog('âœ… Ordre supprimÃ© de Supabase');
+                        console.log('✅ Ordre supprimé de Supabase');
                         orderDeleted = true;
                     }
                 } catch (supabaseError) {
-                    debugWarn('âš ï¸ Ã‰chec suppression Supabase, suppression locale uniquement:', supabaseError);
+                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
                 }
             }
 
-            // Supprimer des listes locales (toujours nÃ©cessaire)
+            // Supprimer des listes locales (toujours nécessaire)
             this.orders = this.orders.filter(order => String(order.id) !== String(orderId));
             this.myOrders = this.myOrders.filter(order => String(order.id) !== String(orderId));
 
@@ -760,18 +760,18 @@ class HDVSystem {
             // Recharger l'affichage
             this.loadMyOrders();
             
-            this.showNotification('âœ… Ordre supprimÃ© avec succÃ¨s', 'success');
+            this.showNotification('✅ Ordre supprimé avec succès', 'success');
         } catch (error) {
-            console.error('âŒ Erreur lors de la suppression:', error);
-            this.showNotification('âŒ Erreur lors de la suppression: ' + error.message, 'error');
+            console.error('❌ Erreur lors de la suppression:', error);
+            this.showNotification('❌ Erreur lors de la suppression: ' + error.message, 'error');
         }
     }
 
-    // VÃ©rifier si un ordre appartient Ã  l'utilisateur connectÃ©
+    // Vérifier si un ordre appartient à l'utilisateur connecté
     isMyOrder(order) {
         const userInfo = this.getCurrentUserInfo();
         const isOwner = userInfo && (order.creator === userInfo.username || order.creatorId === userInfo.id);
-        debugLog('ðŸ” VÃ©rification propriÃ©tÃ© ordre:', {
+        console.log('🔍 Vérification propriété ordre:', {
             orderId: order.id,
             orderCreator: order.creator,
             orderCreatorId: order.creatorId,
@@ -791,8 +791,8 @@ class HDVSystem {
         if (!userInfo) {
             historyList.innerHTML = `
                 <div class="empty-state">
-                    <h3>ðŸ”’ Connexion requise</h3>
-                    <p>Vous devez Ãªtre connectÃ© pour voir votre historique</p>
+                    <h3>🔒 Connexion requise</h3>
+                    <p>Vous devez être connecté pour voir votre historique</p>
                 </div>
             `;
             return;
@@ -804,11 +804,11 @@ class HDVSystem {
             // Essayer de charger depuis Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    debugLog('ðŸ“¥ Chargement historique depuis Supabase...');
+                    console.log('📥 Chargement historique depuis Supabase...');
                     history = await window.hdvSupabaseManager.getUserPurchaseHistory(userInfo.id);
-                    debugLog('âœ… Historique chargÃ©:', history);
+                    console.log('✅ Historique chargé:', history);
                 } catch (supabaseError) {
-                    debugWarn('âš ï¸ Ã‰chec chargement Supabase, fallback localStorage:', supabaseError);
+                    console.warn('⚠️ Échec chargement Supabase, fallback localStorage:', supabaseError);
                 }
             }
 
@@ -828,9 +828,9 @@ class HDVSystem {
             if (history.length === 0) {
                 historyList.innerHTML = `
                     <div class="empty-state">
-                        <h3>ðŸ“œ Historique vide</h3>
-                        <p>Aucune transaction finalisÃ©e pour le moment</p>
-                        <p>Les transactions que vous finalisez via "Vendu/AchetÃ©" apparaÃ®tront ici</p>
+                        <h3>📜 Historique vide</h3>
+                        <p>Aucune transaction finalisée pour le moment</p>
+                        <p>Les transactions que vous finalisez via "Vendu/Acheté" apparaîtront ici</p>
                     </div>
                 `;
                 return;
@@ -839,9 +839,9 @@ class HDVSystem {
             // Afficher l'historique
             historyList.innerHTML = `
                 <div class="history-header">
-                    <h3>ðŸ“œ Historique des Transactions (${history.length})</h3>
+                    <h3>📜 Historique des Transactions (${history.length})</h3>
                     <button class="refresh-btn" onclick="hdvSystem.loadPurchaseHistory()">
-                        ðŸ”„ Actualiser
+                        🔄 Actualiser
                     </button>
                 </div>
                 <div class="history-container">
@@ -851,7 +851,7 @@ class HDVSystem {
                             (transaction.buyer_name || transaction.buyerName) : 
                             (transaction.seller_name || transaction.sellerName);
                         const transactionType = isSeller ? 'vente' : 'achat';
-                        const transactionIcon = isSeller ? 'ðŸ”´' : 'ðŸ”µ';
+                        const transactionIcon = isSeller ? '🔴' : '🔵';
                         
                         return `
                             <div class="history-card ${transactionType}">
@@ -870,7 +870,7 @@ class HDVSystem {
                                              onerror="this.src='../assets/items/default.png'">
                                         <div class="history-item-info">
                                             <h5>${transaction.item_name || transaction.itemName}</h5>
-                                            <span class="item-category">${transaction.item_category || transaction.itemCategory || 'CatÃ©gorie inconnue'}</span>
+                                            <span class="item-category">${transaction.item_category || transaction.itemCategory || 'Catégorie inconnue'}</span>
                                         </div>
                                     </div>
                                     
@@ -879,7 +879,7 @@ class HDVSystem {
                                             <span>${isSeller ? 'Acheteur' : 'Vendeur'}: <strong>${otherParty}</strong></span>
                                         </div>
                                         <div class="history-quantity">
-                                            <span>QuantitÃ©: <strong>${transaction.quantity}</strong></span>
+                                            <span>Quantité: <strong>${transaction.quantity}</strong></span>
                                         </div>
                                         <div class="history-price">
                                             <span>Prix total: <strong>${transaction.total_price || transaction.totalPrice} cols</strong></span>
@@ -892,10 +892,10 @@ class HDVSystem {
                 </div>
             `;
         } catch (error) {
-            console.error('âŒ Erreur chargement historique:', error);
+            console.error('❌ Erreur chargement historique:', error);
             historyList.innerHTML = `
                 <div class="empty-state">
-                    <h3>âŒ Erreur</h3>
+                    <h3>❌ Erreur</h3>
                     <p>Impossible de charger l'historique</p>
                     <p>${error.message}</p>
                 </div>
@@ -905,32 +905,32 @@ class HDVSystem {
 
     // Supprimer un ordre depuis le marketplace
     async deleteOrderFromMarketplace(orderId) {
-        debugLog('ðŸ—‘ï¸ Tentative de suppression ordre ID:', orderId, 'Type:', typeof orderId);
+        console.log('🗑️ Tentative de suppression ordre ID:', orderId, 'Type:', typeof orderId);
         
-        if (!confirm('â“ ÃŠtes-vous sÃ»r de vouloir supprimer cet ordre ?')) return;
+        if (!confirm('❓ Êtes-vous sûr de vouloir supprimer cet ordre ?')) return;
 
         try {
             let orderDeleted = false;
             
-            // Utiliser l'ID tel quel (UUID ou numÃ©rique)
-            debugLog('ðŸ—‘ï¸ ID Ã  supprimer:', orderId);
+            // Utiliser l'ID tel quel (UUID ou numérique)
+            console.log('🗑️ ID à supprimer:', orderId);
             
             // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    debugLog('ðŸ—‘ï¸ Suppression ordre de Supabase...');
+                    console.log('🗑️ Suppression ordre de Supabase...');
                     const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
                     if (success) {
-                        debugLog('âœ… Ordre supprimÃ© de Supabase');
+                        console.log('✅ Ordre supprimé de Supabase');
                         orderDeleted = true;
                     }
                 } catch (supabaseError) {
-                    debugWarn('âš ï¸ Ã‰chec suppression Supabase, suppression locale uniquement:', supabaseError);
+                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
                 }
             }
 
-            // Supprimer des listes locales (toujours nÃ©cessaire)
-            // Comparer les IDs en tant que string pour compatibilitÃ© UUID/numÃ©rique
+            // Supprimer des listes locales (toujours nécessaire)
+            // Comparer les IDs en tant que string pour compatibilité UUID/numérique
             this.orders = this.orders.filter(order => String(order.id) !== String(orderId));
             this.myOrders = this.myOrders.filter(order => String(order.id) !== String(orderId));
 
@@ -941,32 +941,32 @@ class HDVSystem {
             // Recharger l'affichage du marketplace
             this.loadMarketplace();
             
-            this.showNotification('âœ… Ordre supprimÃ© avec succÃ¨s', 'success');
+            this.showNotification('✅ Ordre supprimé avec succès', 'success');
         } catch (error) {
-            console.error('âŒ Erreur lors de la suppression:', error);
-            this.showNotification('âŒ Erreur lors de la suppression: ' + error.message, 'error');
+            console.error('❌ Erreur lors de la suppression:', error);
+            this.showNotification('❌ Erreur lors de la suppression: ' + error.message, 'error');
         }
     }
 
-    // Finaliser une transaction (vente terminÃ©e)
+    // Finaliser une transaction (vente terminée)
     async finalizeTransaction(orderId, itemName, orderType) {
         const actionText = orderType === 'sell' ? 'vente' : 'achat';
-        if (!confirm(`âœ… ÃŠtes-vous sÃ»r que cette ${actionText} de "${itemName}" est terminÃ©e ?\n\nL'ordre sera supprimÃ© automatiquement dans 1 minute.`)) {
+        if (!confirm(`✅ Êtes-vous sûr que cette ${actionText} de "${itemName}" est terminée ?\n\nL'ordre sera supprimé automatiquement dans 1 minute.`)) {
             return;
         }
 
         try {
-            // Marquer l'ordre comme finalisÃ© avec un Ã©tat temporaire
+            // Marquer l'ordre comme finalisé avec un état temporaire
             const orderElement = document.querySelector(`[data-order-id="${orderId}"]`);
             if (orderElement) {
                 // Ajouter un indicateur visuel
                 const actions = orderElement.querySelector('.order-actions');
                 actions.innerHTML = `
                     <div class="transaction-finalized">
-                        <span class="finalized-text">âœ… Transaction finalisÃ©e</span>
+                        <span class="finalized-text">✅ Transaction finalisée</span>
                         <span class="countdown-text">Suppression dans <span id="countdown-${orderId}">60</span>s</span>
                         <button class="btn btn-small btn-secondary" onclick="hdvSystem.cancelFinalization('${orderId}')">
-                            â†©ï¸ Annuler
+                            ↩️ Annuler
                         </button>
                     </div>
                 `;
@@ -975,18 +975,18 @@ class HDVSystem {
                 orderElement.classList.add('order-finalized');
             }
 
-            this.showNotification(`âœ… ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisÃ©e ! Suppression automatique dans 1 minute.`, 'success');
+            this.showNotification(`✅ ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisée ! Suppression automatique dans 1 minute.`, 'success');
 
-            // DÃ©marrer le compte Ã  rebours
+            // Démarrer le compte à rebours
             this.startDeletionCountdown(orderId, itemName, orderType);
 
         } catch (error) {
-            console.error('âŒ Erreur lors de la finalisation:', error);
-            this.showNotification('âŒ Erreur lors de la finalisation', 'error');
+            console.error('❌ Erreur lors de la finalisation:', error);
+            this.showNotification('❌ Erreur lors de la finalisation', 'error');
         }
     }
 
-    // DÃ©marrer le compte Ã  rebours de suppression
+    // Démarrer le compte à rebours de suppression
     startDeletionCountdown(orderId, itemName, orderType) {
         let timeLeft = 60; // 60 secondes
         const countdownElement = document.getElementById(`countdown-${orderId}`);
@@ -1011,7 +1011,7 @@ class HDVSystem {
 
     // Annuler la finalisation
     cancelFinalization(orderId) {
-        // ArrÃªter le timer
+        // Arrêter le timer
         if (this.deletionTimers && this.deletionTimers.has(orderId)) {
             clearInterval(this.deletionTimers.get(orderId));
             this.deletionTimers.delete(orderId);
@@ -1025,31 +1025,31 @@ class HDVSystem {
             this.loadMarketplace();
         }
 
-        this.showNotification('â†©ï¸ Finalisation annulÃ©e', 'info');
+        this.showNotification('↩️ Finalisation annulée', 'info');
     }
 
-    // ExÃ©cuter la suppression automatique
+    // Exécuter la suppression automatique
     async executeAutoDeletion(orderId, itemName, orderType) {
         const actionText = orderType === 'sell' ? 'vente' : 'achat';
         
         try {
             // Supprimer l'ordre
             await this.deleteOrderFromMarketplace(orderId);
-            this.showNotification(`ðŸ—‘ï¸ ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" automatiquement supprimÃ©e`, 'info');
+            this.showNotification(`🗑️ ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" automatiquement supprimée`, 'info');
             
             // Nettoyer le timer
             if (this.deletionTimers) {
                 this.deletionTimers.delete(orderId);
             }
         } catch (error) {
-            console.error('âŒ Erreur suppression auto:', error);
-            this.showNotification('âŒ Erreur lors de la suppression automatique', 'error');
+            console.error('❌ Erreur suppression auto:', error);
+            this.showNotification('❌ Erreur lors de la suppression automatique', 'error');
         }
     }
 
     // Ouvrir la modal de finalisation de transaction
     openFinalizeModal(orderId, itemName, orderType) {
-        const actionText = orderType === 'sell' ? 'vendu' : 'achetÃ©';
+        const actionText = orderType === 'sell' ? 'vendu' : 'acheté';
         const otherParty = orderType === 'sell' ? 'acheteur' : 'vendeur';
         
         const modal = document.createElement('div');
@@ -1057,14 +1057,14 @@ class HDVSystem {
         modal.innerHTML = `
             <div class="finalize-modal">
                 <div class="finalize-header">
-                    <h3>âœ… Finaliser la transaction</h3>
+                    <h3>✅ Finaliser la transaction</h3>
                     <p>Vous avez <strong>${actionText}</strong> : <strong>${itemName}</strong></p>
-                    <button class="close-modal" onclick="this.closest('.finalize-modal-overlay').remove()">âŒ</button>
+                    <button class="close-modal" onclick="this.closest('.finalize-modal-overlay').remove()">❌</button>
                 </div>
                 
                 <div class="finalize-content">
                     <div class="form-group">
-                        <label for="other-party-name">Ã€ qui avez-vous ${actionText} cet item ?</label>
+                        <label for="other-party-name">À qui avez-vous ${actionText} cet item ?</label>
                         <input 
                             type="text" 
                             id="other-party-name" 
@@ -1072,15 +1072,15 @@ class HDVSystem {
                             maxlength="50"
                             required
                         >
-                        <p class="hint">Cette information sera sauvegardÃ©e dans l'historique pour les deux parties.</p>
+                        <p class="hint">Cette information sera sauvegardée dans l'historique pour les deux parties.</p>
                     </div>
                     
                     <div class="form-actions">
                         <button class="btn btn-secondary" onclick="this.closest('.finalize-modal-overlay').remove()">
-                            â†©ï¸ Annuler
+                            ↩️ Annuler
                         </button>
                         <button class="btn btn-success" onclick="hdvSystem.confirmFinalization('${orderId}', '${itemName}', '${orderType}')">
-                            âœ… Confirmer la transaction
+                            ✅ Confirmer la transaction
                         </button>
                     </div>
                 </div>
@@ -1121,14 +1121,14 @@ class HDVSystem {
     async confirmFinalization(orderId, itemName, orderType) {
         const otherPartyInput = document.getElementById('other-party-name');
         if (!otherPartyInput) {
-            this.showNotification('âŒ Erreur: Champ non trouvÃ©', 'error');
+            this.showNotification('❌ Erreur: Champ non trouvé', 'error');
             return;
         }
 
         const otherPartyName = otherPartyInput.value.trim();
         
         if (!otherPartyName) {
-            this.showNotification('âŒ Veuillez entrer le nom de l\'autre partie', 'error');
+            this.showNotification('❌ Veuillez entrer le nom de l\'autre partie', 'error');
             otherPartyInput.focus();
             return;
         }
@@ -1136,51 +1136,51 @@ class HDVSystem {
         // Fermer la modal
         document.querySelector('.finalize-modal-overlay')?.remove();
 
-        // ProcÃ©der Ã  la finalisation
+        // Procéder à la finalisation
         await this.finalizeTransactionInstant(orderId, itemName, orderType, otherPartyName);
     }
 
-    // Finaliser une transaction instantanÃ©ment (depuis Mes Ordres)
+    // Finaliser une transaction instantanément (depuis Mes Ordres)
     async finalizeTransactionInstant(orderId, itemName, orderType, otherPartyName = null) {
         const actionText = orderType === 'sell' ? 'vente' : 'achat';
         
         try {
-            debugLog('âš¡ Finalisation instantanÃ©e:', { orderId, itemName, orderType, otherPartyName });
+            console.log('⚡ Finalisation instantanée:', { orderId, itemName, orderType, otherPartyName });
             
-            // RÃ©cupÃ©rer l'ordre complet pour avoir toutes les informations
+            // Récupérer l'ordre complet pour avoir toutes les informations
             const order = this.orders.find(o => String(o.id) === String(orderId)) || 
                          this.myOrders.find(o => String(o.id) === String(orderId));
             
             if (!order) {
-                throw new Error('Ordre non trouvÃ©');
+                throw new Error('Ordre non trouvé');
             }
 
             // Obtenir l'utilisateur actuel
             const currentUser = this.getCurrentUserInfo();
             if (!currentUser) {
-                throw new Error('Utilisateur non connectÃ©');
+                throw new Error('Utilisateur non connecté');
             }
 
-            // DÃ©terminer qui est le vendeur et qui est l'acheteur
+            // Déterminer qui est le vendeur et qui est l'acheteur
             let sellerName, sellerId, buyerName, buyerId;
             
             if (orderType === 'sell') {
                 // L'utilisateur actuel est le vendeur
                 sellerName = currentUser.username;
                 sellerId = currentUser.id;
-                // L'acheteur est la personne spÃ©cifiÃ©e
+                // L'acheteur est la personne spécifiée
                 buyerName = otherPartyName || 'Acheteur inconnu';
                 buyerId = 'unknown'; // On n'a pas l'ID de l'acheteur
             } else {
                 // L'utilisateur actuel est l'acheteur
                 buyerName = currentUser.username;
                 buyerId = currentUser.id;
-                // Le vendeur est la personne spÃ©cifiÃ©e
+                // Le vendeur est la personne spécifiée
                 sellerName = otherPartyName || 'Vendeur inconnu';
                 sellerId = 'unknown'; // On n'a pas l'ID du vendeur
             }
 
-            // PrÃ©parer les donnÃ©es pour l'historique
+            // Préparer les données pour l'historique
             const transactionData = {
                 orderId: order.id,
                 sellerName: sellerName,
@@ -1196,7 +1196,7 @@ class HDVSystem {
                 transactionType: orderType
             };
 
-            debugLog('ðŸ“Š DonnÃ©es transaction pour historique:', transactionData);
+            console.log('📊 Données transaction pour historique:', transactionData);
 
             // Sauvegarder dans l'historique (Supabase + localStorage)
             let historySaved = false;
@@ -1204,45 +1204,45 @@ class HDVSystem {
             // Essayer de sauvegarder dans Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    debugLog('ðŸ’¾ Sauvegarde transaction dans l\'historique Supabase...');
+                    console.log('💾 Sauvegarde transaction dans l\'historique Supabase...');
                     await window.hdvSupabaseManager.saveTransactionToHistory(transactionData);
-                    debugLog('âœ… Transaction sauvegardÃ©e dans l\'historique Supabase');
+                    console.log('✅ Transaction sauvegardée dans l\'historique Supabase');
                     historySaved = true;
                 } catch (supabaseError) {
-                    debugWarn('âš ï¸ Ã‰chec sauvegarde historique Supabase:', supabaseError);
+                    console.warn('⚠️ Échec sauvegarde historique Supabase:', supabaseError);
                 }
             }
 
             // Sauvegarder en localStorage comme fallback
             if (!historySaved) {
-                debugLog('ðŸ’¾ Sauvegarde transaction dans localStorage...');
+                console.log('💾 Sauvegarde transaction dans localStorage...');
                 const history = JSON.parse(localStorage.getItem('hdv_purchase_history') || '[]');
                 history.push({
                     ...transactionData,
                     timestamp: new Date().toISOString()
                 });
                 localStorage.setItem('hdv_purchase_history', JSON.stringify(history));
-                debugLog('âœ… Transaction sauvegardÃ©e dans localStorage');
+                console.log('✅ Transaction sauvegardée dans localStorage');
             }
 
-            // Supprimer immÃ©diatement l'ordre
+            // Supprimer immédiatement l'ordre
             let orderDeleted = false;
             
             // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    debugLog('ðŸ—‘ï¸ Suppression ordre de Supabase...');
+                    console.log('🗑️ Suppression ordre de Supabase...');
                     const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
                     if (success) {
-                        debugLog('âœ… Ordre supprimÃ© de Supabase');
+                        console.log('✅ Ordre supprimé de Supabase');
                         orderDeleted = true;
                     }
                 } catch (supabaseError) {
-                    debugWarn('âš ï¸ Ã‰chec suppression Supabase, suppression locale uniquement:', supabaseError);
+                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
                 }
             }
 
-            // Supprimer des listes locales (toujours nÃ©cessaire)
+            // Supprimer des listes locales (toujours nécessaire)
             this.orders = this.orders.filter(order => String(order.id) !== String(orderId));
             this.myOrders = this.myOrders.filter(order => String(order.id) !== String(orderId));
 
@@ -1254,11 +1254,11 @@ class HDVSystem {
             this.loadMyOrders();      // Recharger Mes Ordres
             this.loadMarketplace();   // Recharger Marketplace
 
-            this.showNotification(`ðŸŽ‰ ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisÃ©e et sauvegardÃ©e dans l'historique !`, 'success');
+            this.showNotification(`🎉 ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisée et sauvegardée dans l'historique !`, 'success');
 
         } catch (error) {
-            console.error('âŒ Erreur lors de la finalisation instantanÃ©e:', error);
-            this.showNotification('âŒ Erreur lors de la finalisation: ' + error.message, 'error');
+            console.error('❌ Erreur lors de la finalisation instantanée:', error);
+            this.showNotification('❌ Erreur lors de la finalisation: ' + error.message, 'error');
         }
     }
 
@@ -1266,20 +1266,20 @@ class HDVSystem {
         const ordersList = document.getElementById('orders-list');
         if (!ordersList) return;
 
-        // VÃ©rifier que orders est dÃ©fini et est un tableau
+        // Vérifier que orders est défini et est un tableau
         if (!orders || !Array.isArray(orders)) {
-            debugWarn('âš ï¸ displayOrders: orders non dÃ©fini ou pas un tableau:', orders);
+            console.warn('⚠️ displayOrders: orders non défini ou pas un tableau:', orders);
             orders = [];
         }
 
         if (orders.length === 0) {
             ordersList.innerHTML = `
                 <div class="empty-state">
-                    <h3>ðŸª Place du MarchÃ©</h3>
+                    <h3>🏪 Place du Marché</h3>
                     <p>Aucun ordre disponible pour le moment.</p>
-                    <p>Soyez le premier Ã  crÃ©er un ordre d'achat ou de vente !</p>
+                    <p>Soyez le premier à créer un ordre d'achat ou de vente !</p>
                     <button class="btn btn-primary" onclick="hdvSystem.switchTab('create-order')">
-                        âž• CrÃ©er un ordre
+                        ➕ Créer un ordre
                     </button>
                 </div>
             `;
@@ -1292,20 +1292,20 @@ class HDVSystem {
         const headerDiv = document.createElement('div');
         headerDiv.className = 'marketplace-header';
         headerDiv.innerHTML = `
-            <h3>ðŸª Place du MarchÃ© (${orders.length} ordre${orders.length > 1 ? 's' : ''})</h3>
-            <p>ðŸ’¡ <strong>Astuce:</strong> Vous pouvez supprimer vos propres ordres en cliquant sur le bouton "ðŸ—‘ï¸ Supprimer"</p>
+            <h3>🏪 Place du Marché (${orders.length} ordre${orders.length > 1 ? 's' : ''})</h3>
+            <p>💡 <strong>Astuce:</strong> Vous pouvez supprimer vos propres ordres en cliquant sur le bouton "🗑️ Supprimer"</p>
         `;
         fragment.appendChild(headerDiv);
 
         const ordersGrid = document.createElement('div');
         ordersGrid.className = 'orders-grid';
 
-        // Limiter l'affichage initial Ã  20 ordres pour accÃ©lÃ©rer le rendu
+        // Limiter l'affichage initial à 20 ordres pour accélérer le rendu
         const maxInitialDisplay = 20;
         const ordersToDisplay = orders.slice(0, maxInitialDisplay);
         const remainingOrders = orders.slice(maxInitialDisplay);
 
-        // Afficher les premiers ordres immÃ©diatement
+        // Afficher les premiers ordres immédiatement
         ordersToDisplay.forEach(order => {
             ordersGrid.appendChild(this.createOrderCard(order));
         });
@@ -1357,7 +1357,7 @@ class HDVSystem {
                  onerror="this.src='../assets/items/default.png'"
                  loading="lazy">
             
-            <!-- DÃ©tails de l'ordre -->
+            <!-- Détails de l'ordre -->
             <div class="order-details">
                 <h3 class="order-item-name">${order.item.name}</h3>
                 <span class="item-category">${this.getItemCategory(order.item)}</span>
@@ -1365,20 +1365,20 @@ class HDVSystem {
                 
                 <div class="order-meta">
                     <div class="order-meta-item">
-                        <span>${order.type === 'sell' ? 'ðŸ”´' : 'ðŸ”µ'}</span>
+                        <span>${order.type === 'sell' ? '🔴' : '🔵'}</span>
                         <span>${order.type === 'sell' ? 'VENTE' : 'ACHAT'}</span>
                     </div>
                     <div class="order-meta-item">
-                        <span>ðŸ“¦</span>
-                        <span>QtÃ©: ${order.quantity}</span>
+                        <span>📦</span>
+                        <span>Qté: ${order.quantity}</span>
                     </div>
                     <div class="order-meta-item">
-                        <span>ðŸ‘¤</span>
+                        <span>👤</span>
                         <span>${order.creator || order.seller || order.buyer || 'Aventurier Anonyme'}</span>
                     </div>
                     ${order.notes ? `
                     <div class="order-meta-item">
-                        <span>ðŸ“</span>
+                        <span>📝</span>
                         <span>${order.notes}</span>
                     </div>
                     ` : ''}
@@ -1388,14 +1388,14 @@ class HDVSystem {
             <!-- Prix et actions -->
             <div class="order-price-container">
                 <div class="order-price">${order.price} cols</div>
-                <div class="order-price-unit">/${order.quantity > 1 ? 'lot' : 'unitÃ©'}</div>
+                <div class="order-price-unit">/${order.quantity > 1 ? 'lot' : 'unité'}</div>
                 
                 <button class="contact-btn" onclick="hdvSystem.contactTrader('${order.creator || order.seller || order.buyer}', '${order.item.name}')">
-                    ðŸ’¬ Contacter
+                    💬 Contacter
                 </button>
                 ${this.isMyOrder(order) ? `
                     <button class="contact-btn" style="background: #e74c3c; margin-top: 0.5rem;" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
-                        ðŸ—‘ï¸ Supprimer
+                        🗑️ Supprimer
                     </button>
                 ` : ''}
             </div>
@@ -1404,18 +1404,18 @@ class HDVSystem {
         return card;
     }
 
-    // Ouvrir le sÃ©lecteur d'items avec images
+    // Ouvrir le sélecteur d'items avec images
     openItemSelector() {
         this.itemSelector.open((selectedItem) => {
             this.selectItem(selectedItem);
         });
     }
 
-    // SÃ©lectionner un item depuis le sÃ©lecteur
+    // Sélectionner un item depuis le sélecteur
     selectItem(item) {
         this.selectedItem = item;
 
-        // Mise Ã  jour de l'affichage
+        // Mise à jour de l'affichage
         const selectedItemContainer = document.getElementById('selected-item');
         const openSelectorBtn = document.getElementById('open-item-selector');
         
@@ -1440,10 +1440,10 @@ class HDVSystem {
             openSelectorBtn.style.display = 'none';
         }
 
-        debugLog('Item sÃ©lectionnÃ©:', item);
+        console.log('Item sélectionné:', item);
     }
 
-    // Effacer la sÃ©lection d'item
+    // Effacer la sélection d'item
     clearSelectedItem() {
         this.selectedItem = null;
         
@@ -1477,7 +1477,7 @@ class HDVSystem {
     selectOrderType(type) {
         this.orderType = type;
         
-        // Mise Ã  jour visuelle des cartes
+        // Mise à jour visuelle des cartes
         document.querySelectorAll('.order-type-card').forEach(card => {
             card.classList.remove('selected');
         });
@@ -1490,57 +1490,57 @@ class HDVSystem {
             form.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         
-        // Mise Ã  jour du label
+        // Mise à jour du label
         const orderTypeLabel = document.getElementById('order-type-label');
         if (orderTypeLabel) {
-            orderTypeLabel.textContent = type === 'sell' ? 'ðŸ”´ VENTE' : 'ðŸ”µ ACHAT';
+            orderTypeLabel.textContent = type === 'sell' ? '🔴 VENTE' : '🔵 ACHAT';
             orderTypeLabel.className = `order-type-label ${type}`;
         }
 
-        // Notification supprimÃ©e pour Ã©viter le spam
+        // Notification supprimée pour éviter le spam
     }
 
     async createOrder() {
-        // VÃ©rification obligatoire de l'authentification
+        // Vérification obligatoire de l'authentification
         const userInfo = this.getCurrentUserInfo();
         if (!userInfo) {
-            this.showNotification('âŒ Vous devez Ãªtre connectÃ© pour crÃ©er un ordre', 'error');
+            this.showNotification('❌ Vous devez être connecté pour créer un ordre', 'error');
             this.redirectToLogin();
             return;
         }
 
         if (!this.selectedItem) {
-            this.showNotification('âŒ Veuillez sÃ©lectionner un item', 'error');
+            this.showNotification('❌ Veuillez sélectionner un item', 'error');
             return;
         }
 
         if (!this.orderType) {
-            this.showNotification('âŒ Veuillez sÃ©lectionner le type d\'ordre (vente/achat)', 'error');
+            this.showNotification('❌ Veuillez sélectionner le type d\'ordre (vente/achat)', 'error');
             return;
         }
 
         const quantity = parseInt(document.getElementById('quantity').value);
         const price = parseInt(document.getElementById('price').value);
-        const notes = document.getElementById('notes').value.trim(); // RÃ©cupÃ©ration des notes
+        const notes = document.getElementById('notes').value.trim(); // Récupération des notes
 
         if (!quantity || quantity <= 0) {
-            this.showNotification('âŒ QuantitÃ© invalide', 'error');
+            this.showNotification('❌ Quantité invalide', 'error');
             return;
         }
 
         if (!price || price <= 0) {
-            this.showNotification('âŒ Prix invalide', 'error');
+            this.showNotification('❌ Prix invalide', 'error');
             return;
         }
 
-        // Enrichir l'item avec catÃ©gorie et raretÃ© automatiques
+        // Enrichir l'item avec catégorie et rareté automatiques
         const enrichedItem = {
             ...this.selectedItem,
             category: this.getItemCategory(this.selectedItem),
             rarity: this.getItemRarity(this.selectedItem)
         };
 
-        // CrÃ©ation de l'ordre
+        // Création de l'ordre
         const newOrder = {
             id: Date.now(),
             type: this.orderType,
@@ -1548,7 +1548,7 @@ class HDVSystem {
             quantity: quantity,
             price: price,
             total: quantity * price,
-            notes: notes || null, // Ajout des notes Ã  l'ordre
+            notes: notes || null, // Ajout des notes à l'ordre
             seller: this.orderType === 'sell' ? userInfo.username : null,
             buyer: this.orderType === 'buy' ? userInfo.username : null,
             sellerId: this.orderType === 'sell' ? userInfo.id : null,
@@ -1565,119 +1565,119 @@ class HDVSystem {
             // Essayer de sauvegarder dans Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    debugLog('ðŸ’¾ Sauvegarde ordre dans Supabase...');
+                    console.log('💾 Sauvegarde ordre dans Supabase...');
                     const savedOrder = await window.hdvSupabaseManager.saveOrderToSupabase(newOrder);
-                    newOrder.id = savedOrder.id; // Utiliser l'ID gÃ©nÃ©rÃ© par Supabase
-                    debugLog('âœ… Ordre sauvegardÃ© dans Supabase avec ID:', savedOrder.id);
+                    newOrder.id = savedOrder.id; // Utiliser l'ID généré par Supabase
+                    console.log('✅ Ordre sauvegardé dans Supabase avec ID:', savedOrder.id);
                     orderSaved = true;
                 } catch (supabaseError) {
-                    debugWarn('âš ï¸ Ã‰chec sauvegarde Supabase, basculement vers localStorage:', supabaseError);
+                    console.warn('⚠️ Échec sauvegarde Supabase, basculement vers localStorage:', supabaseError);
                 }
             }
             
-            // Fallback vers localStorage si Supabase a Ã©chouÃ© ou n'est pas disponible
+            // Fallback vers localStorage si Supabase a échoué ou n'est pas disponible
             if (!orderSaved) {
-                debugLog('ðŸ’¾ Sauvegarde locale dans localStorage...');
+                console.log('💾 Sauvegarde locale dans localStorage...');
                 this.orders.push(newOrder);
                 this.myOrders.push(newOrder);
                 localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
                 localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
-                debugLog('âœ… Ordre sauvegardÃ© localement');
+                console.log('✅ Ordre sauvegardé localement');
             }
 
             // Invalider le cache
             this.cache.lastUpdate = null;
 
-            this.showNotification('âœ… Ordre crÃ©Ã© avec succÃ¨s !', 'success');
+            this.showNotification('✅ Ordre créé avec succès !', 'success');
             this.resetCreateOrderForm();
             
-            // Retour Ã  l'onglet marketplace pour voir l'ordre crÃ©Ã©
+            // Retour à l'onglet marketplace pour voir l'ordre créé
             await this.switchTab('marketplace');
             
-            // Recharger les donnÃ©es pour inclure le nouvel ordre
+            // Recharger les données pour inclure le nouvel ordre
             setTimeout(async () => {
                 await this.loadOrdersFromStorage();
                 await this.loadMarketplace();
             }, 500);
             
         } catch (error) {
-            console.error('âŒ Erreur lors de la crÃ©ation de l\'ordre:', error);
-            this.showNotification('âŒ Erreur lors de la crÃ©ation de l\'ordre: ' + error.message, 'error');
+            console.error('❌ Erreur lors de la création de l\'ordre:', error);
+            this.showNotification('❌ Erreur lors de la création de l\'ordre: ' + error.message, 'error');
         }
     }
 
     async saveOrdersToStorage() {
         // Nouvelle version avec Supabase - ne fait plus rien en local
-        // Les ordres sont maintenant sauvegardÃ©s directement dans Supabase lors de leur crÃ©ation
-        debugLog('â„¹ï¸ saveOrdersToStorage: Les ordres sont maintenant gÃ©rÃ©s par Supabase');
+        // Les ordres sont maintenant sauvegardés directement dans Supabase lors de leur création
+        console.log('ℹ️ saveOrdersToStorage: Les ordres sont maintenant gérés par Supabase');
     }
 
     async loadOrdersFromStorage() {
         try {
-            // 1. Charger depuis localStorage IMMÃ‰DIATEMENT pour affichage rapide
+            // 1. Charger depuis localStorage IMMÉDIATEMENT pour affichage rapide
             const localOrders = localStorage.getItem('hdv_orders');
             const localMyOrders = localStorage.getItem('hdv_my_orders');
             
             if (localOrders) {
                 this.orders = JSON.parse(localOrders);
                 this.myOrders = localMyOrders ? JSON.parse(localMyOrders) : [];
-                debugLog('âš¡ Affichage rapide depuis localStorage:', this.orders.length, 'ordres');
+                console.log('⚡ Affichage rapide depuis localStorage:', this.orders.length, 'ordres');
                 
-                // Mettre Ã  jour l'affichage immÃ©diatement
+                // Mettre à jour l'affichage immédiatement
                 if (this.currentTab === 'marketplace') {
                     this.displayOrders(this.orders);
                 }
             }
 
-            // 2. VÃ©rifier le cache en mÃ©moire
+            // 2. Vérifier le cache en mémoire
             const now = Date.now();
             if (this.cache.orders && this.cache.lastUpdate && (now - this.cache.lastUpdate < this.cache.cacheTimeout)) {
-                debugLog('ðŸ“¦ Utilisation du cache mÃ©moire (frais)');
+                console.log('📦 Utilisation du cache mémoire (frais)');
                 return;
             }
 
-            // 3. Charger depuis Supabase en arriÃ¨re-plan pour mise Ã  jour
-            debugLog('ï¿½ Mise Ã  jour depuis Supabase en arriÃ¨re-plan...');
+            // 3. Charger depuis Supabase en arrière-plan pour mise à jour
+            console.log('� Mise à jour depuis Supabase en arrière-plan...');
             
             if (!window.hdvSupabaseManager || !window.hdvSupabaseManager.isSupabaseAvailable()) {
-                debugWarn('âš ï¸ HDV Supabase Manager non disponible, utilisation donnÃ©es locales');
+                console.warn('⚠️ HDV Supabase Manager non disponible, utilisation données locales');
                 return;
             }
 
             const { orders, myOrders } = await window.hdvSupabaseManager.loadOrdersFromSupabase();
             
-            // VÃ©rifier si les donnÃ©es ont changÃ©
+            // Vérifier si les données ont changé
             const hasChanged = JSON.stringify(orders) !== JSON.stringify(this.orders);
             
             if (hasChanged) {
-                debugLog('ðŸ†• Nouvelles donnÃ©es dÃ©tectÃ©es, mise Ã  jour...');
+                console.log('🆕 Nouvelles données détectées, mise à jour...');
                 this.orders = orders;
                 this.myOrders = myOrders;
                 
-                // Mettre Ã  jour localStorage
+                // Mettre à jour localStorage
                 localStorage.setItem('hdv_orders', JSON.stringify(orders));
                 localStorage.setItem('hdv_my_orders', JSON.stringify(myOrders));
                 
-                // Mettre Ã  jour le cache
+                // Mettre à jour le cache
                 this.cache.orders = orders;
                 this.cache.myOrders = myOrders;
                 this.cache.lastUpdate = now;
                 
-                // RafraÃ®chir l'affichage si on est sur le marketplace
+                // Rafraîchir l'affichage si on est sur le marketplace
                 if (this.currentTab === 'marketplace') {
                     this.displayOrders(this.orders);
                 }
             } else {
-                debugLog('âœ… DonnÃ©es Ã  jour depuis Supabase');
-                // Mettre Ã  jour le cache quand mÃªme
+                console.log('✅ Données à jour depuis Supabase');
+                // Mettre à jour le cache quand même
                 this.cache.orders = orders;
                 this.cache.myOrders = myOrders;
                 this.cache.lastUpdate = now;
             }
             
         } catch (error) {
-            console.error('âŒ Erreur chargement:', error);
-            // En cas d'erreur, on garde les donnÃ©es locales dÃ©jÃ  chargÃ©es
+            console.error('❌ Erreur chargement:', error);
+            // En cas d'erreur, on garde les données locales déjà chargées
         }
     }
 
@@ -1694,30 +1694,30 @@ class HDVSystem {
             this.myOrders = JSON.parse(savedMyOrders);
         }
         
-        debugLog('ðŸ“¦ DonnÃ©es chargÃ©es depuis localStorage (fallback)');
+        console.log('📦 Données chargées depuis localStorage (fallback)');
     }
 
     resetCreateOrderForm() {
         this.selectedItem = null;
         this.orderType = null;
         
-        // RÃ©initialiser le sÃ©lecteur d'items
+        // Réinitialiser le sélecteur d'items
         this.clearSelectedItem();
         
-        // RÃ©initialiser les autres champs
+        // Réinitialiser les autres champs
         document.getElementById('quantity').value = '1';
         document.getElementById('price').value = '';
         document.getElementById('notes').value = '';
         
-        // RÃ©initialiser les cartes de type d'ordre
+        // Réinitialiser les cartes de type d'ordre
         document.querySelectorAll('.order-type-card').forEach(card => {
             card.classList.remove('selected');
         });
         
-        // RÃ©initialiser le label du type d'ordre
+        // Réinitialiser le label du type d'ordre
         const orderTypeLabel = document.getElementById('order-type-label');
         if (orderTypeLabel) {
-            orderTypeLabel.textContent = 'SÃ©lectionnez le type d\'ordre';
+            orderTypeLabel.textContent = 'Sélectionnez le type d\'ordre';
             orderTypeLabel.className = 'order-type-label';
         }
         
@@ -1736,14 +1736,14 @@ class HDVSystem {
             filteredOrders = filteredOrders.filter(order => order.type === this.filters.type);
         }
 
-        // Filtre par catÃ©gorie
+        // Filtre par catégorie
         if (this.filters.category !== 'all') {
             filteredOrders = filteredOrders.filter(order => 
                 this.getItemCategory(order.item).toLowerCase().includes(this.filters.category.toLowerCase())
             );
         }
 
-        // Filtre par raretÃ©
+        // Filtre par rareté
         if (this.filters.rarity !== 'all') {
             filteredOrders = filteredOrders.filter(order => 
                 this.getItemRarity(order.item) === this.filters.rarity
@@ -1771,22 +1771,22 @@ class HDVSystem {
     contactTrader(traderName, itemName) {
         const currentUser = this.getCurrentUserInfo();
         
-        debugLog('ðŸ“ž Contact trader - Informations:', {
+        console.log('📞 Contact trader - Informations:', {
             trader: traderName,
             item: itemName,
             currentUser: currentUser
         });
         
-        // VÃ©rifier l'authentification
+        // Vérifier l'authentification
         if (!currentUser) {
-            this.showNotification('âŒ Vous devez Ãªtre connectÃ© pour contacter un trader !', 'error');
+            this.showNotification('❌ Vous devez être connecté pour contacter un trader !', 'error');
             this.redirectToLogin();
             return;
         }
         
         // Comparaison des utilisateurs
         if (traderName === currentUser.username) {
-            this.showNotification('âŒ Vous ne pouvez pas vous contacter vous-mÃªme !', 'error');
+            this.showNotification('❌ Vous ne pouvez pas vous contacter vous-même !', 'error');
             return;
         }
 
@@ -1797,12 +1797,12 @@ class HDVSystem {
         );
         
         if (!order) {
-            debugWarn('âŒ Ordre non trouvÃ© pour le contact');
-            this.showNotification('âŒ Impossible de trouver les dÃ©tails de l\'ordre', 'error');
+            console.warn('❌ Ordre non trouvé pour le contact');
+            this.showNotification('❌ Impossible de trouver les détails de l\'ordre', 'error');
             return;
         }
 
-        // Ouvrir directement l'interface de composition de message personnalisÃ©
+        // Ouvrir directement l'interface de composition de message personnalisé
         this.openCustomMessageModal(traderName, itemName, order);
     }
 
@@ -1812,64 +1812,64 @@ class HDVSystem {
         modal.innerHTML = `
             <div class="contact-modal">
                 <div class="contact-header">
-                    <h3>ðŸ’¬ Contacter ${traderName}</h3>
-                    <p>Concernant: <strong>${order.type === 'sell' ? 'ðŸ”´ Vente' : 'ðŸ”µ Achat'} - ${itemName}</strong></p>
-                    <p class="order-details">Prix: <strong>${order.price} cols</strong> â€¢ QuantitÃ©: <strong>${order.quantity}</strong></p>
-                    <button class="close-modal" onclick="this.closest('.contact-modal-overlay').remove()">âŒ</button>
+                    <h3>💬 Contacter ${traderName}</h3>
+                    <p>Concernant: <strong>${order.type === 'sell' ? '🔴 Vente' : '🔵 Achat'} - ${itemName}</strong></p>
+                    <p class="order-details">Prix: <strong>${order.price} cols</strong> • Quantité: <strong>${order.quantity}</strong></p>
+                    <button class="close-modal" onclick="this.closest('.contact-modal-overlay').remove()">❌</button>
                 </div>
                 
                 <div class="message-compose-area">
                     <div class="compose-form">
                         <div class="form-group">
-                            <label for="message-subject">ðŸ“‹ Sujet du message</label>
+                            <label for="message-subject">📋 Sujet du message</label>
                             <input 
                                 type="text" 
                                 id="message-subject" 
-                                value="${order.type === 'sell' ? 'ðŸ”´ IntÃ©ressÃ© par votre vente' : 'ðŸ”µ Proposition pour votre achat'} - ${itemName}"
+                                value="${order.type === 'sell' ? '🔴 Intéressé par votre vente' : '🔵 Proposition pour votre achat'} - ${itemName}"
                                 maxlength="100"
                             >
                         </div>
                         
                         <div class="form-group">
-                            <label for="custom-message-content">âœï¸ Votre message personnalisÃ©</label>
+                            <label for="custom-message-content">✏️ Votre message personnalisé</label>
                             <textarea 
                                 id="custom-message-content" 
-                                placeholder="Ã‰crivez votre message personnalisÃ© ici...
+                                placeholder="Écrivez votre message personnalisé ici...
                                 
 Exemples:
-â€¢ Bonjour, je suis intÃ©ressÃ© par votre ${itemName}. ÃŠtes-vous disponible pour un Ã©change ?
-â€¢ Votre prix me convient parfaitement. Quand pouvons-nous nous retrouver en jeu ?
-â€¢ Je propose ${Math.floor(order.price * 0.9)} cols au lieu de ${order.price}. Qu'en pensez-vous ?"
+• Bonjour, je suis intéressé par votre ${itemName}. Êtes-vous disponible pour un échange ?
+• Votre prix me convient parfaitement. Quand pouvons-nous nous retrouver en jeu ?
+• Je propose ${Math.floor(order.price * 0.9)} cols au lieu de ${order.price}. Qu'en pensez-vous ?"
                                 rows="8"
                                 maxlength="1000"
                             ></textarea>
                             <div class="char-counter">
-                                <span id="char-count">0</span>/1000 caractÃ¨res
+                                <span id="char-count">0</span>/1000 caractères
                             </div>
                         </div>
                         
                         <div class="quick-suggestions">
-                            <h4>ðŸ’¡ Suggestions rapides (cliquez pour ajouter) :</h4>
-                            <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Bonjour ${traderName}, je suis intÃ©ressÃ© par votre ${itemName}. ÃŠtes-vous disponible pour discuter ?')">
-                                ï¿½ IntÃ©rÃªt gÃ©nÃ©ral
+                            <h4>💡 Suggestions rapides (cliquez pour ajouter) :</h4>
+                            <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Bonjour ${traderName}, je suis intéressé par votre ${itemName}. Êtes-vous disponible pour discuter ?')">
+                                � Intérêt général
                             </button>
                             <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Votre prix de ${order.price} cols me convient. Quand pouvons-nous nous retrouver en jeu ?')">
-                                âœ… Accepter le prix
+                                ✅ Accepter le prix
                             </button>
-                            <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Pourriez-vous accepter ${Math.floor(order.price * 0.9)} cols au lieu de ${order.price} ? Je suis trÃ¨s intÃ©ressÃ©.')">
-                                ðŸ’¸ NÃ©gocier le prix
+                            <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Pourriez-vous accepter ${Math.floor(order.price * 0.9)} cols au lieu de ${order.price} ? Je suis très intéressé.')">
+                                💸 Négocier le prix
                             </button>
                             <button class="suggestion-btn" type="button" onclick="hdvSystem.addSuggestion('Pouvez-vous me contacter en jeu ? Mon pseudo est [VOTRE_PSEUDO]. Merci !')">
-                                ðŸŽ® Contact en jeu
+                                🎮 Contact en jeu
                             </button>
                         </div>
                         
                         <div class="form-actions">
                             <button class="btn btn-secondary" onclick="this.closest('.contact-modal-overlay').remove()">
-                                â†©ï¸ Annuler
+                                ↩️ Annuler
                             </button>
                             <button class="btn btn-primary" onclick="hdvSystem.sendCustomMessage('${traderName}', '${itemName}')">
-                                ðŸ“¤ Envoyer le message
+                                📤 Envoyer le message
                             </button>
                         </div>
                     </div>
@@ -1879,7 +1879,7 @@ Exemples:
 
         document.body.appendChild(modal);
 
-        // Gestion du compteur de caractÃ¨res
+        // Gestion du compteur de caractères
         const messageContent = document.getElementById('custom-message-content');
         const charCount = document.getElementById('char-count');
         
@@ -1908,10 +1908,10 @@ Exemples:
             const newText = currentText ? currentText + '\n\n' + text : text;
             messageContent.value = newText;
             
-            // Trigger le compteur de caractÃ¨res
+            // Trigger le compteur de caractères
             messageContent.dispatchEvent(new Event('input'));
             
-            // Focus et positionner le curseur Ã  la fin
+            // Focus et positionner le curseur à la fin
             messageContent.focus();
             messageContent.setSelectionRange(newText.length, newText.length);
         }
@@ -1922,7 +1922,7 @@ Exemples:
         const contentInput = document.getElementById('custom-message-content');
         
         if (!subjectInput || !contentInput) {
-            this.showNotification('âŒ Erreur: Champs de message non trouvÃ©s', 'error');
+            this.showNotification('❌ Erreur: Champs de message non trouvés', 'error');
             return;
         }
         
@@ -1930,19 +1930,19 @@ Exemples:
         const content = contentInput.value.trim();
         
         if (!subject) {
-            this.showNotification('âŒ Veuillez entrer un sujet pour votre message', 'error');
+            this.showNotification('❌ Veuillez entrer un sujet pour votre message', 'error');
             subjectInput.focus();
             return;
         }
         
         if (!content) {
-            this.showNotification('âŒ Veuillez Ã©crire votre message', 'error');
+            this.showNotification('❌ Veuillez écrire votre message', 'error');
             contentInput.focus();
             return;
         }
         
         if (content.length < 10) {
-            this.showNotification('âŒ Votre message doit faire au moins 10 caractÃ¨res', 'error');
+            this.showNotification('❌ Votre message doit faire au moins 10 caractères', 'error');
             contentInput.focus();
             return;
         }
@@ -1950,7 +1950,7 @@ Exemples:
         try {
             const currentUser = this.getCurrentUserInfo();
             
-            // CrÃ©er l'objet message
+            // Créer l'objet message
             const message = {
                 id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                 from: currentUser.username,
@@ -1962,7 +1962,7 @@ Exemples:
                 relatedItem: itemName
             };
             
-            debugLog('ðŸ“¤ Envoi message personnalisÃ©:', message);
+            console.log('📤 Envoi message personnalisé:', message);
             
             // Essayer d'envoyer via Supabase d'abord
             let messageSent = false;
@@ -1971,10 +1971,10 @@ Exemples:
                     const success = await window.mailboxSystem.sendMessage(message.to, message.subject, message.content);
                     if (success) {
                         messageSent = true;
-                        debugLog('âœ… Message envoyÃ© via systÃ¨me Supabase');
+                        console.log('✅ Message envoyé via système Supabase');
                     }
                 } catch (supabaseError) {
-                    debugWarn('âš ï¸ Ã‰chec envoi Supabase, sauvegarde locale:', supabaseError);
+                    console.warn('⚠️ Échec envoi Supabase, sauvegarde locale:', supabaseError);
                 }
             }
             
@@ -1983,21 +1983,21 @@ Exemples:
                 const messages = JSON.parse(localStorage.getItem('hdv_messages') || '[]');
                 messages.push(message);
                 localStorage.setItem('hdv_messages', JSON.stringify(messages));
-                debugLog('ðŸ’¾ Message sauvegardÃ© localement');
+                console.log('💾 Message sauvegardé localement');
             }
             
             // Fermer la modal
             document.querySelector('.contact-modal-overlay')?.remove();
             
-            this.showNotification(`âœ… Message envoyÃ© Ã  ${traderName} avec succÃ¨s !`, 'success');
+            this.showNotification(`✅ Message envoyé à ${traderName} avec succès !`, 'success');
             
         } catch (error) {
-            console.error('âŒ Erreur envoi message:', error);
-            this.showNotification('âŒ Erreur lors de l\'envoi du message: ' + error.message, 'error');
+            console.error('❌ Erreur envoi message:', error);
+            this.showNotification('❌ Erreur lors de l\'envoi du message: ' + error.message, 'error');
         }
     }
 
-    // MÃ©thode pour formater la date des ordres
+    // Méthode pour formater la date des ordres
     formatOrderDate(order) {
         if (!order.timestamp) return '';
         
@@ -2017,7 +2017,7 @@ Exemples:
         }
     }
 
-    // MÃ©thode pour formater l'heure
+    // Méthode pour formater l'heure
     formatTime(timestamp) {
         if (!timestamp) return '';
         return new Date(timestamp).toLocaleTimeString('fr-FR', {
@@ -2026,7 +2026,7 @@ Exemples:
         });
     }
 
-    // MÃ©thode pour afficher les notifications
+    // Méthode pour afficher les notifications
     showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `hdv-notification ${type}`;
@@ -2063,7 +2063,7 @@ Exemples:
         }, 4000);
     }
 
-    // MÃ©thode pour formater la date des ordres
+    // Méthode pour formater la date des ordres
     formatOrderDate(order) {
         if (!order.timestamp) return '';
         
@@ -2083,7 +2083,7 @@ Exemples:
         }
     }
 
-    // MÃ©thode pour formater l'heure
+    // Méthode pour formater l'heure
     formatTime(timestamp) {
         if (!timestamp) return '';
         return new Date(timestamp).toLocaleTimeString('fr-FR', {
@@ -2093,5 +2093,5 @@ Exemples:
     }
 }
 
-// Initialisation globale pour Ã©viter les conflits
+// Initialisation globale pour éviter les conflits
 window.HDVSystem = HDVSystem;

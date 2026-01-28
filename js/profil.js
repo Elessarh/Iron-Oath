@@ -1,20 +1,20 @@
-﻿/* profil.js - Gestion de la page profil utilisateur */
+/* profil.js - Gestion de la page profil utilisateur */
 
 // Variables locales (currentUser et userProfile sont globaux depuis auth-supabase.js)
 let localUserProfile = null;
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async function() {
-    debugLog('ðŸ“„ Initialisation de la page profil...');
+    console.log('📄 Initialisation de la page profil...');
     
-    // Attendre que auth-supabase.js soit chargÃ© ET que l'utilisateur soit connectÃ©
+    // Attendre que auth-supabase.js soit chargé ET que l'utilisateur soit connecté
     await waitForAuthAndUser();
     
     // Charger le profil
     await loadProfilePage();
 });
 
-// Attendre que l'authentification soit prÃªte ET que l'utilisateur soit connectÃ©
+// Attendre que l'authentification soit prête ET que l'utilisateur soit connecté
 function waitForAuthAndUser() {
     return new Promise((resolve) => {
         let attempts = 0;
@@ -23,19 +23,19 @@ function waitForAuthAndUser() {
         const checkAuth = setInterval(() => {
             attempts++;
             
-            // VÃ©rifier que Supabase ET window.currentUser sont prÃªts
+            // Vérifier que Supabase ET window.currentUser sont prêts
             if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
-                debugLog('âœ… Auth prÃªte et utilisateur connectÃ©:', window.currentUser.email);
+                console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
-                console.error('âŒ Timeout: utilisateur non connectÃ© aprÃ¨s 10s');
-                debugLog('Ã‰tat:', {
+                console.error('❌ Timeout: utilisateur non connecté après 10s');
+                console.log('État:', {
                     supabase: typeof supabase !== 'undefined',
                     currentUser: window.currentUser
                 });
-                showError('Vous devez Ãªtre connectÃ© pour voir votre profil.');
+                showError('Vous devez être connecté pour voir votre profil.');
                 setTimeout(() => {
                     window.location.href = 'connexion.html';
                 }, 2000);
@@ -45,33 +45,33 @@ function waitForAuthAndUser() {
     });
 }
 
-// Charger le profil de l'utilisateur connectÃ© (renommÃ© pour Ã©viter conflit avec auth-supabase.js)
+// Charger le profil de l'utilisateur connecté (renommé pour éviter conflit avec auth-supabase.js)
 async function loadProfilePage() {
     try {
-        // Double vÃ©rification
+        // Double vérification
         if (!window.currentUser) {
-            console.error('âŒ Pas d\'utilisateur connectÃ© (window.currentUser est null)');
-            showError('Vous devez Ãªtre connectÃ© pour voir votre profil.');
+            console.error('❌ Pas d\'utilisateur connecté (window.currentUser est null)');
+            showError('Vous devez être connecté pour voir votre profil.');
             setTimeout(() => {
                 window.location.href = 'connexion.html';
             }, 2000);
             return;
         }
         
-        debugLog('âœ… Utilisateur connectÃ©:', window.currentUser.email);
+        console.log('✅ Utilisateur connecté:', window.currentUser.email);
         
         // Essayer de charger depuis le cache d'abord
         const cacheKey = `user_profile_${window.currentUser.id}`;
         const cachedProfile = window.cacheManager?.get(cacheKey);
         
         if (cachedProfile) {
-            debugLog('ðŸ“¦ Profil chargÃ© depuis le cache');
+            console.log('📦 Profil chargé depuis le cache');
             localUserProfile = cachedProfile;
             displayProfile(cachedProfile);
             return;
         }
         
-        // RÃ©cupÃ©rer le profil depuis user_profiles
+        // Récupérer le profil depuis user_profiles
         const { data: profile, error } = await supabase
             .from('user_profiles')
             .select('*')
@@ -79,19 +79,19 @@ async function loadProfilePage() {
             .single();
             
         if (error) {
-            console.error('âŒ Erreur chargement profil:', error);
-            showError('Impossible de charger votre profil. Veuillez rÃ©essayer.');
+            console.error('❌ Erreur chargement profil:', error);
+            showError('Impossible de charger votre profil. Veuillez réessayer.');
             return;
         }
         
         if (!profile) {
-            console.error('âŒ Profil introuvable');
+            console.error('❌ Profil introuvable');
             showError('Votre profil n\'existe pas encore. Contactez un administrateur.');
             return;
         }
         
         localUserProfile = profile;
-        debugLog('âœ… Profil chargÃ©:', profile);
+        console.log('✅ Profil chargé:', profile);
         
         // Mettre en cache pour 5 minutes
         if (window.cacheManager) {
@@ -102,7 +102,7 @@ async function loadProfilePage() {
         displayProfile(profile);
         
     } catch (error) {
-        console.error('âŒ Erreur lors du chargement du profil:', error);
+        console.error('❌ Erreur lors du chargement du profil:', error);
         showError('Une erreur technique est survenue.');
     }
 }
@@ -119,7 +119,7 @@ function displayProfile(profile) {
     document.getElementById('profile-username').textContent = profile.username || 'Inconnu';
     document.getElementById('profile-email').textContent = window.currentUser.email || 'Inconnu';
     
-    // Afficher le rÃ´le avec le bon badge
+    // Afficher le rôle avec le bon badge
     const roleBadge = document.getElementById('profile-role');
     const role = (profile.role || 'joueur').trim(); // Nettoyer les espaces
     
@@ -132,34 +132,34 @@ function displayProfile(profile) {
     
     // Afficher le bouton Dashboard si admin
     const dashboardBtn = document.getElementById('dashboard-btn');
-    debugLog('[DEBUG] Role de l utilisateur:', role);
-    debugLog('[DEBUG] Bouton dashboard:', dashboardBtn ? 'trouve' : 'non trouve');
+    console.log('[DEBUG] Role de l utilisateur:', role);
+    console.log('[DEBUG] Bouton dashboard:', dashboardBtn ? 'trouve' : 'non trouve');
     
     if (dashboardBtn) {
         if (role === 'admin') {
-            debugLog('[OK] Affichage bouton Dashboard (admin)');
+            console.log('[OK] Affichage bouton Dashboard (admin)');
             dashboardBtn.style.setProperty('display', 'inline-block', 'important');
         } else {
-            debugLog('[INFO] Bouton Dashboard cache (role:', role, ')');
+            console.log('[INFO] Bouton Dashboard cache (role:', role, ')');
             dashboardBtn.style.setProperty('display', 'none', 'important');
         }
     }
     
     // Afficher le bouton Guilde si membre ou admin
     const guildeBtn = document.getElementById('guilde-btn');
-    debugLog('[DEBUG] Bouton guilde:', guildeBtn ? 'trouve' : 'non trouve');
+    console.log('[DEBUG] Bouton guilde:', guildeBtn ? 'trouve' : 'non trouve');
     
     if (guildeBtn) {
         if (role === 'membre' || role === 'admin') {
-            debugLog('[OK] Affichage bouton Guilde (membre/admin)');
+            console.log('[OK] Affichage bouton Guilde (membre/admin)');
             guildeBtn.style.setProperty('display', 'inline-block', 'important');
         } else {
-            debugLog('[INFO] Bouton Guilde cache (role:', role, ')');
+            console.log('[INFO] Bouton Guilde cache (role:', role, ')');
             guildeBtn.style.setProperty('display', 'none', 'important');
         }
     }
     
-    // Formater la date de crÃ©ation
+    // Formater la date de création
     if (profile.created_at) {
         const date = new Date(profile.created_at);
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -178,7 +178,7 @@ function displayProfile(profile) {
     loadStats(profile);
 }
 
-// Obtenir le label du rÃ´le en franÃ§ais
+// Obtenir le label du rôle en français
 function getRoleLabel(role) {
     const labels = {
         'joueur': 'Joueur',
@@ -196,11 +196,11 @@ async function saveProfileChanges() {
         
         // Valider le niveau
         if (niveau < 1 || niveau > 100) {
-            showError('Le niveau doit Ãªtre entre 1 et 100.');
+            showError('Le niveau doit être entre 1 et 100.');
             return;
         }
         
-        // Mettre Ã  jour le profil
+        // Mettre à jour le profil
         const { error } = await supabase
             .from('user_profiles')
             .update({ 
@@ -210,49 +210,49 @@ async function saveProfileChanges() {
             .eq('id', window.currentUser.id);
         
         if (error) {
-            console.error('âŒ Erreur sauvegarde profil:', error);
+            console.error('❌ Erreur sauvegarde profil:', error);
             showError('Impossible de sauvegarder vos modifications.');
             return;
         }
         
-        debugLog('âœ… Profil mis Ã  jour');
-        showSuccess('Modifications sauvegardÃ©es avec succÃ¨s !');
+        console.log('✅ Profil mis à jour');
+        showSuccess('Modifications sauvegardées avec succès !');
         
         // Invalider le cache du profil
         if (window.cacheManager) {
             window.cacheManager.invalidate(`user_profile_${window.currentUser.id}`);
-            window.cacheManager.invalidate('all_users'); // Aussi invalider la liste complÃ¨te
+            window.cacheManager.invalidate('all_users'); // Aussi invalider la liste complète
         }
         
         // Recharger le profil
         await loadProfilePage();
         
     } catch (error) {
-        console.error('âŒ Erreur lors de la sauvegarde:', error);
+        console.error('❌ Erreur lors de la sauvegarde:', error);
         showError('Une erreur technique est survenue.');
     }
 }
 
-// Charger les statistiques avec les vraies donnÃ©es du profil
+// Charger les statistiques avec les vraies données du profil
 function loadStats(profile) {
     // Afficher le vrai niveau de l'utilisateur
     document.getElementById('stat-messages').textContent = '0';
     document.getElementById('stat-items').textContent = '0';
     document.getElementById('stat-level').textContent = profile.niveau || 1;
     
-    // TODO: ImplÃ©menter la rÃ©cupÃ©ration des vraies statistiques
+    // TODO: Implémenter la récupération des vraies statistiques
     // - Compter les messages dans la table mailbox
-    // - Compter les items possÃ©dÃ©s
+    // - Compter les items possédés
 }
 
 // Afficher un message d'erreur
 function showError(message) {
-    alert('âŒ ' + message);
+    alert('❌ ' + message);
 }
 
-// Afficher un message de succÃ¨s
+// Afficher un message de succès
 function showSuccess(message) {
-    alert('âœ… ' + message);
+    alert('✅ ' + message);
 }
 
 // Fonction utilitaire pour formater les dates
@@ -272,4 +272,4 @@ function formatDate(dateString) {
     return `Il y a ${Math.floor(diffDays / 365)} ans`;
 }
 
-debugLog('âœ… Module profil.js chargÃ©');
+console.log('✅ Module profil.js chargé');

@@ -1,8 +1,8 @@
-﻿/* espace-guilde.js - Gestion de l'espace guilde pour les membres */
+/* espace-guilde.js - Gestion de l'espace guilde pour les membres */
 
 // Fonction pour changer d'onglet
 function switchGuildeTab(tabName) {
-    debugLog('[GUILDE] Changement d\'onglet vers:', tabName);
+    console.log('[GUILDE] Changement d\'onglet vers:', tabName);
     
     // Retirer la classe active de tous les boutons et contenus
     document.querySelectorAll('.guilde-tab-btn').forEach(btn => {
@@ -27,33 +27,33 @@ function switchGuildeTab(tabName) {
     localStorage.setItem('guildeActiveTab', tabName);
 }
 
-// Attendre que l'auth soit prÃªte
+// Attendre que l'auth soit prête
 document.addEventListener('DOMContentLoaded', async function() {
-    debugLog('[GUILDE] Initialisation de l espace guilde...');
+    console.log('[GUILDE] Initialisation de l espace guilde...');
     
-    // Cacher le lien "Guilde" du menu (on est dÃ©jÃ  sur la page)
+    // Cacher le lien "Guilde" du menu (on est déjà sur la page)
     hideGuildeLinkFromMenu();
     
-    // Attendre que Supabase et l'utilisateur soient prÃªts
+    // Attendre que Supabase et l'utilisateur soient prêts
     await waitForAuthAndUser();
     
-    // VÃ©rifier que l'utilisateur est membre ou admin
+    // Vérifier que l'utilisateur est membre ou admin
     await checkMemberAccess();
 });
 
-// Cacher le lien Guilde du menu (on est dÃ©jÃ  sur cette page)
+// Cacher le lien Guilde du menu (on est déjà sur cette page)
 function hideGuildeLinkFromMenu() {
     const navMenu = document.getElementById('nav-menu');
     if (navMenu) {
         const guildeLink = navMenu.querySelector('a[href="espace-guilde.html"]');
         if (guildeLink && guildeLink.parentElement) {
             guildeLink.parentElement.style.display = 'none';
-            debugLog('[OK] Lien Guilde cache du menu');
+            console.log('[OK] Lien Guilde cache du menu');
         }
     }
 }
 
-// Attendre que l'authentification soit prÃªte
+// Attendre que l'authentification soit prête
 function waitForAuthAndUser() {
     return new Promise((resolve) => {
         let attempts = 0;
@@ -64,7 +64,7 @@ function waitForAuthAndUser() {
             
             if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
-                debugLog('[OK] Auth prete et utilisateur connecte');
+                console.log('[OK] Auth prete et utilisateur connecte');
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
@@ -76,7 +76,7 @@ function waitForAuthAndUser() {
     });
 }
 
-// VÃ©rifier l'accÃ¨s membre/admin
+// Vérifier l'accès membre/admin
 async function checkMemberAccess() {
     try {
         if (!window.currentUser) {
@@ -85,7 +85,7 @@ async function checkMemberAccess() {
             return;
         }
         
-        // RÃ©cupÃ©rer le profil
+        // Récupérer le profil
         const { data: profile, error } = await supabase
             .from('user_profiles')
             .select('role')
@@ -98,11 +98,11 @@ async function checkMemberAccess() {
             return;
         }
         
-        // VÃ©rifier le rÃ´le (nettoyer les espaces)
+        // Vérifier le rôle (nettoyer les espaces)
         const role = (profile.role || '').trim();
         
         if (role === 'membre' || role === 'admin') {
-            debugLog('[OK] Acces autorise - Role:', role);
+            console.log('[OK] Acces autorise - Role:', role);
             await loadGuildeData();
             
             // Restaurer l'onglet actif depuis localStorage
@@ -111,7 +111,7 @@ async function checkMemberAccess() {
                 switchGuildeTab(savedTab);
             }
         } else {
-            debugWarn('[ATTENTION] Acces refuse - Role:', role);
+            console.warn('[ATTENTION] Acces refuse - Role:', role);
             showAccessDenied();
         }
         
@@ -121,19 +121,19 @@ async function checkMemberAccess() {
     }
 }
 
-// Afficher le message d'accÃ¨s refusÃ©
+// Afficher le message d'accès refusé
 function showAccessDenied() {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('guilde-content').style.display = 'none';
     document.getElementById('access-denied').style.display = 'block';
 }
 
-// Charger toutes les donnÃ©es de la guilde
+// Charger toutes les données de la guilde
 async function loadGuildeData() {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('guilde-content').style.display = 'block';
     
-    // Charger les trois sections en parallÃ¨le
+    // Charger les trois sections en parallèle
     await Promise.all([
         loadPlanning(),
         loadObjectives(),
@@ -155,11 +155,11 @@ async function loadPlanning() {
         
         if (cached) {
             displayPlanning(cached);
-            debugLog('[OK] Planning charge depuis cache');
+            console.log('[OK] Planning charge depuis cache');
             return;
         }
         
-        // RÃ©cupÃ©rer les Ã©vÃ©nements Ã  venir
+        // Récupérer les événements à venir
         const { data, error } = await supabase
             .from('guild_planning')
             .select('*')
@@ -178,7 +178,7 @@ async function loadPlanning() {
         }
         
         displayPlanning(data || []);
-        debugLog('[OK] Planning charge:', (data || []).length, 'evenements');
+        console.log('[OK] Planning charge:', (data || []).length, 'evenements');
         
     } catch (error) {
         console.error('[ERREUR]:', error);
@@ -203,7 +203,7 @@ function displayPlanning(data) {
 }// ========== OBJECTIFS ==========
 async function loadObjectives() {
     try {
-        // Obtenir le numÃ©ro de semaine actuel
+        // Obtenir le numéro de semaine actuel
         const now = new Date();
         const weekNumber = getWeekNumber(now);
         const year = now.getFullYear();
@@ -214,11 +214,11 @@ async function loadObjectives() {
         
         if (cached) {
             displayObjectives(cached);
-            debugLog('[OK] Objectifs charges depuis cache');
+            console.log('[OK] Objectifs charges depuis cache');
             return;
         }
         
-        // RÃ©cupÃ©rer les objectifs de la semaine
+        // Récupérer les objectifs de la semaine
         const { data, error } = await supabase
             .from('guild_objectives')
             .select('*')
@@ -237,7 +237,7 @@ async function loadObjectives() {
         }
         
         displayObjectives(data || []);
-        debugLog('[OK] Objectifs charges:', (data || []).length);
+        console.log('[OK] Objectifs charges:', (data || []).length);
         
     } catch (error) {
         console.error('[ERREUR]:', error);
@@ -268,14 +268,14 @@ function displayObjectives(data) {
     `).join('');
 }
 
-// ========== PRÃ‰SENCE ==========
+// ========== PRÉSENCE ==========
 async function loadPresence() {
     try {
         const today = new Date().toISOString().split('T')[0];
         
-        debugLog('[DEBUG] Chargement presences pour:', today);
+        console.log('[DEBUG] Chargement presences pour:', today);
         
-        // RÃ©cupÃ©rer toutes les prÃ©sences du jour
+        // Récupérer toutes les présences du jour
         const { data: presences, error: presencesError } = await supabase
             .from('guild_presence')
             .select('*')
@@ -289,7 +289,7 @@ async function loadPresence() {
             return;
         }
         
-        debugLog('[DEBUG] Presences recues:', presences);
+        console.log('[DEBUG] Presences recues:', presences);
         
         const container = document.getElementById('presence-list');
         
@@ -298,7 +298,7 @@ async function loadPresence() {
             return;
         }
         
-        // RÃ©cupÃ©rer les profils des utilisateurs
+        // Récupérer les profils des utilisateurs
         const userIds = presences.map(p => p.user_id);
         const { data: profiles, error: profilesError } = await supabase
             .from('user_profiles')
@@ -312,13 +312,13 @@ async function loadPresence() {
             return;
         }
         
-        // CrÃ©er un map des profils par ID
+        // Créer un map des profils par ID
         const profileMap = {};
         (profiles || []).forEach(p => {
             profileMap[p.id] = p;
         });
         
-        debugLog('[DEBUG] Profils recus:', profiles);
+        console.log('[DEBUG] Profils recus:', profiles);
         
         container.innerHTML = presences.map(presence => {
             const profile = profileMap[presence.user_id];
@@ -334,7 +334,7 @@ async function loadPresence() {
             `;
         }).join('');
         
-        debugLog('[OK] Presences chargees:', presences.length);
+        console.log('[OK] Presences chargees:', presences.length);
         
     } catch (error) {
         console.error('[ERREUR]:', error);
@@ -345,12 +345,12 @@ async function loadPresence() {
     }
 }
 
-// Marquer sa prÃ©sence ou absence
+// Marquer sa présence ou absence
 async function markPresence(statut = 'present') {
     try {
         const today = new Date().toISOString().split('T')[0];
         
-        // VÃ©rifier si dÃ©jÃ  marquÃ©
+        // Vérifier si déjà marqué
         const { data: existing } = await supabase
             .from('guild_presence')
             .select('id, statut')
@@ -359,7 +359,7 @@ async function markPresence(statut = 'present') {
             .single();
         
         if (existing) {
-            // Mettre Ã  jour le statut si diffÃ©rent
+            // Mettre à jour le statut si différent
             if (existing.statut !== statut) {
                 const { error: updateError } = await supabase
                     .from('guild_presence')
@@ -385,7 +385,7 @@ async function markPresence(statut = 'present') {
             }
         }
         
-        // InsÃ©rer la prÃ©sence/absence
+        // Insérer la présence/absence
         const { error } = await supabase
             .from('guild_presence')
             .insert({
@@ -469,10 +469,10 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// ========== MUR D'ACTIVITÃ‰ ==========
+// ========== MUR D'ACTIVITÉ ==========
 async function loadActivityWall() {
     try {
-        debugLog('[GUILDE] Chargement du mur d\'activitÃ©...');
+        console.log('[GUILDE] Chargement du mur d\'activité...');
         
         // Utiliser le cache
         const cacheKey = 'guild_activity_wall';
@@ -480,11 +480,11 @@ async function loadActivityWall() {
         
         if (cached) {
             displayActivityWall(cached);
-            debugLog('[OK] Mur d\'activitÃ© chargÃ© depuis cache');
+            console.log('[OK] Mur d\'activité chargé depuis cache');
             return;
         }
         
-        // RÃ©cupÃ©rer les activitÃ©s (limitÃ©es aux 20 derniÃ¨res)
+        // Récupérer les activités (limitées aux 20 dernières)
         const { data, error } = await supabase
             .from('guild_activity_wall')
             .select('*')
@@ -492,7 +492,7 @@ async function loadActivityWall() {
             .limit(20);
         
         if (error) {
-            console.error('[ERREUR] Erreur chargement activitÃ©s:', error);
+            console.error('[ERREUR] Erreur chargement activités:', error);
             return;
         }
         
@@ -502,10 +502,10 @@ async function loadActivityWall() {
         }
         
         displayActivityWall(data || []);
-        debugLog('[OK] Mur d\'activitÃ© chargÃ©:', (data || []).length, 'publications');
+        console.log('[OK] Mur d\'activité chargé:', (data || []).length, 'publications');
         
     } catch (error) {
-        console.error('[ERREUR] Erreur mur d\'activitÃ©:', error);
+        console.error('[ERREUR] Erreur mur d\'activité:', error);
     }
 }
 
@@ -515,8 +515,8 @@ function displayActivityWall(activities) {
     if (!activities || activities.length === 0) {
         container.innerHTML = `
             <div class="no-activities">
-                <div class="no-activities-icon">ðŸ“‹</div>
-                <p class="no-activities-text">Aucune activitÃ© pour le moment</p>
+                <div class="no-activities-icon">📋</div>
+                <p class="no-activities-text">Aucune activité pour le moment</p>
             </div>
         `;
         return;
@@ -548,7 +548,7 @@ function formatActivityDate(dateString) {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
     
-    if (minutes < 1) return 'Ã€ l\'instant';
+    if (minutes < 1) return 'À l\'instant';
     if (minutes < 60) return `Il y a ${minutes} min`;
     if (hours < 24) return `Il y a ${hours}h`;
     if (days < 7) return `Il y a ${days}j`;
@@ -559,11 +559,11 @@ function formatActivityDate(dateString) {
 
 function formatActivityType(type) {
     const types = {
-        'annonce': 'ðŸ“¢ Annonce',
-        'evenement': 'ðŸ“… Ã‰vÃ©nement',
-        'info': 'â„¹ï¸ Info',
-        'victoire': 'ðŸ† Victoire'
+        'annonce': '📢 Annonce',
+        'evenement': '📅 Événement',
+        'info': 'ℹ️ Info',
+        'victoire': '🏆 Victoire'
     };
-    return types[type] || 'ðŸ“¢ Annonce';
+    return types[type] || '📢 Annonce';
 }
 

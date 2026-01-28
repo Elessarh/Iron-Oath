@@ -1,4 +1,4 @@
-﻿// hdv-supabase.js - SystÃ¨me HDV avec intÃ©gration Supabase
+// hdv-supabase.js - Système HDV avec intégration Supabase
 // Fonctions pour remplacer localStorage par Supabase
 
 class HDVSupabaseManager {
@@ -10,23 +10,23 @@ class HDVSupabaseManager {
 
     // Attendre que Supabase soit disponible
     async waitForSupabase() {
-        debugLog('â³ Attente de Supabase...');
+        console.log('⏳ Attente de Supabase...');
         
         for (let i = 0; i < 50; i++) { // Max 5 secondes d'attente
             if (window.globalSupabase) {
                 this.supabase = window.globalSupabase;
                 this.initialized = true;
-                debugLog('âœ… Supabase connectÃ© au HDV Manager');
+                console.log('✅ Supabase connecté au HDV Manager');
                 return true;
             }
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         
-        console.error('âŒ Timeout: Instance globale Supabase non disponible aprÃ¨s 5 secondes');
+        console.error('❌ Timeout: Instance globale Supabase non disponible après 5 secondes');
         return false;
     }
 
-    // S'assurer que Supabase est initialisÃ©
+    // S'assurer que Supabase est initialisé
     async ensureInitialized() {
         if (!this.initialized) {
             await this.initPromise;
@@ -37,21 +37,21 @@ class HDVSupabaseManager {
     // Sauvegarder un ordre dans Supabase
     async saveOrderToSupabase(order) {
         try {
-            // S'assurer que Supabase est initialisÃ©
+            // S'assurer que Supabase est initialisé
             const ready = await this.ensureInitialized();
             if (!ready) {
                 throw new Error('Supabase non disponible');
             }
 
-            debugLog('ðŸ’¾ Sauvegarde ordre vers Supabase:', order);
+            console.log('💾 Sauvegarde ordre vers Supabase:', order);
             
             // Obtenir l'utilisateur actuel
             const user = await this.getCurrentUser();
             if (!user) {
-                throw new Error('Utilisateur non connectÃ©');
+                throw new Error('Utilisateur non connecté');
             }
 
-            // PrÃ©parer les donnÃ©es de l'ordre
+            // Préparer les données de l'ordre
             const orderData = {
                 user_id: user.id,
                 username: order.username,
@@ -66,7 +66,7 @@ class HDVSupabaseManager {
                 status: 'active'
             };
 
-            debugLog('ðŸ“¤ DonnÃ©es envoyÃ©es Ã  Supabase:', orderData);
+            console.log('📤 Données envoyées à Supabase:', orderData);
 
             const { data, error } = await this.supabase
                 .from('market_orders')
@@ -74,14 +74,14 @@ class HDVSupabaseManager {
                 .select();
 
             if (error) {
-                console.error('âŒ Erreur Supabase:', error);
+                console.error('❌ Erreur Supabase:', error);
                 throw error;
             }
 
-            debugLog('âœ… Ordre sauvegardÃ©:', data[0]);
+            console.log('✅ Ordre sauvegardé:', data[0]);
             return data[0];
         } catch (error) {
-            console.error('âŒ Erreur sauvegarde ordre:', error);
+            console.error('❌ Erreur sauvegarde ordre:', error);
             throw error;
         }
     }
@@ -89,13 +89,13 @@ class HDVSupabaseManager {
     // Charger tous les ordres actifs depuis Supabase
     async loadOrdersFromSupabase() {
         try {
-            // S'assurer que Supabase est initialisÃ©
+            // S'assurer que Supabase est initialisé
             const ready = await this.ensureInitialized();
             if (!ready) {
                 throw new Error('Supabase non disponible');
             }
 
-            debugLog('ðŸ“¥ Chargement ordres depuis Supabase...');
+            console.log('📥 Chargement ordres depuis Supabase...');
 
             const { data, error } = await this.supabase
                 .from('market_orders')
@@ -104,14 +104,14 @@ class HDVSupabaseManager {
                 .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('âŒ Erreur Supabase:', error);
+                console.error('❌ Erreur Supabase:', error);
                 throw error;
             }
 
-            debugLog(`âœ… ${data.length} ordres chargÃ©s depuis Supabase`);
+            console.log(`✅ ${data.length} ordres chargés depuis Supabase`);
             return this.formatOrdersFromSupabase(data);
         } catch (error) {
-            console.error('âŒ Erreur chargement ordres:', error);
+            console.error('❌ Erreur chargement ordres:', error);
             return { orders: [], myOrders: [] };
         }
     }
@@ -135,7 +135,7 @@ class HDVSupabaseManager {
 
             return this.formatMyOrdersFromSupabase(data);
         } catch (error) {
-            console.error('âŒ Erreur chargement mes ordres:', error);
+            console.error('❌ Erreur chargement mes ordres:', error);
             return [];
         }
     }
@@ -143,7 +143,7 @@ class HDVSupabaseManager {
     // Supprimer un ordre
     async deleteOrderFromSupabase(orderId) {
         try {
-            debugLog('ðŸ—‘ï¸ Suppression ordre:', orderId);
+            console.log('🗑️ Suppression ordre:', orderId);
 
             const { error } = await this.supabase
                 .from('market_orders')
@@ -152,10 +152,10 @@ class HDVSupabaseManager {
 
             if (error) throw error;
 
-            debugLog('âœ… Ordre supprimÃ©');
+            console.log('✅ Ordre supprimé');
             return true;
         } catch (error) {
-            console.error('âŒ Erreur suppression ordre:', error);
+            console.error('❌ Erreur suppression ordre:', error);
             return false;
         }
     }
@@ -180,7 +180,7 @@ class HDVSupabaseManager {
                 price: order.price,
                 total: order.total_price,
                 username: order.username,
-                creator: order.username, // Ajout pour compatibilitÃ©
+                creator: order.username, // Ajout pour compatibilité
                 seller: order.type === 'sell' ? order.username : null,
                 buyer: order.type === 'buy' ? order.username : null,
                 timestamp: new Date(order.created_at).toLocaleString(),
@@ -189,7 +189,7 @@ class HDVSupabaseManager {
 
             orders.push(formattedOrder);
 
-            // Si c'est un ordre de l'utilisateur actuel, l'ajouter aussi Ã  myOrders
+            // Si c'est un ordre de l'utilisateur actuel, l'ajouter aussi à myOrders
             if (user && order.user_id === user.id) {
                 myOrders.push(formattedOrder);
             }
@@ -223,7 +223,7 @@ class HDVSupabaseManager {
             const { data: { user } } = await this.supabase.auth.getUser();
             return user;
         } catch (error) {
-            console.error('âŒ Erreur rÃ©cupÃ©ration utilisateur:', error);
+            console.error('❌ Erreur récupération utilisateur:', error);
             return null;
         }
     }
@@ -244,7 +244,7 @@ class HDVSupabaseManager {
         return null;
     }
 
-    // VÃ©rifier si Supabase est disponible
+    // Vérifier si Supabase est disponible
     isSupabaseAvailable() {
         try {
             return this.initialized && 
@@ -252,7 +252,7 @@ class HDVSupabaseManager {
                    window.supabase !== null &&
                    typeof this.supabase.from === 'function';
         } catch (error) {
-            debugWarn('âš ï¸ VÃ©rification Supabase Ã©chouÃ©e:', error);
+            console.warn('⚠️ Vérification Supabase échouée:', error);
             return false;
         }
     }
@@ -260,20 +260,20 @@ class HDVSupabaseManager {
     // Sauvegarder une transaction dans l'historique d'achat
     async saveTransactionToHistory(transaction) {
         try {
-            // S'assurer que Supabase est initialisÃ©
+            // S'assurer que Supabase est initialisé
             const ready = await this.ensureInitialized();
             if (!ready) {
-                console.error('âŒ Supabase non disponible pour sauvegarder l\'historique');
+                console.error('❌ Supabase non disponible pour sauvegarder l\'historique');
                 throw new Error('Supabase non disponible');
             }
 
-            debugLog('ðŸ’¾ Sauvegarde transaction dans l\'historique:', transaction);
+            console.log('💾 Sauvegarde transaction dans l\'historique:', transaction);
 
-            // Obtenir l'utilisateur actuel pour vÃ©rifier
+            // Obtenir l'utilisateur actuel pour vérifier
             const currentUser = await this.getCurrentUser();
-            debugLog('ðŸ‘¤ Utilisateur actuel:', currentUser);
+            console.log('👤 Utilisateur actuel:', currentUser);
 
-            // PrÃ©parer les donnÃ©es de la transaction pour l'historique
+            // Préparer les données de la transaction pour l'historique
             const historyData = {
                 order_id: transaction.orderId,
                 seller_id: transaction.sellerId,
@@ -289,7 +289,7 @@ class HDVSupabaseManager {
                 transaction_type: transaction.transactionType
             };
 
-            debugLog('ðŸ“¤ DonnÃ©es historique envoyÃ©es Ã  Supabase:', historyData);
+            console.log('📤 Données historique envoyées à Supabase:', historyData);
 
             const { data, error } = await this.supabase
                 .from('purchase_history')
@@ -297,8 +297,8 @@ class HDVSupabaseManager {
                 .select();
 
             if (error) {
-                console.error('âŒ Erreur Supabase historique:', error);
-                console.error('âŒ DÃ©tails erreur:', {
+                console.error('❌ Erreur Supabase historique:', error);
+                console.error('❌ Détails erreur:', {
                     message: error.message,
                     details: error.details,
                     hint: error.hint,
@@ -307,15 +307,15 @@ class HDVSupabaseManager {
                 throw error;
             }
 
-            debugLog('âœ… Transaction sauvegardÃ©e dans l\'historique:', data[0]);
+            console.log('✅ Transaction sauvegardée dans l\'historique:', data[0]);
             return data[0];
         } catch (error) {
-            console.error('âŒ Erreur sauvegarde historique:', error);
+            console.error('❌ Erreur sauvegarde historique:', error);
             throw error;
         }
     }
 
-    // RÃ©cupÃ©rer l'historique d'achat d'un utilisateur
+    // Récupérer l'historique d'achat d'un utilisateur
     async getUserPurchaseHistory(userId) {
         try {
             const ready = await this.ensureInitialized();
@@ -323,7 +323,7 @@ class HDVSupabaseManager {
                 throw new Error('Supabase non disponible');
             }
 
-            debugLog('ðŸ“¥ Chargement historique d\'achat pour utilisateur:', userId);
+            console.log('📥 Chargement historique d\'achat pour utilisateur:', userId);
 
             const { data, error } = await this.supabase
                 .from('purchase_history')
@@ -332,14 +332,14 @@ class HDVSupabaseManager {
                 .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('âŒ Erreur chargement historique:', error);
+                console.error('❌ Erreur chargement historique:', error);
                 throw error;
             }
 
-            debugLog(`âœ… ${data.length} transactions chargÃ©es depuis l'historique`);
+            console.log(`✅ ${data.length} transactions chargées depuis l'historique`);
             return data;
         } catch (error) {
-            console.error('âŒ Erreur chargement historique:', error);
+            console.error('❌ Erreur chargement historique:', error);
             return [];
         }
     }

@@ -905,35 +905,13 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    .container {
-        padding: 0 1rem;
-    }
-    
     .hdv-tabs {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .hdv-tab {
-        padding: 0.75rem 1rem;
-        font-size: 0.85rem;
-        flex-shrink: 0;
-    }
-    
-    .hdv-panel {
-        padding: 1rem;
+        flex-direction: column;
     }
     
     .filter-row {
         flex-direction: column;
         gap: 1rem;
-    }
-    
-    .filter-group {
-        min-width: auto;
-        width: 100%;
     }
     
     .order-type-selection {
@@ -948,7 +926,6 @@
     .order-card {
         flex-direction: column;
         text-align: center;
-        padding: 1rem;
     }
     
     /* Amélioration responsive pour les boutons */
