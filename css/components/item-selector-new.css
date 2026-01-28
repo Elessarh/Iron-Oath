@@ -416,17 +416,60 @@
     }
     
     .items-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 0.75rem;
-        padding: 1rem;
+        grid-template-columns: repeat(2, 1fr); /* Forcer 2 colonnes sur mobile */
+        gap: 0.5rem;
+        padding: 0.75rem;
+        max-height: 50vh; /* Limiter la hauteur pour éviter débordement */
+    }
+    
+    .item-card {
+        padding: 0.75rem;
+        min-height: auto;
+    }
+    
+    .item-image {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .item-name {
+        font-size: 0.8rem;
     }
     
     .selector-actions {
         flex-direction: column;
+        padding: 1rem;
+    }
+    
+    .selector-actions button {
+        width: 100%;
     }
     
     .pagination-controls {
         flex-wrap: wrap;
         gap: 0.5rem;
+        padding: 0.75rem;
+    }
+    
+    .pagination-btn {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+        min-width: 70px;
+    }
+    
+    .pagination-numbers {
+        gap: 0.25rem;
+        flex-wrap: wrap;
+    }
+    
+    .pagination-number {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+        min-width: 35px;
+    }
+    
+    .items-info {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
     }
 }

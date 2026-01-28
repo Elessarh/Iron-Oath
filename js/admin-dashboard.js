@@ -1,4 +1,4 @@
-/* admin-dashboard.js - Gestion du dashboard administrateur */
+﻿/* admin-dashboard.js - Gestion du dashboard administrateur */
 
 // Variables locales (currentUser est global depuis auth-supabase.js)
 let localCurrentUser = null;
@@ -15,7 +15,7 @@ let currentSortDirection = 'desc'; // 'asc' ou 'desc'
 
 // Fonction de gestion des onglets du dashboard
 function switchDashboardTab(tabName) {
-    console.log('🔄 Changement d\'onglet vers:', tabName);
+    debugLog('ðŸ”„ Changement d\'onglet vers:', tabName);
     
     // Retirer la classe active de tous les boutons et contenus
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -32,7 +32,7 @@ function switchDashboardTab(tabName) {
     if (activeButton) activeButton.classList.add('active');
     if (activeContent) activeContent.classList.add('active');
     
-    // Charger les données spécifiques à l'onglet
+    // Charger les donnÃ©es spÃ©cifiques Ã  l'onglet
     if (tabName === 'activity') {
         loadAdminActivities();
     }
@@ -43,16 +43,16 @@ function switchDashboardTab(tabName) {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('📊 Initialisation du dashboard admin...');
+    debugLog('ðŸ“Š Initialisation du dashboard admin...');
     
-    // Attendre que auth-supabase.js soit chargé ET que l'utilisateur soit connecté
+    // Attendre que auth-supabase.js soit chargÃ© ET que l'utilisateur soit connectÃ©
     await waitForAuthAndUser();
     
-    // Vérifier les droits admin
+    // VÃ©rifier les droits admin
     await checkAdminAccess();
 });
 
-// Attendre que l'authentification soit prête ET que l'utilisateur soit connecté
+// Attendre que l'authentification soit prÃªte ET que l'utilisateur soit connectÃ©
 function waitForAuthAndUser() {
     return new Promise((resolve) => {
         let attempts = 0;
@@ -61,19 +61,19 @@ function waitForAuthAndUser() {
         const checkAuth = setInterval(() => {
             attempts++;
             
-            // Vérifier que Supabase ET window.currentUser sont prêts
+            // VÃ©rifier que Supabase ET window.currentUser sont prÃªts
             if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
-                console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
+                debugLog('âœ… Auth prÃªte et utilisateur connectÃ©:', window.currentUser.email);
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
-                console.error('❌ Timeout: utilisateur non connecté après 10s');
-                console.log('État:', {
+                console.error('âŒ Timeout: utilisateur non connectÃ© aprÃ¨s 10s');
+                debugLog('Ã‰tat:', {
                     supabase: typeof supabase !== 'undefined',
                     currentUser: window.currentUser
                 });
-                showError('Vous devez être connecté pour accéder au dashboard.');
+                showError('Vous devez Ãªtre connectÃ© pour accÃ©der au dashboard.');
                 setTimeout(() => {
                     window.location.href = 'connexion.html';
                 }, 2000);
@@ -83,21 +83,21 @@ function waitForAuthAndUser() {
     });
 }
 
-// Vérifier que l'utilisateur est admin
+// VÃ©rifier que l'utilisateur est admin
 async function checkAdminAccess() {
     try {
         // Utiliser la session globale depuis auth-supabase.js
         if (!window.currentUser) {
-            console.error('❌ Pas d\'utilisateur connecté');
-            showError('Vous devez être connecté pour accéder au dashboard.');
+            console.error('âŒ Pas d\'utilisateur connectÃ©');
+            showError('Vous devez Ãªtre connectÃ© pour accÃ©der au dashboard.');
             setTimeout(() => {
                 window.location.href = 'connexion.html';
             }, 2000);
             return;
         }        localCurrentUser = window.currentUser;
-        console.log('✅ Utilisateur connecté:', localCurrentUser.email);
+        debugLog('âœ… Utilisateur connectÃ©:', localCurrentUser.email);
         
-        // Récupérer le profil et vérifier le rôle
+        // RÃ©cupÃ©rer le profil et vÃ©rifier le rÃ´le
         const { data: profile, error } = await supabase
             .from('user_profiles')
             .select('*')
@@ -105,24 +105,24 @@ async function checkAdminAccess() {
             .single();
             
         if (error || !profile) {
-            console.error('❌ Erreur chargement profil:', error);
-            showError('Impossible de vérifier vos droits d\'accès.');
+            console.error('âŒ Erreur chargement profil:', error);
+            showError('Impossible de vÃ©rifier vos droits d\'accÃ¨s.');
             return;
         }
         
         currentUserProfile = profile;
         
-        // Vérifier si l'utilisateur est admin
+        // VÃ©rifier si l'utilisateur est admin
         if (profile.role !== 'admin') {
-            console.error('❌ Accès refusé: utilisateur non admin');
-            showError('Vous devez être administrateur pour accéder à cette page.');
+            console.error('âŒ AccÃ¨s refusÃ©: utilisateur non admin');
+            showError('Vous devez Ãªtre administrateur pour accÃ©der Ã  cette page.');
             setTimeout(() => {
                 window.location.href = '../index.html';
             }, 3000);
             return;
         }
         
-        console.log('✅ Accès admin confirmé');
+        debugLog('âœ… AccÃ¨s admin confirmÃ©');
         
         // Charger les utilisateurs
         await loadUsers();
@@ -131,15 +131,15 @@ async function checkAdminAccess() {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('dashboard-content').style.display = 'block';
         
-        // Charger les données
+        // Charger les donnÃ©es
         await loadUsers();
         await loadPresences();
-        await loadMembersForPresence(); // Charger la liste des membres pour le formulaire de présence
+        await loadMembersForPresence(); // Charger la liste des membres pour le formulaire de prÃ©sence
         
         // Initialiser les event listeners
         initializeEventListeners();
         
-        // Charger les activités si l'onglet est actif ou pré-charger
+        // Charger les activitÃ©s si l'onglet est actif ou prÃ©-charger
         const savedTab = localStorage.getItem('dashboardActiveTab');
         if (savedTab === 'activity') {
             await loadAdminActivities();
@@ -151,7 +151,7 @@ async function checkAdminAccess() {
         }
         
     } catch (error) {
-        console.error('❌ Erreur lors de la vérification admin:', error);
+        console.error('âŒ Erreur lors de la vÃ©rification admin:', error);
         showError('Une erreur technique est survenue.');
     }
 }
@@ -159,14 +159,14 @@ async function checkAdminAccess() {
 // Charger tous les utilisateurs
 async function loadUsers() {
     try {
-        // Utiliser le cache pour éviter les requêtes multiples
+        // Utiliser le cache pour Ã©viter les requÃªtes multiples
         const cachedUsers = window.cacheManager?.get('all_users');
         if (cachedUsers) {
             allUsers = cachedUsers;
             filteredUsers = allUsers;
             updateStats();
             displayUsers();
-            console.log(`📦 ${allUsers.length} utilisateurs chargés depuis le cache`);
+            debugLog(`ðŸ“¦ ${allUsers.length} utilisateurs chargÃ©s depuis le cache`);
             return;
         }
 
@@ -176,7 +176,7 @@ async function loadUsers() {
             .order('created_at', { ascending: false });
             
         if (error) {
-            console.error('❌ Erreur chargement utilisateurs:', error);
+            console.error('âŒ Erreur chargement utilisateurs:', error);
             showError('Impossible de charger les utilisateurs.');
             return;
         }
@@ -189,20 +189,20 @@ async function loadUsers() {
             window.cacheManager.set('all_users', allUsers);
         }
         
-        console.log(`✅ ${allUsers.length} utilisateurs chargés`);
+        debugLog(`âœ… ${allUsers.length} utilisateurs chargÃ©s`);
         
-        // Mettre à jour les statistiques
+        // Mettre Ã  jour les statistiques
         updateStats();
         
         // Afficher les utilisateurs
         displayUsers();
         
     } catch (error) {
-        console.error('❌ Erreur lors du chargement des utilisateurs:', error);
+        console.error('âŒ Erreur lors du chargement des utilisateurs:', error);
     }
 }
 
-// Mettre à jour les statistiques
+// Mettre Ã  jour les statistiques
 function updateStats() {
     const totalUsers = allUsers.length;
     const admins = allUsers.filter(u => u.role === 'admin').length;
@@ -221,7 +221,7 @@ function displayUsers() {
     tbody.innerHTML = '';
     
     if (filteredUsers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Aucun utilisateur trouvé</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #888; padding: 30px;">Aucun utilisateur trouvÃ©</td></tr>';
         updatePagination();
         return;
     }
@@ -253,7 +253,7 @@ function displayUsers() {
         tdNiveau.style.textAlign = 'center';
         tr.appendChild(tdNiveau);
         
-        // Rôle
+        // RÃ´le
         const tdRole = document.createElement('td');
         const roleBadge = document.createElement('span');
         roleBadge.className = `role-badge role-${user.role || 'joueur'}`;
@@ -261,7 +261,7 @@ function displayUsers() {
         tdRole.appendChild(roleBadge);
         tr.appendChild(tdRole);
         
-        // Date de création
+        // Date de crÃ©ation
         const tdDate = document.createElement('td');
         tdDate.textContent = formatDate(user.created_at);
         tr.appendChild(tdDate);
@@ -272,11 +272,11 @@ function displayUsers() {
         // Bouton Modifier
         const btnEdit = document.createElement('button');
         btnEdit.className = 'action-btn btn-edit';
-        btnEdit.textContent = 'Modifier rôle';
+        btnEdit.textContent = 'Modifier rÃ´le';
         btnEdit.onclick = () => openRoleModal(user);
         tdActions.appendChild(btnEdit);
         
-        // Bouton Supprimer (désactivé pour le compte actuel)
+        // Bouton Supprimer (dÃ©sactivÃ© pour le compte actuel)
         if (user.id !== localCurrentUser.id) {
             const btnDelete = document.createElement('button');
             btnDelete.className = 'action-btn btn-delete';
@@ -290,7 +290,7 @@ function displayUsers() {
     });
 }
 
-// Obtenir le label du rôle
+// Obtenir le label du rÃ´le
 function getRoleLabel(role) {
     const labels = {
         'joueur': 'Joueur',
@@ -312,7 +312,7 @@ function getClasseColor(classe) {
     return colors[classe] || '#4ecdc4';
 }
 
-// Mettre à jour la pagination
+// Mettre Ã  jour la pagination
 function updatePagination() {
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
     const pageInfo = document.getElementById('page-info');
@@ -322,7 +322,7 @@ function updatePagination() {
     // Afficher les informations de page
     pageInfo.textContent = `Page ${currentPage} / ${totalPages || 1} (${filteredUsers.length} utilisateur${filteredUsers.length > 1 ? 's' : ''})`;
     
-    // Activer/désactiver les boutons
+    // Activer/dÃ©sactiver les boutons
     prevBtn.disabled = currentPage <= 1;
     nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
 }
@@ -341,7 +341,7 @@ function sortUsers() {
         if (typeof aValue === 'string') aValue = aValue.toLowerCase();
         if (typeof bValue === 'string') bValue = bValue.toLowerCase();
         
-        // Tri numérique pour le niveau
+        // Tri numÃ©rique pour le niveau
         if (currentSortField === 'niveau') {
             aValue = parseInt(aValue) || 0;
             bValue = parseInt(bValue) || 0;
@@ -378,11 +378,11 @@ function initializeEventListeners() {
     // Recherche
     const searchInput = document.getElementById('search-input');
     searchInput.addEventListener('input', (e) => {
-        currentPage = 1; // Reset à la page 1 lors d'une recherche
+        currentPage = 1; // Reset Ã  la page 1 lors d'une recherche
         filterUsers();
     });
     
-    // Filtre par rôle
+    // Filtre par rÃ´le
     const roleFilter = document.getElementById('role-filter');
     roleFilter.addEventListener('change', (e) => {
         currentPage = 1;
@@ -429,7 +429,7 @@ function initializeEventListeners() {
         header.addEventListener('click', () => {
             const sortField = header.getAttribute('data-sort');
             
-            // Si on clique sur la même colonne, inverser la direction
+            // Si on clique sur la mÃªme colonne, inverser la direction
             if (currentSortField === sortField) {
                 currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
             } else {
@@ -437,7 +437,7 @@ function initializeEventListeners() {
                 currentSortDirection = 'asc';
             }
             
-            // Mettre à jour les classes CSS
+            // Mettre Ã  jour les classes CSS
             sortableHeaders.forEach(h => {
                 h.classList.remove('sorted-asc', 'sorted-desc');
             });
@@ -484,7 +484,7 @@ function filterUsers() {
             (user.username && user.username.toLowerCase().includes(searchTerm)) ||
             (user.email && user.email.toLowerCase().includes(searchTerm));
         
-        // Filtre de rôle
+        // Filtre de rÃ´le
         const matchesRole = roleFilter === 'all' || user.role === roleFilter || (!user.role && roleFilter === 'joueur');
         
         // Filtre de classe
@@ -501,15 +501,15 @@ function filterUsers() {
         return matchesSearch && matchesRole && matchesClasse && matchesNiveau;
     });
     
-    // Trier les utilisateurs après filtrage
+    // Trier les utilisateurs aprÃ¨s filtrage
     sortUsers();
     
-    currentPage = 1; // Reset à la page 1
+    currentPage = 1; // Reset Ã  la page 1
     displayUsers();
     updatePagination();
 }
 
-// Ouvrir le modal de modification de rôle
+// Ouvrir le modal de modification de rÃ´le
 function openRoleModal(user) {
     editingUserId = user.id;
     document.getElementById('modal-username').textContent = user.username || user.email;
@@ -517,13 +517,13 @@ function openRoleModal(user) {
     document.getElementById('role-modal').classList.add('active');
 }
 
-// Fermer le modal de modification de rôle
+// Fermer le modal de modification de rÃ´le
 function closeRoleModal() {
     editingUserId = null;
     document.getElementById('role-modal').classList.remove('active');
 }
 
-// Confirmer le changement de rôle
+// Confirmer le changement de rÃ´le
 async function confirmRoleChange() {
     if (!editingUserId) return;
     
@@ -536,13 +536,13 @@ async function confirmRoleChange() {
             .eq('id', editingUserId);
             
         if (error) {
-            console.error('❌ Erreur modification rôle:', error);
-            alert('Erreur lors de la modification du rôle.');
+            console.error('âŒ Erreur modification rÃ´le:', error);
+            alert('Erreur lors de la modification du rÃ´le.');
             return;
         }
         
-        console.log('✅ Rôle modifié avec succès');
-        alert('Rôle modifié avec succès !');
+        debugLog('âœ… RÃ´le modifiÃ© avec succÃ¨s');
+        alert('RÃ´le modifiÃ© avec succÃ¨s !');
         
         // Invalider le cache des utilisateurs
         if (window.cacheManager) {
@@ -556,14 +556,14 @@ async function confirmRoleChange() {
         closeRoleModal();
         
     } catch (error) {
-        console.error('❌ Erreur lors de la modification du rôle:', error);
+        console.error('âŒ Erreur lors de la modification du rÃ´le:', error);
         alert('Une erreur technique est survenue.');
     }
 }
 
 // Confirmer la suppression d'un utilisateur
 function confirmDeleteUser(user) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur "${user.username || user.email}" ?\n\nCette action est irréversible.`)) {
+    if (confirm(`ÃŠtes-vous sÃ»r de vouloir supprimer l'utilisateur "${user.username || user.email}" ?\n\nCette action est irrÃ©versible.`)) {
         deleteUser(user.id);
     }
 }
@@ -571,29 +571,29 @@ function confirmDeleteUser(user) {
 // Supprimer un utilisateur
 async function deleteUser(userId) {
     try {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ? Cette action est irréversible.')) {
+        if (!confirm('ÃŠtes-vous sÃ»r de vouloir supprimer dÃ©finitivement cet utilisateur ? Cette action est irrÃ©versible.')) {
             return;
         }
         
-        // Utiliser la fonction PostgreSQL pour suppression complète
+        // Utiliser la fonction PostgreSQL pour suppression complÃ¨te
         const { data, error } = await supabase.rpc('delete_user_completely', {
             user_id: userId
         });
             
         if (error) {
-            console.error('❌ Erreur suppression utilisateur:', error);
+            console.error('âŒ Erreur suppression utilisateur:', error);
             alert('Erreur lors de la suppression de l\'utilisateur : ' + error.message);
             return;
         }
         
-        console.log('✅ Utilisateur supprimé complètement (auth.users + user_profiles)');
-        alert('Utilisateur supprimé avec succès !');
+        debugLog('âœ… Utilisateur supprimÃ© complÃ¨tement (auth.users + user_profiles)');
+        alert('Utilisateur supprimÃ© avec succÃ¨s !');
         
         // Recharger les utilisateurs
         await loadUsers();
         
     } catch (error) {
-        console.error('❌ Erreur lors de la suppression:', error);
+        console.error('âŒ Erreur lors de la suppression:', error);
         alert('Une erreur technique est survenue : ' + error.message);
     }
 }
@@ -622,11 +622,11 @@ function switchGuildTab(tabName) {
         btn.classList.remove('active');
     });
     
-    // Afficher le contenu sélectionné
+    // Afficher le contenu sÃ©lectionnÃ©
     document.getElementById(`guild-${tabName}-tab`).style.display = 'block';
     document.getElementById(`tab-${tabName}`).classList.add('active');
     
-    // Charger les données de l'onglet
+    // Charger les donnÃ©es de l'onglet
     if (tabName === 'planning') {
         loadAdminPlanning();
     } else if (tabName === 'objectives') {
@@ -637,7 +637,7 @@ function switchGuildTab(tabName) {
     }
 }
 
-// Charger les événements du planning (admin)
+// Charger les Ã©vÃ©nements du planning (admin)
 async function loadAdminPlanning() {
     try {
         const { data, error } = await supabase
@@ -650,7 +650,7 @@ async function loadAdminPlanning() {
         const container = document.getElementById('admin-planning-list');
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<p style="color: #888; text-align: center;">Aucun événement planifié</p>';
+            container.innerHTML = '<p style="color: #888; text-align: center;">Aucun Ã©vÃ©nement planifiÃ©</p>';
             return;
         }
         
@@ -659,10 +659,10 @@ async function loadAdminPlanning() {
                 <div class="guild-item-header">
                     <div class="guild-item-title">${escapeHtml(event.titre)}</div>
                     <div class="guild-item-actions">
-                        <button class="btn-delete" onclick="deleteGuildItem('guild_planning', '${event.id}', 'planning')">🗑️ Supprimer</button>
+                        <button class="btn-delete" onclick="deleteGuildItem('guild_planning', '${event.id}', 'planning')">ðŸ—‘ï¸ Supprimer</button>
                     </div>
                 </div>
-                <div style="color: #ff6b35; margin: 5px 0;">📅 ${formatDate(event.date_event)} | ${formatEventType(event.type_event)}</div>
+                <div style="color: #ff6b35; margin: 5px 0;">ðŸ“… ${formatDate(event.date_event)} | ${formatEventType(event.type_event)}</div>
                 ${event.description ? `<div style="color: #ccc;">${escapeHtml(event.description)}</div>` : ''}
             </div>
         `).join('');
@@ -685,7 +685,7 @@ async function loadAdminObjectives() {
         const container = document.getElementById('admin-objectives-list');
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<p style="color: #888; text-align: center;">Aucun objectif défini</p>';
+            container.innerHTML = '<p style="color: #888; text-align: center;">Aucun objectif dÃ©fini</p>';
             return;
         }
         
@@ -694,7 +694,7 @@ async function loadAdminObjectives() {
                 <div class="guild-item-header">
                     <div class="guild-item-title">${escapeHtml(obj.titre)}</div>
                     <div class="guild-item-actions">
-                        <button class="btn-delete" onclick="deleteGuildItem('guild_objectives', '${obj.id}', 'objectives')">🗑️ Supprimer</button>
+                        <button class="btn-delete" onclick="deleteGuildItem('guild_objectives', '${obj.id}', 'objectives')">ðŸ—‘ï¸ Supprimer</button>
                     </div>
                 </div>
                 <div style="color: #ccc; margin: 10px 0;">${escapeHtml(obj.description || '')}</div>
@@ -714,7 +714,7 @@ async function loadAdminObjectives() {
     }
 }
 
-// Charger les présences (admin)
+// Charger les prÃ©sences (admin)
 async function loadAdminPresence() {
     try {
         const today = new Date().toISOString().split('T')[0];
@@ -733,7 +733,7 @@ async function loadAdminPresence() {
         const container = document.getElementById('admin-presence-list');
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<p style="color: #888; text-align: center;">Aucune présence enregistrée aujourd\'hui</p>';
+            container.innerHTML = '<p style="color: #888; text-align: center;">Aucune prÃ©sence enregistrÃ©e aujourd\'hui</p>';
             return;
         }
         
@@ -742,7 +742,7 @@ async function loadAdminPresence() {
                 <div class="guild-item-header">
                     <div class="guild-item-title">${escapeHtml(presence.user_profiles.username)}</div>
                     <div class="guild-item-actions">
-                        <button class="btn-delete" onclick="deleteGuildItem('guild_presence', '${presence.id}', 'presence')">🗑️ Supprimer</button>
+                        <button class="btn-delete" onclick="deleteGuildItem('guild_presence', '${presence.id}', 'presence')">ðŸ—‘ï¸ Supprimer</button>
                     </div>
                 </div>
                 <div style="color: ${getStatusColor(presence.statut)}; font-weight: bold;">
@@ -753,14 +753,14 @@ async function loadAdminPresence() {
         `).join('');
         
     } catch (error) {
-        console.error('Erreur chargement présences:', error);
+        console.error('Erreur chargement prÃ©sences:', error);
     }
 }
 
-// Charger la liste des membres pour le formulaire de présence
+// Charger la liste des membres pour le formulaire de prÃ©sence
 async function loadMembersForPresence() {
     try {
-        console.log('🔄 Chargement des membres pour le select présence...');
+        debugLog('ðŸ”„ Chargement des membres pour le select prÃ©sence...');
         
         const { data, error } = await supabase
             .from('user_profiles')
@@ -770,27 +770,27 @@ async function loadMembersForPresence() {
         
         if (error) throw error;
         
-        console.log('✅ Membres récupérés:', data?.length);
+        debugLog('âœ… Membres rÃ©cupÃ©rÃ©s:', data?.length);
         
         const select = document.getElementById('presence-user');
         if (!select) {
-            console.error('❌ Select #presence-user introuvable !');
+            console.error('âŒ Select #presence-user introuvable !');
             return;
         }
         
-        select.innerHTML = '<option value="">Sélectionner un membre</option>' +
+        select.innerHTML = '<option value="">SÃ©lectionner un membre</option>' +
             data.map(user => `<option value="${user.id}">${escapeHtml(user.username)}</option>`).join('');
         
-        console.log('✅ Select mis à jour avec', data.length, 'membres');
+        debugLog('âœ… Select mis Ã  jour avec', data.length, 'membres');
         
     } catch (error) {
-        console.error('❌ Erreur chargement membres:', error);
+        console.error('âŒ Erreur chargement membres:', error);
     }
 }
 
-// Supprimer un élément de guilde
+// Supprimer un Ã©lÃ©ment de guilde
 async function deleteGuildItem(table, id, type) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) return;
+    if (!confirm('ÃŠtes-vous sÃ»r de vouloir supprimer cet Ã©lÃ©ment ?')) return;
     
     try {
         const { error } = await supabase
@@ -800,16 +800,16 @@ async function deleteGuildItem(table, id, type) {
         
         if (error) throw error;
         
-        alert('✅ Élément supprimé avec succès !');
+        alert('âœ… Ã‰lÃ©ment supprimÃ© avec succÃ¨s !');
         
-        // Recharger la liste appropriée
+        // Recharger la liste appropriÃ©e
         if (type === 'planning') loadAdminPlanning();
         else if (type === 'objectives') loadAdminObjectives();
         else if (type === 'presence') loadAdminPresence();
         
     } catch (error) {
         console.error('Erreur suppression:', error);
-        alert('❌ Erreur lors de la suppression');
+        alert('âŒ Erreur lors de la suppression');
     }
 }
 
@@ -834,13 +834,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (error) throw error;
                 
-                alert('✅ Événement ajouté au planning !');
+                alert('âœ… Ã‰vÃ©nement ajoutÃ© au planning !');
                 planningForm.reset();
                 loadAdminPlanning();
                 
             } catch (error) {
                 console.error('Erreur:', error);
-                alert('❌ Erreur lors de l\'ajout');
+                alert('âŒ Erreur lors de l\'ajout');
             }
         });
     }
@@ -866,18 +866,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (error) throw error;
                 
-                alert('✅ Objectif créé !');
+                alert('âœ… Objectif crÃ©Ã© !');
                 objectiveForm.reset();
                 loadAdminObjectives();
                 
             } catch (error) {
                 console.error('Erreur:', error);
-                alert('❌ Erreur lors de la création');
+                alert('âŒ Erreur lors de la crÃ©ation');
             }
         });
     }
     
-    // Formulaire présence
+    // Formulaire prÃ©sence
     const presenceForm = document.getElementById('add-presence-form');
     if (presenceForm) {
         presenceForm.addEventListener('submit', async function(e) {
@@ -887,7 +887,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const userId = document.getElementById('presence-user').value;
                 const datePresence = document.getElementById('presence-date').value;
                 
-                // Vérifier si déjà existant
+                // VÃ©rifier si dÃ©jÃ  existant
                 const { data: existing } = await supabase
                     .from('guild_presence')
                     .select('id')
@@ -906,7 +906,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .eq('id', existing.id);
                     
                     if (error) throw error;
-                    alert('✅ Présence mise à jour !');
+                    alert('âœ… PrÃ©sence mise Ã  jour !');
                 } else {
                     // Insert
                     const { error } = await supabase
@@ -919,7 +919,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     
                     if (error) throw error;
-                    alert('✅ Présence enregistrée !');
+                    alert('âœ… PrÃ©sence enregistrÃ©e !');
                 }
                 
                 presenceForm.reset();
@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             } catch (error) {
                 console.error('Erreur:', error);
-                alert('❌ Erreur lors de l\'enregistrement');
+                alert('âŒ Erreur lors de l\'enregistrement');
             }
         });
     }
@@ -936,30 +936,30 @@ document.addEventListener('DOMContentLoaded', function() {
 // Fonctions utilitaires pour la guilde
 function formatEventType(type) {
     const types = {
-        'reunion': '🗣️ Réunion',
-        'raid': '⚔️ Raid',
-        'event': '🎉 Événement',
-        'pvp': '🗡️ PvP',
-        'construction': '🏗️ Construction',
-        'autre': '📌 Autre'
+        'reunion': 'ðŸ—£ï¸ RÃ©union',
+        'raid': 'âš”ï¸ Raid',
+        'event': 'ðŸŽ‰ Ã‰vÃ©nement',
+        'pvp': 'ðŸ—¡ï¸ PvP',
+        'construction': 'ðŸ—ï¸ Construction',
+        'autre': 'ðŸ“Œ Autre'
     };
     return types[type] || type;
 }
 
 function formatStatus(status) {
     const statuses = {
-        'en_cours': '⏳ En cours',
-        'termine': '✅ Terminé',
-        'abandonne': '❌ Abandonné'
+        'en_cours': 'â³ En cours',
+        'termine': 'âœ… TerminÃ©',
+        'abandonne': 'âŒ AbandonnÃ©'
     };
     return statuses[status] || status;
 }
 
 function formatPresenceStatus(status) {
     const statuses = {
-        'present': '✅ Présent',
-        'absent': '❌ Absent',
-        'en_mission': '🎯 En mission'
+        'present': 'âœ… PrÃ©sent',
+        'absent': 'âŒ Absent',
+        'en_mission': 'ðŸŽ¯ En mission'
     };
     return statuses[status] || status;
 }
@@ -993,13 +993,13 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// ========== GESTION DES PRÉSENCES ==========
+// ========== GESTION DES PRÃ‰SENCES ==========
 
 async function loadPresences() {
     try {
         const today = new Date().toISOString().split('T')[0];
         
-        // Récupérer tous les membres et admins
+        // RÃ©cupÃ©rer tous les membres et admins
         const { data: members, error: membersError } = await supabase
             .from('user_profiles')
             .select('*')
@@ -1010,7 +1010,7 @@ async function loadPresences() {
             return;
         }
         
-        // Récupérer les présences du jour
+        // RÃ©cupÃ©rer les prÃ©sences du jour
         const { data: presences, error: presencesError } = await supabase
             .from('guild_presence')
             .select('*')
@@ -1021,7 +1021,7 @@ async function loadPresences() {
             return;
         }
         
-        // Créer un map des présences par user_id
+        // CrÃ©er un map des prÃ©sences par user_id
         const presenceMap = {};
         (presences || []).forEach(p => {
             presenceMap[p.user_id] = p;
@@ -1032,7 +1032,7 @@ async function loadPresences() {
         let absents = 0;
         let enMission = 0;
         
-        // Créer le HTML du tableau
+        // CrÃ©er le HTML du tableau
         const tbody = document.getElementById('presence-tbody');
         if (!tbody) return;
         
@@ -1066,12 +1066,12 @@ async function loadPresences() {
             `;
         }).join('');
         
-        // Mettre à jour les statistiques
+        // Mettre Ã  jour les statistiques
         document.getElementById('stat-presents').textContent = presents;
         document.getElementById('stat-absents').textContent = absents;
         document.getElementById('stat-missions').textContent = enMission;
         
-        console.log('[OK] Presences chargees:', { presents, absents, enMission });
+        debugLog('[OK] Presences chargees:', { presents, absents, enMission });
         
     } catch (error) {
         console.error('[ERREUR] Erreur chargement presences:', error);
@@ -1088,14 +1088,14 @@ function getPresenceLabel(statut) {
     return labels[statut] || statut;
 }
 
-// ========== GESTION DU MUR D'ACTIVITÉ ==========
+// ========== GESTION DU MUR D'ACTIVITÃ‰ ==========
 
 let editingActivityId = null;
 
-// Charger les activités dans l'admin
+// Charger les activitÃ©s dans l'admin
 async function loadAdminActivities() {
     try {
-        console.log('[ADMIN] Chargement des activités...');
+        debugLog('[ADMIN] Chargement des activitÃ©s...');
         
         const { data, error } = await supabase
             .from('guild_activity_wall')
@@ -1103,14 +1103,14 @@ async function loadAdminActivities() {
             .order('created_at', { ascending: false });
         
         if (error) {
-            console.error('[ERREUR] Erreur chargement activités:', error);
+            console.error('[ERREUR] Erreur chargement activitÃ©s:', error);
             document.getElementById('admin-activities-list').innerHTML = 
                 '<div style="text-align: center; padding: 40px; color: #e74c3c;">Erreur de chargement</div>';
             return;
         }
         
         displayAdminActivities(data || []);
-        console.log('[OK] Activités chargées:', (data || []).length);
+        debugLog('[OK] ActivitÃ©s chargÃ©es:', (data || []).length);
         
     } catch (error) {
         console.error('[ERREUR]:', error);
@@ -1123,7 +1123,7 @@ function displayAdminActivities(activities) {
     if (!activities || activities.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #888;">
-                Aucune publication. Créez votre première publication ci-dessus !
+                Aucune publication. CrÃ©ez votre premiÃ¨re publication ci-dessus !
             </div>
         `;
         return;
@@ -1135,19 +1135,19 @@ function displayAdminActivities(activities) {
                 <h4 class="admin-activity-title">${escapeHtml(activity.titre)}</h4>
                 <div class="admin-activity-actions">
                     <button class="btn-edit-activity" onclick="editActivity('${activity.id}')">
-                        ✏️ Modifier
+                        âœï¸ Modifier
                     </button>
                     <button class="btn-delete-activity" onclick="deleteActivity('${activity.id}')">
-                        🗑️ Supprimer
+                        ðŸ—‘ï¸ Supprimer
                     </button>
                 </div>
             </div>
             <p class="admin-activity-content">${escapeHtml(activity.contenu)}</p>
             ${activity.image_url ? `<img src="${activity.image_url}" alt="Image" class="admin-activity-image">` : ''}
             <div class="admin-activity-meta">
-                <span>📌 Type: ${formatActivityTypeAdmin(activity.type)}</span>
-                <span>👤 Par: ${escapeHtml(activity.author_name || 'Admin')}</span>
-                <span>📅 ${formatDateAdmin(activity.created_at)}</span>
+                <span>ðŸ“Œ Type: ${formatActivityTypeAdmin(activity.type)}</span>
+                <span>ðŸ‘¤ Par: ${escapeHtml(activity.author_name || 'Admin')}</span>
+                <span>ðŸ“… ${formatDateAdmin(activity.created_at)}</span>
             </div>
         </div>
     `).join('');
@@ -1156,7 +1156,7 @@ function displayAdminActivities(activities) {
 function formatActivityTypeAdmin(type) {
     const types = {
         'annonce': 'Annonce',
-        'evenement': 'Événement',
+        'evenement': 'Ã‰vÃ©nement',
         'info': 'Information',
         'victoire': 'Victoire'
     };
@@ -1175,7 +1175,7 @@ function formatDateAdmin(dateString) {
     return date.toLocaleDateString('fr-FR', options);
 }
 
-// Prévisualiser l'image
+// PrÃ©visualiser l'image
 document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('activity-image');
     if (imageInput) {
@@ -1209,10 +1209,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Soumettre une activité (créer ou modifier)
+// Soumettre une activitÃ© (crÃ©er ou modifier)
 window.submitActivity = async function() {
     try {
-        console.log('[ACTIVITY] Début de la soumission...');
+        debugLog('[ACTIVITY] DÃ©but de la soumission...');
         const title = document.getElementById('activity-title').value.trim();
         const type = document.getElementById('activity-type').value;
         const content = document.getElementById('activity-content').value.trim();
@@ -1229,7 +1229,7 @@ window.submitActivity = async function() {
         
         let imageUrl = null;
         
-        // Upload de l'image si présente
+        // Upload de l'image si prÃ©sente
         if (imageInput.files.length > 0) {
             const file = imageInput.files[0];
             const fileExt = file.name.split('.').pop();
@@ -1242,7 +1242,7 @@ window.submitActivity = async function() {
             
             if (uploadError) {
                 console.error('[ERREUR] Upload image:', uploadError);
-                alert('Erreur lors de l\'upload de l\'image. La publication sera créée sans image.');
+                alert('Erreur lors de l\'upload de l\'image. La publication sera crÃ©Ã©e sans image.');
             } else {
                 const { data: urlData } = supabase.storage
                     .from('iron-oath-storage')
@@ -1259,13 +1259,13 @@ window.submitActivity = async function() {
             author_name: currentUserProfile?.username || localCurrentUser?.email || 'Admin'
         };
         
-        console.log('[ACTIVITY] Données à publier:', activityData);
-        console.log('[ACTIVITY] User actuel:', window.currentUser);
-        console.log('[ACTIVITY] Profile:', currentUserProfile);
+        debugLog('[ACTIVITY] DonnÃ©es Ã  publier:', activityData);
+        debugLog('[ACTIVITY] User actuel:', window.currentUser);
+        debugLog('[ACTIVITY] Profile:', currentUserProfile);
         
         if (editingActivityId) {
-            // Mode édition
-            console.log('[ACTIVITY] Mode édition, ID:', editingActivityId);
+            // Mode Ã©dition
+            debugLog('[ACTIVITY] Mode Ã©dition, ID:', editingActivityId);
             const { data, error } = await supabase
                 .from('guild_activity_wall')
                 .update(activityData)
@@ -1273,39 +1273,39 @@ window.submitActivity = async function() {
                 .select();
             
             if (error) {
-                console.error('[ERREUR] Modification activité:', error);
-                console.error('[ERREUR] Détails:', error.message, error.details, error.hint);
+                console.error('[ERREUR] Modification activitÃ©:', error);
+                console.error('[ERREUR] DÃ©tails:', error.message, error.details, error.hint);
                 alert(`Erreur lors de la modification: ${error.message}`);
                 submitBtn.disabled = false;
                 submitBtn.querySelector('#submit-btn-text').textContent = 'Modifier';
                 return;
             }
             
-            console.log('[SUCCESS] Publication modifiée:', data);
-            alert('Publication modifiée avec succès !');
+            debugLog('[SUCCESS] Publication modifiÃ©e:', data);
+            alert('Publication modifiÃ©e avec succÃ¨s !');
         } else {
-            // Mode création
-            console.log('[ACTIVITY] Mode création');
+            // Mode crÃ©ation
+            debugLog('[ACTIVITY] Mode crÃ©ation');
             const { data, error } = await supabase
                 .from('guild_activity_wall')
                 .insert([activityData])
                 .select();
             
             if (error) {
-                console.error('[ERREUR] Création activité:', error);
-                console.error('[ERREUR] Détails:', error.message, error.details, error.hint);
-                alert(`Erreur lors de la création: ${error.message}`);
+                console.error('[ERREUR] CrÃ©ation activitÃ©:', error);
+                console.error('[ERREUR] DÃ©tails:', error.message, error.details, error.hint);
+                alert(`Erreur lors de la crÃ©ation: ${error.message}`);
                 submitBtn.disabled = false;
                 submitBtn.querySelector('#submit-btn-text').textContent = 'Publier';
                 return;
             }
             
-            console.log('[SUCCESS] Publication créée:', data);
+            debugLog('[SUCCESS] Publication crÃ©Ã©e:', data);
             
-            alert('Publication créée avec succès !');
+            alert('Publication crÃ©Ã©e avec succÃ¨s !');
         }
         
-        // Réinitialiser le formulaire
+        // RÃ©initialiser le formulaire
         resetActivityForm();
         
         // Recharger la liste
@@ -1319,7 +1319,7 @@ window.submitActivity = async function() {
     }
 }
 
-// Éditer une activité
+// Ã‰diter une activitÃ©
 async function editActivity(activityId) {
     try {
         const { data, error } = await supabase
@@ -1329,8 +1329,8 @@ async function editActivity(activityId) {
             .single();
         
         if (error || !data) {
-            console.error('[ERREUR] Récupération activité:', error);
-            alert('Impossible de charger l\'activité.');
+            console.error('[ERREUR] RÃ©cupÃ©ration activitÃ©:', error);
+            alert('Impossible de charger l\'activitÃ©.');
             return;
         }
         
@@ -1339,7 +1339,7 @@ async function editActivity(activityId) {
         document.getElementById('activity-type').value = data.type;
         document.getElementById('activity-content').value = data.contenu;
         
-        // Afficher l'aperçu de l'image si elle existe
+        // Afficher l'aperÃ§u de l'image si elle existe
         if (data.image_url) {
             const preview = document.getElementById('image-preview');
             const container = document.getElementById('image-preview-container');
@@ -1347,7 +1347,7 @@ async function editActivity(activityId) {
             container.style.display = 'block';
         }
         
-        // Passer en mode édition
+        // Passer en mode Ã©dition
         editingActivityId = activityId;
         document.getElementById('form-mode-title').textContent = 'Modifier la Publication';
         document.getElementById('submit-btn-text').textContent = 'Modifier';
@@ -1362,12 +1362,12 @@ async function editActivity(activityId) {
     }
 }
 
-// Annuler l'édition
+// Annuler l'Ã©dition
 function cancelEdit() {
     resetActivityForm();
 }
 
-// Réinitialiser le formulaire
+// RÃ©initialiser le formulaire
 function resetActivityForm() {
     document.getElementById('activity-title').value = '';
     document.getElementById('activity-type').value = 'annonce';
@@ -1384,14 +1384,14 @@ function resetActivityForm() {
     submitBtn.disabled = false;
 }
 
-// Supprimer une activité
+// Supprimer une activitÃ©
 async function deleteActivity(activityId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette publication ?')) {
+    if (!confirm('ÃŠtes-vous sÃ»r de vouloir supprimer cette publication ?')) {
         return;
     }
     
     try {
-        // Récupérer l'activité pour supprimer l'image si elle existe
+        // RÃ©cupÃ©rer l'activitÃ© pour supprimer l'image si elle existe
         const { data: activity } = await supabase
             .from('guild_activity_wall')
             .select('image_url')
@@ -1406,19 +1406,19 @@ async function deleteActivity(activityId) {
                 .remove([`guild-activities/${imagePath}`]);
         }
         
-        // Supprimer l'activité
+        // Supprimer l'activitÃ©
         const { error } = await supabase
             .from('guild_activity_wall')
             .delete()
             .eq('id', activityId);
         
         if (error) {
-            console.error('[ERREUR] Suppression activité:', error);
+            console.error('[ERREUR] Suppression activitÃ©:', error);
             alert('Erreur lors de la suppression.');
             return;
         }
         
-        alert('Publication supprimée avec succès !');
+        alert('Publication supprimÃ©e avec succÃ¨s !');
         await loadAdminActivities();
         
     } catch (error) {
@@ -1427,10 +1427,10 @@ async function deleteActivity(activityId) {
     }
 }
 
-// Rendre les fonctions accessibles globalement pour les appels dynamiques depuis le HTML généré
+// Rendre les fonctions accessibles globalement pour les appels dynamiques depuis le HTML gÃ©nÃ©rÃ©
 window.editActivity = editActivity;
 window.deleteActivity = deleteActivity;
 
-console.log('✅ Module admin-dashboard.js chargé');
+debugLog('âœ… Module admin-dashboard.js chargÃ©');
 
 

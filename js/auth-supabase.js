@@ -1,6 +1,6 @@
-/* auth-supabase.js - Système d'authentification Supabase pour Iron Oath */
+﻿/* auth-supabase.js - SystÃ¨me d'authentification Supabase pour Iron Oath */
 
-// Utiliser var au lieu de let pour éviter les erreurs de re-déclaration lors des navigations
+// Utiliser var au lieu de let pour Ã©viter les erreurs de re-dÃ©claration lors des navigations
 var supabase = supabase || null;
 
 const ENCODED_SUPABASE_URL = 'aHR0cHM6Ly96aGJ1d3d2YWZicnJ4cHN1cGVidC5zdXBhYmFzZS5jbw==';
@@ -8,11 +8,11 @@ const ENCODED_SUPABASE_KEY = 'ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5Lm
 
 function decodeKey(encodedKey) {
     try {
-        // Décodage Base64 simple - pas de rotation nécessaire
+        // DÃ©codage Base64 simple - pas de rotation nÃ©cessaire
         const decoded = atob(encodedKey);
         return decoded;
     } catch (error) {
-        console.error('Erreur décodage clé:', error);
+        console.error('Erreur dÃ©codage clÃ©:', error);
         return null;
     }
 }
@@ -23,34 +23,34 @@ async function initSupabase() {
         const SUPABASE_URL = decodeKey(ENCODED_SUPABASE_URL);
         const SUPABASE_ANON_KEY = decodeKey(ENCODED_SUPABASE_KEY);
         
-        console.log('🔍 Debug Supabase URLs:');
-        console.log('URL décodée:', SUPABASE_URL);
-        console.log('URL valide?', SUPABASE_URL && SUPABASE_URL.startsWith('http'));
-        console.log('Clé décodée (premières 20 chars):', SUPABASE_ANON_KEY ? SUPABASE_ANON_KEY.substring(0, 20) + '...' : 'null');
-        console.log('Clé valide?', SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.startsWith('eyJ'));
+        debugLog('ðŸ” Debug Supabase URLs:');
+        debugLog('URL dÃ©codÃ©e:', SUPABASE_URL);
+        debugLog('URL valide?', SUPABASE_URL && SUPABASE_URL.startsWith('http'));
+        debugLog('ClÃ© dÃ©codÃ©e (premiÃ¨res 20 chars):', SUPABASE_ANON_KEY ? SUPABASE_ANON_KEY.substring(0, 20) + '...' : 'null');
+        debugLog('ClÃ© valide?', SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.startsWith('eyJ'));
         
         if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-            throw new Error('Erreur de décodage des clés');
+            throw new Error('Erreur de dÃ©codage des clÃ©s');
         }
         
-        // Vérifier si Supabase est disponible (soit via window.supabase, soit via un CDN déjà chargé)
+        // VÃ©rifier si Supabase est disponible (soit via window.supabase, soit via un CDN dÃ©jÃ  chargÃ©)
         const supabaseLib = window.supabase || (window.supabasejs && window.supabasejs.supabase);
         
         if (!supabaseLib || typeof supabaseLib.createClient !== 'function') {
-            console.log('⏳ Chargement de la bibliothèque Supabase...');
+            debugLog('â³ Chargement de la bibliothÃ¨que Supabase...');
             await new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
                 script.onload = () => {
-                    console.log('✅ Script Supabase chargé depuis jsdelivr');
+                    debugLog('âœ… Script Supabase chargÃ© depuis jsdelivr');
                     resolve();
                 };
                 script.onerror = () => {
-                    console.warn('⚠️ Échec jsdelivr, essai avec unpkg...');
+                    debugWarn('âš ï¸ Ã‰chec jsdelivr, essai avec unpkg...');
                     const altScript = document.createElement('script');
                     altScript.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js';
                     altScript.onload = () => {
-                        console.log('✅ Script Supabase chargé depuis unpkg');
+                        debugLog('âœ… Script Supabase chargÃ© depuis unpkg');
                         resolve();
                     };
                     altScript.onerror = () => reject(new Error('Impossible de charger Supabase depuis aucun CDN'));
@@ -59,30 +59,30 @@ async function initSupabase() {
                 document.head.appendChild(script);
             });
             
-            // Attendre que le script soit complètement initialisé
+            // Attendre que le script soit complÃ¨tement initialisÃ©
             await new Promise(resolve => setTimeout(resolve, 200));
         }
         
-        // Récupérer la fonction createClient
+        // RÃ©cupÃ©rer la fonction createClient
         const createClient = window.supabase?.createClient || window.supabasejs?.supabase?.createClient;
         
         if (!createClient || typeof createClient !== 'function') {
-            throw new Error('createClient non disponible après chargement');
+            throw new Error('createClient non disponible aprÃ¨s chargement');
         }
         
         supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Client Supabase créé:', !!supabase);
-        console.log('🔍 Client Supabase URL:', supabase.supabaseUrl);
+        debugLog('âœ… Client Supabase crÃ©Ã©:', !!supabase);
+        debugLog('ðŸ” Client Supabase URL:', supabase.supabaseUrl);
         
         // Partager l'instance Supabase globalement pour les autres modules
         window.globalSupabase = supabase;
         
-        // Test rapide de connectivité
+        // Test rapide de connectivitÃ©
         try {
             const { data, error } = await supabase.auth.getUser();
-            console.log('🔍 Test connectivité Supabase:', { data: !!data, error: error?.message });
+            debugLog('ðŸ” Test connectivitÃ© Supabase:', { data: !!data, error: error?.message });
         } catch (testError) {
-            console.warn('⚠️ Test connectivité échoué:', testError.message);
+            debugWarn('âš ï¸ Test connectivitÃ© Ã©chouÃ©:', testError.message);
         }
         
         return true;
@@ -100,10 +100,10 @@ const usernamePendingMap = new Map();
 let isCheckingAuthState = false;
 let lastAuthStateCheck = 0;
 
-// ========== GESTION DE L'ÉTAT DE CONNEXION ==========
+// ========== GESTION DE L'Ã‰TAT DE CONNEXION ==========
 function checkAuthState() {
     const now = Date.now();
-    if (now - lastAuthStateCheck < 100) return;
+    if (now - lastAuthStateCheck < 500) return; // RÃ©duit les appels rÃ©pÃ©tÃ©s
     lastAuthStateCheck = now;
     
     if (isCheckingAuthState) return;
@@ -114,7 +114,7 @@ function checkAuthState() {
         const loginLink = document.getElementById('login-link');
         const usernameSpan = document.getElementById('username');
         
-        console.log('🔍 Debug checkAuthState:', {
+        debugLog('ðŸ” Debug checkAuthState:', {
             userInfo: !!userInfo,
             loginLink: !!loginLink,
             currentUser: !!currentUser,
@@ -127,8 +127,8 @@ function checkAuthState() {
         }
         
         if (currentUser) {
-            // Utilisateur connecté
-            console.log('✅ Utilisateur connecté:', currentUser.email);
+            // Utilisateur connectÃ©
+            debugLog('âœ… Utilisateur connectÃ©:', currentUser.email);
             
             if (userInfo) {
                 userInfo.style.display = 'flex';
@@ -152,8 +152,8 @@ function checkAuthState() {
                 loginLink.classList.remove('js-visible');
             }
         } else {
-            // Utilisateur non connecté
-            console.log('👤 Utilisateur non connecté - affichage du bouton connexion');
+            // Utilisateur non connectÃ©
+            debugLog('ðŸ‘¤ Utilisateur non connectÃ© - affichage du bouton connexion');
             
             if (userInfo) {
                 userInfo.style.display = 'none';
@@ -162,13 +162,13 @@ function checkAuthState() {
             }
             
             if (loginLink) {
-                console.log('🔗 Affichage du bouton connexion');
+                debugLog('ðŸ”— Affichage du bouton connexion');
                 loginLink.style.display = 'block';
                 loginLink.classList.add('show');
                 loginLink.classList.add('js-visible');
-                console.log('🔗 Classes appliquées:', loginLink.className);
+                debugLog('ðŸ”— Classes appliquÃ©es:', loginLink.className);
             } else {
-                console.error('❌ Bouton login-link non trouvé dans le DOM');
+                console.error('âŒ Bouton login-link non trouvÃ© dans le DOM');
             }
         }
     } catch (error) {
@@ -208,12 +208,12 @@ async function registerUser(username, email, password, confirmPassword) {
         }
         
         if (username.length < 3) {
-            showMessage('Le pseudo joueur doit contenir au moins 3 caractères.');
+            showMessage('Le pseudo joueur doit contenir au moins 3 caractÃ¨res.');
             return false;
         }
         
         if (username.length > 20) {
-            showMessage('Le pseudo joueur ne peut pas dépasser 20 caractères.');
+            showMessage('Le pseudo joueur ne peut pas dÃ©passer 20 caractÃ¨res.');
             return false;
         }
         
@@ -229,7 +229,7 @@ async function registerUser(username, email, password, confirmPassword) {
         }
         
         if (password.length < 6) {
-            showMessage('Le mot de passe doit contenir au moins 6 caractères.');
+            showMessage('Le mot de passe doit contenir au moins 6 caractÃ¨res.');
             return false;
         }
         
@@ -241,15 +241,15 @@ async function registerUser(username, email, password, confirmPassword) {
                 .single();
                 
             if (existingProfile) {
-                showMessage('Ce pseudo joueur est déjà pris. Choisissez-en un autre.');
+                showMessage('Ce pseudo joueur est dÃ©jÃ  pris. Choisissez-en un autre.');
                 return false;
             }
         } catch (checkError) {
             if (checkError.code === 'PGRST116' || checkError.message.includes('406')) {
                 // Table inaccessible, on continue
             } else {
-                console.error('Erreur vérification pseudo:', checkError);
-                showMessage('Erreur technique lors de la vérification. Réessayez.');
+                console.error('Erreur vÃ©rification pseudo:', checkError);
+                showMessage('Erreur technique lors de la vÃ©rification. RÃ©essayez.');
                 return false;
             }
         }
@@ -269,12 +269,12 @@ async function registerUser(username, email, password, confirmPassword) {
         if (signUpError) {
             console.error('Erreur inscription Supabase:', signUpError);
             
-            // Si l'utilisateur existe déjà dans auth.users
+            // Si l'utilisateur existe dÃ©jÃ  dans auth.users
             if (signUpError.message.includes('User already registered') || signUpError.message.includes('already been registered')) {
-                // NE PAS se connecter automatiquement, juste vérifier si le profil existe
-                // On ne connaît pas le vrai mot de passe de l'utilisateur existant
+                // NE PAS se connecter automatiquement, juste vÃ©rifier si le profil existe
+                // On ne connaÃ®t pas le vrai mot de passe de l'utilisateur existant
                 
-                showMessage('Ce compte existe déjà. Si c\'est votre compte, connectez-vous. Sinon, utilisez un autre email.');
+                showMessage('Ce compte existe dÃ©jÃ . Si c\'est votre compte, connectez-vous. Sinon, utilisez un autre email.');
                 setTimeout(() => showLoginForm(), 2000);
                 return false;
             }
@@ -283,11 +283,11 @@ async function registerUser(username, email, password, confirmPassword) {
             return false;
         }
         
-        // Si l'inscription réussit, créer le profil utilisateur
+        // Si l'inscription rÃ©ussit, crÃ©er le profil utilisateur
         if (authData.user) {
-            console.log('✅ Compte Supabase créé, vérification du profil...');
+            debugLog('âœ… Compte Supabase crÃ©Ã©, vÃ©rification du profil...');
             
-            // Vérifier d'abord si le profil existe déjà
+            // VÃ©rifier d'abord si le profil existe dÃ©jÃ 
             const { data: existingProfile, error: checkError } = await supabase
                 .from('user_profiles')
                 .select('*')
@@ -295,10 +295,10 @@ async function registerUser(username, email, password, confirmPassword) {
                 .single();
                 
             if (existingProfile) {
-                console.log('ℹ️ Profil déjà existant pour cet utilisateur');
-                showMessage('Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte.', 'success');
+                debugLog('â„¹ï¸ Profil dÃ©jÃ  existant pour cet utilisateur');
+                showMessage('Compte crÃ©Ã© avec succÃ¨s ! VÃ©rifiez votre email pour confirmer votre compte.', 'success');
             } else {
-                // Le profil n'existe pas, le créer
+                // Le profil n'existe pas, le crÃ©er
                 const { error: profileError } = await supabase
                     .from('user_profiles')
                     .insert([
@@ -310,16 +310,16 @@ async function registerUser(username, email, password, confirmPassword) {
                     ]);
                     
                 if (profileError) {
-                    console.error('Erreur création profil:', profileError);
+                    console.error('Erreur crÃ©ation profil:', profileError);
                     
                     if (profileError.code === '23505') {
-                        showMessage('Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte.', 'success');
+                        showMessage('Compte crÃ©Ã© avec succÃ¨s ! VÃ©rifiez votre email pour confirmer votre compte.', 'success');
                     } else {
-                        showMessage(`Erreur lors de la création du profil: ${profileError.message}. Contactez le support.`);
+                        showMessage(`Erreur lors de la crÃ©ation du profil: ${profileError.message}. Contactez le support.`);
                         return false;
                     }
                 } else {
-                    showMessage('Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte.', 'success');
+                    showMessage('Compte crÃ©Ã© avec succÃ¨s ! VÃ©rifiez votre email pour confirmer votre compte.', 'success');
                 }
             }
             
@@ -338,9 +338,9 @@ async function registerUser(username, email, password, confirmPassword) {
 }
 
 async function loginUser(email, password) {
-    console.log('🔑 Tentative de connexion pour:', email);
-    console.log('🔍 Supabase client disponible?', !!supabase);
-    console.log('🔍 Supabase auth disponible?', !!supabase?.auth);
+    debugLog('ðŸ”‘ Tentative de connexion pour:', email);
+    debugLog('ðŸ” Supabase client disponible?', !!supabase);
+    debugLog('ðŸ” Supabase auth disponible?', !!supabase?.auth);
     
     try {
         const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -348,10 +348,10 @@ async function loginUser(email, password) {
             password: password
         });
         
-        console.log('🔍 Réponse Supabase:', { authData: !!authData, error: signInError });
+        debugLog('ðŸ” RÃ©ponse Supabase:', { authData: !!authData, error: signInError });
         
         if (signInError) {
-            console.error('❌ Erreur de connexion détaillée:', signInError);
+            console.error('âŒ Erreur de connexion dÃ©taillÃ©e:', signInError);
             if (signInError.message.includes('Invalid login credentials')) {
                 showMessage('Email ou mot de passe incorrect.');
             } else if (signInError.message.includes('Email not confirmed')) {
@@ -366,7 +366,7 @@ async function loginUser(email, password) {
             currentUser = authData.user;
             await loadUserProfile();
             
-            showMessage('Connexion réussie ! Redirection...', 'success');
+            showMessage('Connexion rÃ©ussie ! Redirection...', 'success');
             
             setTimeout(() => {
                 window.location.href = '../index.html';
@@ -386,7 +386,7 @@ async function logoutUser() {
     try {
         const { error } = await supabase.auth.signOut();
         if (error) {
-            console.error('Erreur lors de la déconnexion:', error);
+            console.error('Erreur lors de la dÃ©connexion:', error);
         }
         
         currentUser = null;
@@ -396,7 +396,7 @@ async function logoutUser() {
         window.location.href = '../index.html';
         
     } catch (error) {
-        console.error('Erreur technique lors de la déconnexion:', error);
+        console.error('Erreur technique lors de la dÃ©connexion:', error);
     }
 }
 
@@ -420,7 +420,7 @@ async function loadUserProfile() {
         }
         
         userProfile = data;
-        window.userProfile = userProfile; // Mettre à jour immédiatement
+        window.userProfile = userProfile; // Mettre Ã  jour immÃ©diatement
         
         if (userProfile.username.includes('_') && userProfile.username.match(/.*_[a-z0-9]{4}$/)) {
             await autoCorrectUsername();
@@ -439,7 +439,7 @@ async function loadUserProfile() {
         try {
             return await createMissingProfile();
         } catch (recoveryError) {
-            console.error('Échec de la récupération automatique:', recoveryError);
+            console.error('Ã‰chec de la rÃ©cupÃ©ration automatique:', recoveryError);
             showMessage('Erreur de synchronisation. Rechargez la page.', 'error');
             return null;
         }
@@ -471,7 +471,7 @@ async function createMissingProfile() {
             .single();
             
         if (error) {
-            console.error('Erreur création profil:', error);
+            console.error('Erreur crÃ©ation profil:', error);
             
             if (error.code === '23505') {
                 const { data: existingProfile } = await supabase
@@ -486,7 +486,7 @@ async function createMissingProfile() {
                 }
             }
             
-            throw new Error(`Erreur création profil: ${error.message}`);
+            throw new Error(`Erreur crÃ©ation profil: ${error.message}`);
         }
         
         userProfile = data;
@@ -494,7 +494,7 @@ async function createMissingProfile() {
         return userProfile;
         
     } catch (error) {
-        console.error('Erreur technique création profil:', error);
+        console.error('Erreur technique crÃ©ation profil:', error);
         throw error;
     }
 }
@@ -525,7 +525,7 @@ async function autoCorrectUsername() {
             }
         }
     } catch (error) {
-        // Correction automatique échouée
+        // Correction automatique Ã©chouÃ©e
     }
 }
 
@@ -580,12 +580,12 @@ function isMemberOrAdmin() {
 
 // ========== INITIALISATION AUTOMATIQUE ==========
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 Démarrage de l\'initialisation auth...');
+    debugLog('ðŸš€ DÃ©marrage de l\'initialisation auth...');
     
     const supabaseReady = await initSupabase();
     if (!supabaseReady) {
-        console.error('❌ Impossible d\'initialiser Supabase');
-        // Forcer l'affichage du bouton connexion si Supabase échoue
+        console.error('âŒ Impossible d\'initialiser Supabase');
+        // Forcer l'affichage du bouton connexion si Supabase Ã©choue
         setTimeout(() => {
             const loginLink = document.getElementById('login-link');
             if (loginLink) {
@@ -601,38 +601,38 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
     
-    // Vérifier la session actuelle
+    // VÃ©rifier la session actuelle
     try {
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-            console.warn('⚠️ Erreur récupération session:', error);
+            debugWarn('âš ï¸ Erreur rÃ©cupÃ©ration session:', error);
             currentUser = null;
             userProfile = null;
         } else if (session?.user) {
-            console.log('✅ Session trouvée pour:', session.user.email);
+            debugLog('âœ… Session trouvÃ©e pour:', session.user.email);
             currentUser = session.user;
             window.currentUser = currentUser;
             await loadUserProfile();
         } else {
-            console.log('ℹ️ Aucune session active');
+            debugLog('â„¹ï¸ Aucune session active');
             currentUser = null;
             userProfile = null;
             window.currentUser = null;
             window.userProfile = null;
         }
     } catch (error) {
-        console.error('❌ Erreur lors de la vérification de session:', error);
+        console.error('âŒ Erreur lors de la vÃ©rification de session:', error);
         currentUser = null;
         userProfile = null;
     }
     
-    // Mettre à jour l'UI une seule fois
+    // Mettre Ã  jour l'UI une seule fois
     checkAuthState();
     
-    // Écouter les changements d'authentification
+    // Ã‰couter les changements d'authentification
     supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log('🔄 État auth changé:', event);
+        debugLog('ðŸ”„ Ã‰tat auth changÃ©:', event);
         
         if (event === 'SIGNED_IN' && session?.user) {
             currentUser = session.user;
@@ -704,14 +704,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         showLoginBtn.addEventListener('click', showLoginForm);
     }
     
-    // Bouton de déconnexion
+    // Bouton de dÃ©connexion
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', logoutUser);
     }
     
-    console.log('✅ Système d\'authentification Supabase initialisé');
-    console.log('📊 Utilisateur actuel:', currentUser ? userProfile?.username || currentUser.email : 'Aucun');
+    debugLog('âœ… SystÃ¨me d\'authentification Supabase initialisÃ©');
+    debugLog('ðŸ“Š Utilisateur actuel:', currentUser ? userProfile?.username || currentUser.email : 'Aucun');
     
     // Rendre les fonctions et variables accessibles globalement
     window.getCurrentUser = getCurrentUser;
@@ -722,7 +722,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     window.currentUser = currentUser;
     window.userProfile = userProfile;
 
-    // Fonction pour exposer les variables mises à jour
+    // Fonction pour exposer les variables mises Ã  jour
     window.updateGlobalAuthVars = function() {
         window.currentUser = currentUser;
         window.userProfile = userProfile;

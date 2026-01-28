@@ -1,19 +1,19 @@
-// mailbox-supabase.js - Gestionnaire de messagerie avec Supabase
+﻿// mailbox-supabase.js - Gestionnaire de messagerie avec Supabase
 class MailboxSupabaseManager {
     constructor() {
         this.supabase = null;
         this.initialized = false;
-        console.log('📬 Initialisation MailboxSupabaseManager...');
+        debugLog('ðŸ“¬ Initialisation MailboxSupabaseManager...');
         this.ensureInitialized();
     }
 
-    // S'assurer que Supabase est initialisé
+    // S'assurer que Supabase est initialisÃ©
     async ensureInitialized() {
         if (this.initialized && this.supabase) {
             return true;
         }
 
-        console.log('⏳ Attente de Supabase pour messagerie...');
+        debugLog('â³ Attente de Supabase pour messagerie...');
         
         // Attendre que l'instance globale Supabase soit disponible
         let attempts = 0;
@@ -23,13 +23,13 @@ class MailboxSupabaseManager {
         }
 
         if (!window.globalSupabase) {
-            console.error('❌ Instance globale Supabase non disponible pour la messagerie');
+            console.error('âŒ Instance globale Supabase non disponible pour la messagerie');
             return false;
         }
 
         this.supabase = window.globalSupabase;
         this.initialized = true;
-        console.log('✅ Supabase connecté au Mailbox Manager');
+        debugLog('âœ… Supabase connectÃ© au Mailbox Manager');
         return true;
     }
 
@@ -42,7 +42,7 @@ class MailboxSupabaseManager {
             const { data: { user } } = await this.supabase.auth.getUser();
             return user;
         } catch (error) {
-            console.error('❌ Erreur récupération utilisateur:', error);
+            console.error('âŒ Erreur rÃ©cupÃ©ration utilisateur:', error);
             return null;
         }
     }
@@ -55,17 +55,17 @@ class MailboxSupabaseManager {
         try {
             let targetUserId = userId;
             
-            // Si pas d'userId fourni, récupérer l'utilisateur actuel
+            // Si pas d'userId fourni, rÃ©cupÃ©rer l'utilisateur actuel
             if (!targetUserId) {
                 const { data: { user }, error: userError } = await this.supabase.auth.getUser();
                 if (userError || !user) {
-                    console.error('❌ Erreur récupération utilisateur actuel:', userError);
+                    console.error('âŒ Erreur rÃ©cupÃ©ration utilisateur actuel:', userError);
                     return null;
                 }
                 targetUserId = user.id;
             }
             
-            console.log('🔍 Recherche profil utilisateur ID:', targetUserId);
+            debugLog('ðŸ” Recherche profil utilisateur ID:', targetUserId);
             
             // Utiliser EXPLICITEMENT la table user_profiles
             const { data, error } = await this.supabase
@@ -75,14 +75,14 @@ class MailboxSupabaseManager {
                 .single();
 
             if (error) {
-                console.error('❌ Erreur profil utilisateur (user_profiles):', error);
+                console.error('âŒ Erreur profil utilisateur (user_profiles):', error);
                 return null;
             }
 
-            console.log('✅ Profil utilisateur trouvé:', data);
+            debugLog('âœ… Profil utilisateur trouvÃ©:', data);
             return data;
         } catch (error) {
-            console.error('❌ Erreur dans getUserProfile:', error);
+            console.error('âŒ Erreur dans getUserProfile:', error);
             return null;
         }
     }
@@ -95,27 +95,27 @@ class MailboxSupabaseManager {
                 throw new Error('Supabase non disponible');
             }
 
-            console.log('📤 Envoi message:', { recipientUsername, subject, messageType });
+            debugLog('ðŸ“¤ Envoi message:', { recipientUsername, subject, messageType });
 
-            // Obtenir l'expéditeur
+            // Obtenir l'expÃ©diteur
             const senderProfile = await this.getUserProfile();
             if (!senderProfile) {
-                throw new Error('Profil expéditeur non trouvé');
+                throw new Error('Profil expÃ©diteur non trouvÃ©');
             }
 
             // Trouver le destinataire
-            console.log('🔍 Recherche destinataire:', recipientUsername);
+            debugLog('ðŸ” Recherche destinataire:', recipientUsername);
             let { data: recipientData, error: recipientError } = await this.supabase
                 .from('user_profiles')
                 .select('id, username')
                 .eq('username', recipientUsername)
                 .single();
 
-            console.log('👤 Résultat recherche destinataire:', { recipientData, recipientError });
+            debugLog('ðŸ‘¤ RÃ©sultat recherche destinataire:', { recipientData, recipientError });
 
             if (recipientError || !recipientData) {
-                // Essayer de créer automatiquement le profil utilisateur si non trouvé
-                console.log('⚠️ Destinataire non trouvé, tentative de création automatique...');
+                // Essayer de crÃ©er automatiquement le profil utilisateur si non trouvÃ©
+                debugLog('âš ï¸ Destinataire non trouvÃ©, tentative de crÃ©ation automatique...');
                 
                 try {
                     const { data: newUser, error: createError } = await this.supabase
@@ -128,19 +128,19 @@ class MailboxSupabaseManager {
                         .single();
                         
                     if (createError) {
-                        throw new Error(`Impossible de créer le profil pour "${recipientUsername}": ${createError.message}`);
+                        throw new Error(`Impossible de crÃ©er le profil pour "${recipientUsername}": ${createError.message}`);
                     }
                     
-                    console.log('✅ Profil créé automatiquement:', newUser);
+                    debugLog('âœ… Profil crÃ©Ã© automatiquement:', newUser);
                     recipientData = newUser;
                 } catch (createErr) {
-                    throw new Error(`Destinataire "${recipientUsername}" non trouvé et création automatique échouée: ${createErr.message}`);
+                    throw new Error(`Destinataire "${recipientUsername}" non trouvÃ© et crÃ©ation automatique Ã©chouÃ©e: ${createErr.message}`);
                 }
             } else {
-                console.log('✅ Destinataire trouvé:', recipientData);
+                debugLog('âœ… Destinataire trouvÃ©:', recipientData);
             }
 
-            // Préparer les données du message
+            // PrÃ©parer les donnÃ©es du message
             const messageData = {
                 sender_id: senderProfile.id,
                 sender_username: senderProfile.username,
@@ -152,7 +152,7 @@ class MailboxSupabaseManager {
                 order_id: orderId
             };
 
-            // Insérer le message
+            // InsÃ©rer le message
             const { data, error } = await this.supabase
                 .from('messages')
                 .insert([messageData])
@@ -160,20 +160,20 @@ class MailboxSupabaseManager {
                 .single();
 
             if (error) {
-                console.error('❌ Erreur envoi message:', error);
+                console.error('âŒ Erreur envoi message:', error);
                 throw error;
             }
 
-            console.log('✅ Message envoyé avec succès:', data.id);
+            debugLog('âœ… Message envoyÃ© avec succÃ¨s:', data.id);
             return data;
 
         } catch (error) {
-            console.error('❌ Erreur envoi message:', error);
+            console.error('âŒ Erreur envoi message:', error);
             throw error;
         }
     }
 
-    // Charger les messages reçus
+    // Charger les messages reÃ§us
     async loadReceivedMessages() {
         try {
             const ready = await this.ensureInitialized();
@@ -182,7 +182,7 @@ class MailboxSupabaseManager {
             const user = await this.getCurrentUser();
             if (!user) return [];
 
-            console.log('📥 Chargement messages reçus...');
+            debugLog('ðŸ“¥ Chargement messages reÃ§us...');
 
             const { data, error } = await this.supabase
                 .from('messages')
@@ -191,20 +191,20 @@ class MailboxSupabaseManager {
                 .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('❌ Erreur chargement messages reçus:', error);
+                console.error('âŒ Erreur chargement messages reÃ§us:', error);
                 return [];
             }
 
-            console.log(`✅ ${data.length} messages reçus chargés`);
+            debugLog(`âœ… ${data.length} messages reÃ§us chargÃ©s`);
             return data;
 
         } catch (error) {
-            console.error('❌ Erreur chargement messages reçus:', error);
+            console.error('âŒ Erreur chargement messages reÃ§us:', error);
             return [];
         }
     }
 
-    // Charger les messages envoyés
+    // Charger les messages envoyÃ©s
     async loadSentMessages() {
         try {
             const ready = await this.ensureInitialized();
@@ -213,7 +213,7 @@ class MailboxSupabaseManager {
             const user = await this.getCurrentUser();
             if (!user) return [];
 
-            console.log('📤 Chargement messages envoyés...');
+            debugLog('ðŸ“¤ Chargement messages envoyÃ©s...');
 
             const { data, error } = await this.supabase
                 .from('messages')
@@ -222,15 +222,15 @@ class MailboxSupabaseManager {
                 .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('❌ Erreur chargement messages envoyés:', error);
+                console.error('âŒ Erreur chargement messages envoyÃ©s:', error);
                 return [];
             }
 
-            console.log(`✅ ${data.length} messages envoyés chargés`);
+            debugLog(`âœ… ${data.length} messages envoyÃ©s chargÃ©s`);
             return data;
 
         } catch (error) {
-            console.error('❌ Erreur chargement messages envoyés:', error);
+            console.error('âŒ Erreur chargement messages envoyÃ©s:', error);
             return [];
         }
     }
@@ -247,15 +247,15 @@ class MailboxSupabaseManager {
                 .eq('id', messageId);
 
             if (error) {
-                console.error('❌ Erreur marquage lecture:', error);
+                console.error('âŒ Erreur marquage lecture:', error);
                 return false;
             }
 
-            console.log('✅ Message marqué comme lu:', messageId);
+            debugLog('âœ… Message marquÃ© comme lu:', messageId);
             return true;
 
         } catch (error) {
-            console.error('❌ Erreur marquage lecture:', error);
+            console.error('âŒ Erreur marquage lecture:', error);
             return false;
         }
     }
@@ -276,14 +276,14 @@ class MailboxSupabaseManager {
                 .is('read_at', null);
 
             if (error) {
-                console.error('❌ Erreur comptage non lus:', error);
+                console.error('âŒ Erreur comptage non lus:', error);
                 return 0;
             }
 
             return data.length;
 
         } catch (error) {
-            console.error('❌ Erreur comptage non lus:', error);
+            console.error('âŒ Erreur comptage non lus:', error);
             return 0;
         }
     }
@@ -293,19 +293,19 @@ class MailboxSupabaseManager {
         try {
             const ready = await this.ensureInitialized();
             if (!ready) {
-                console.error('❌ Supabase non initialisé pour suppression');
+                console.error('âŒ Supabase non initialisÃ© pour suppression');
                 return false;
             }
 
             const user = await this.getCurrentUser();
             if (!user) {
-                console.error('❌ Utilisateur non connecté pour suppression');
+                console.error('âŒ Utilisateur non connectÃ© pour suppression');
                 return false;
             }
 
-            console.log('🗑️ Tentative suppression message:', messageId, 'par utilisateur:', user.id);
+            debugLog('ðŸ—‘ï¸ Tentative suppression message:', messageId, 'par utilisateur:', user.id);
 
-            // Vérifier que l'utilisateur a le droit de supprimer ce message
+            // VÃ©rifier que l'utilisateur a le droit de supprimer ce message
             const { data: messageToDelete, error: fetchError } = await this.supabase
                 .from('messages')
                 .select('*')
@@ -313,22 +313,22 @@ class MailboxSupabaseManager {
                 .single();
 
             if (fetchError) {
-                console.error('❌ Erreur récupération message à supprimer:', fetchError);
+                console.error('âŒ Erreur rÃ©cupÃ©ration message Ã  supprimer:', fetchError);
                 return false;
             }
 
             if (!messageToDelete) {
-                console.error('❌ Message non trouvé:', messageId);
+                console.error('âŒ Message non trouvÃ©:', messageId);
                 return false;
             }
 
-            // Vérifier que l'utilisateur est soit l'expéditeur soit le destinataire
+            // VÃ©rifier que l'utilisateur est soit l'expÃ©diteur soit le destinataire
             if (messageToDelete.sender_id !== user.id && messageToDelete.recipient_id !== user.id) {
-                console.error('❌ Utilisateur non autorisé à supprimer ce message');
+                console.error('âŒ Utilisateur non autorisÃ© Ã  supprimer ce message');
                 return false;
             }
 
-            console.log('✅ Autorisation de suppression confirmée pour:', messageToDelete);
+            debugLog('âœ… Autorisation de suppression confirmÃ©e pour:', messageToDelete);
 
             const { data: deleteResult, error } = await this.supabase
                 .from('messages')
@@ -336,14 +336,14 @@ class MailboxSupabaseManager {
                 .eq('id', messageId);
 
             if (error) {
-                console.error('❌ Erreur suppression message Supabase:', error);
+                console.error('âŒ Erreur suppression message Supabase:', error);
                 return false;
             }
 
-            console.log('🔍 Résultat suppression Supabase:', { deleteResult, error });
-            console.log('✅ Message supprimé avec succès de Supabase:', messageId);
+            debugLog('ðŸ” RÃ©sultat suppression Supabase:', { deleteResult, error });
+            debugLog('âœ… Message supprimÃ© avec succÃ¨s de Supabase:', messageId);
             
-            // Vérification supplémentaire - chercher le message pour s'assurer qu'il est supprimé
+            // VÃ©rification supplÃ©mentaire - chercher le message pour s'assurer qu'il est supprimÃ©
             const { data: checkMessage, error: checkError } = await this.supabase
                 .from('messages')
                 .select('id')
@@ -351,29 +351,29 @@ class MailboxSupabaseManager {
                 .maybeSingle();
                 
             if (checkMessage) {
-                console.error('❌ PROBLÈME: Le message existe encore après suppression!', checkMessage);
+                console.error('âŒ PROBLÃˆME: Le message existe encore aprÃ¨s suppression!', checkMessage);
                 return false;
             } else {
-                console.log('✅ Vérification: Message bien supprimé de la base');
+                debugLog('âœ… VÃ©rification: Message bien supprimÃ© de la base');
             }
             
             return true;
 
         } catch (error) {
-            console.error('❌ Exception lors suppression message:', error);
+            console.error('âŒ Exception lors suppression message:', error);
             return false;
         }
     }
 
     // Envoyer un message automatique pour une transaction HDV
     async sendOrderMessage(recipientUsername, orderType, itemName, message) {
-        const subject = `${orderType === 'sell' ? '🔴 Vente' : '🔵 Achat'} - ${itemName}`;
+        const subject = `${orderType === 'sell' ? 'ðŸ”´ Vente' : 'ðŸ”µ Achat'} - ${itemName}`;
         const content = `Transaction HDV: ${message}`;
         
         return await this.sendMessage(recipientUsername, subject, content, 'order');
     }
 
-    // Obtenir la liste de tous les utilisateurs (pour autocomplétion)
+    // Obtenir la liste de tous les utilisateurs (pour autocomplÃ©tion)
     async getAllUsers() {
         try {
             const ready = await this.ensureInitialized();
@@ -385,19 +385,19 @@ class MailboxSupabaseManager {
                 .order('username');
 
             if (error) {
-                console.error('❌ Erreur récupération utilisateurs:', error);
+                console.error('âŒ Erreur rÃ©cupÃ©ration utilisateurs:', error);
                 return [];
             }
 
             return data.map(user => user.username);
 
         } catch (error) {
-            console.error('❌ Erreur getAllUsers:', error);
+            console.error('âŒ Erreur getAllUsers:', error);
             return [];
         }
     }
 
-    // Vérifier qu'un utilisateur existe
+    // VÃ©rifier qu'un utilisateur existe
     async userExists(username) {
         try {
             const ready = await this.ensureInitialized();
@@ -412,56 +412,56 @@ class MailboxSupabaseManager {
             return !error && !!data;
 
         } catch (error) {
-            console.error('❌ Erreur vérification utilisateur:', error);
+            console.error('âŒ Erreur vÃ©rification utilisateur:', error);
             return false;
         }
     }
 
-    // Test de la connectivité et des fonctions
+    // Test de la connectivitÃ© et des fonctions
     async testConnectivity() {
         try {
-            console.log('🧪 Test de connectivité mailbox...');
+            debugLog('ðŸ§ª Test de connectivitÃ© mailbox...');
             
             const ready = await this.ensureInitialized();
             if (!ready) {
-                throw new Error('Supabase non initialisé');
+                throw new Error('Supabase non initialisÃ©');
             }
 
-            // Test 1: Récupérer l'utilisateur actuel
+            // Test 1: RÃ©cupÃ©rer l'utilisateur actuel
             const user = await this.getCurrentUser();
             if (!user) {
-                throw new Error('Utilisateur non connecté');
+                throw new Error('Utilisateur non connectÃ©');
             }
-            console.log('✅ Test 1: Utilisateur connecté -', user.email);
+            debugLog('âœ… Test 1: Utilisateur connectÃ© -', user.email);
 
-            // Test 2: Récupérer le profil
+            // Test 2: RÃ©cupÃ©rer le profil
             const profile = await this.getUserProfile();
             if (!profile) {
-                throw new Error('Profil utilisateur non trouvé');
+                throw new Error('Profil utilisateur non trouvÃ©');
             }
-            console.log('✅ Test 2: Profil utilisateur -', profile.username);
+            debugLog('âœ… Test 2: Profil utilisateur -', profile.username);
 
-            // Test 3: Charger les messages reçus
+            // Test 3: Charger les messages reÃ§us
             const receivedMessages = await this.loadReceivedMessages();
-            console.log(`✅ Test 3: ${receivedMessages.length} messages reçus chargés`);
+            debugLog(`âœ… Test 3: ${receivedMessages.length} messages reÃ§us chargÃ©s`);
 
-            // Test 4: Charger les messages envoyés
+            // Test 4: Charger les messages envoyÃ©s
             const sentMessages = await this.loadSentMessages();
-            console.log(`✅ Test 4: ${sentMessages.length} messages envoyés chargés`);
+            debugLog(`âœ… Test 4: ${sentMessages.length} messages envoyÃ©s chargÃ©s`);
 
             // Test 5: Compter les messages non lus
             const unreadCount = await this.getUnreadCount();
-            console.log(`✅ Test 5: ${unreadCount} messages non lus`);
+            debugLog(`âœ… Test 5: ${unreadCount} messages non lus`);
 
-            // Test 6: Récupérer tous les utilisateurs
+            // Test 6: RÃ©cupÃ©rer tous les utilisateurs
             const allUsers = await this.getAllUsers();
-            console.log(`✅ Test 6: ${allUsers.length} utilisateurs dans la base`);
+            debugLog(`âœ… Test 6: ${allUsers.length} utilisateurs dans la base`);
 
-            console.log('🎉 Tous les tests de connectivité réussis !');
+            debugLog('ðŸŽ‰ Tous les tests de connectivitÃ© rÃ©ussis !');
             return true;
 
         } catch (error) {
-            console.error('❌ Échec test de connectivité:', error);
+            console.error('âŒ Ã‰chec test de connectivitÃ©:', error);
             return false;
         }
     }
@@ -473,28 +473,28 @@ class MailboxSupabaseManager {
             if (!ready) return false;
 
             const user = await this.getCurrentUser();
-            console.log('🔍 Test permissions pour utilisateur:', user?.id);
+            debugLog('ðŸ” Test permissions pour utilisateur:', user?.id);
 
-            // Essayer de récupérer le message
+            // Essayer de rÃ©cupÃ©rer le message
             const { data: message, error: fetchError } = await this.supabase
                 .from('messages')
                 .select('*')
                 .eq('id', messageId)
                 .single();
 
-            console.log('📧 Message trouvé:', message);
-            console.log('❌ Erreur fetch:', fetchError);
+            debugLog('ðŸ“§ Message trouvÃ©:', message);
+            debugLog('âŒ Erreur fetch:', fetchError);
 
             if (message) {
-                console.log('👤 Expéditeur:', message.sender_id);
-                console.log('📥 Destinataire:', message.recipient_id);
-                console.log('🔐 User peut supprimer:', 
+                debugLog('ðŸ‘¤ ExpÃ©diteur:', message.sender_id);
+                debugLog('ðŸ“¥ Destinataire:', message.recipient_id);
+                debugLog('ðŸ” User peut supprimer:', 
                     message.sender_id === user?.id || message.recipient_id === user?.id);
             }
 
             return true;
         } catch (error) {
-            console.error('❌ Erreur test permissions:', error);
+            console.error('âŒ Erreur test permissions:', error);
             return false;
         }
     }
