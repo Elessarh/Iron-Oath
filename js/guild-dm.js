@@ -1,6 +1,6 @@
 /* guild-dm.js - Gestion des messages privés de la guilde */
 
-console.log('✅ Module guild-dm.js chargé');
+// console.log('✅ Module guild-dm.js chargé');
 
 let dmOpen = false;
 let currentRecipient = null;
@@ -9,7 +9,7 @@ let dmSubscription = null;
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('[DM] Initialisation des messages privés...');
+    // console.log('[DM] Initialisation des messages privés...');
     
     await waitForDmAuth();
     
@@ -29,11 +29,11 @@ function waitForDmAuth() {
             
             if (typeof supabase !== 'undefined' && window.currentUser) {
                 clearInterval(checkAuth);
-                console.log('[DM] Auth prête');
+                // console.log('[DM] Auth prête');
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
-                console.log('[DM] Timeout auth');
+                // console.log('[DM] Timeout auth');
                 resolve();
             }
         }, 100);
@@ -54,14 +54,14 @@ async function isGuildMember() {
         const role = (profile?.role || '').trim();
         return role === 'membre' || role === 'admin';
     } catch (error) {
-        console.error('[DM] Erreur vérification membre:', error);
+        // console.error('[DM] Erreur vérification membre:', error);
         return false;
     }
 }
 
 // Initialiser les DMs
 function initializeDM() {
-    console.log('[DM] Initialisation des événements DM...');
+    // console.log('[DM] Initialisation des événements DM...');
     
     // Event listeners
     document.getElementById('dm-back-btn').addEventListener('click', closeDMChat);
@@ -120,15 +120,15 @@ function closeDMChat() {
 // Charger la liste des membres
 async function loadDmMembers() {
     try {
-        console.log('[DM] Chargement de la liste des membres...');
+        // console.log('[DM] Chargement de la liste des membres...');
         
         const list = document.getElementById('dm-members-list');
         if (!list) {
-            console.error('[DM] ERREUR: Élément dm-members-list non trouvé!');
+            // console.error('[DM] ERREUR: Élément dm-members-list non trouvé!');
             return;
         }
         
-        console.log('[DM] Élément dm-members-list trouvé, requête Supabase...');
+        // console.log('[DM] Élément dm-members-list trouvé, requête Supabase...');
         
         const { data: members, error } = await supabase
             .from('user_profiles')
@@ -138,12 +138,12 @@ async function loadDmMembers() {
             .order('username');
         
         if (error) {
-            console.error('[DM] Erreur chargement membres:', error);
+            // console.error('[DM] Erreur chargement membres:', error);
             list.innerHTML = '<div class="dm-loading" style="color: #e74c3c;">Erreur de chargement</div>';
             return;
         }
         
-        console.log('[DM] Membres récupérés:', members);
+        // console.log('[DM] Membres récupérés:', members);
         
         if (!members || members.length === 0) {
             list.innerHTML = '<div class="dm-loading">Aucun membre disponible</div>';
@@ -162,10 +162,10 @@ async function loadDmMembers() {
         
         list.innerHTML = html;
         
-        console.log('[DM] HTML injecté, membres chargés:', members.length);
-        console.log('[DM] Premier élément injecté:', list.firstElementChild);
+        // console.log('[DM] HTML injecté, membres chargés:', members.length);
+        // console.log('[DM] Premier élément injecté:', list.firstElementChild);
     } catch (error) {
-        console.error('[DM] Erreur:', error);
+        // console.error('[DM] Erreur:', error);
         const list = document.getElementById('dm-members-list');
         if (list) {
             list.innerHTML = '<div class="dm-loading" style="color: #e74c3c;">Erreur: ' + error.message + '</div>';
@@ -199,7 +199,7 @@ window.openDMChat = async function(recipientId, recipientName) {
 // Charger les messages privés
 async function loadDmMessages(recipientId) {
     try {
-        console.log('[DM] Chargement messages avec:', recipientId);
+        // console.log('[DM] Chargement messages avec:', recipientId);
         
         const { data: messages, error } = await supabase
             .from('guild_chat')
@@ -210,7 +210,7 @@ async function loadDmMessages(recipientId) {
             .limit(100);
         
         if (error) {
-            console.error('[DM] Erreur chargement messages:', error);
+            // console.error('[DM] Erreur chargement messages:', error);
             displayDmError();
             return;
         }
@@ -233,10 +233,10 @@ async function loadDmMessages(recipientId) {
         });
         
         displayDmMessages(messages, profileMap);
-        console.log('[DM] Messages chargés:', messages.length);
+        // console.log('[DM] Messages chargés:', messages.length);
         
     } catch (error) {
-        console.error('[DM] Erreur:', error);
+        // console.error('[DM] Erreur:', error);
         displayDmError();
     }
 }
@@ -333,7 +333,7 @@ async function sendDM() {
             .insert([messageData]);
         
         if (error) {
-            console.error('[DM] Erreur envoi:', error);
+            // console.error('[DM] Erreur envoi:', error);
             alert(`Erreur: ${error.message}`);
             sendBtn.disabled = false;
             return;
@@ -347,10 +347,10 @@ async function sendDM() {
         // Recharger les messages
         await loadDmMessages(currentRecipient);
         
-        console.log('[DM] Message envoyé');
+        // console.log('[DM] Message envoyé');
         
     } catch (error) {
-        console.error('[DM] Erreur:', error);
+        // console.error('[DM] Erreur:', error);
         document.getElementById('dm-send-btn').disabled = false;
     }
 }
@@ -408,7 +408,7 @@ async function uploadChatImage(file) {
             .upload(filePath, file);
         
         if (error) {
-            console.error('[DM] Erreur upload:', error);
+            // console.error('[DM] Erreur upload:', error);
             return null;
         }
         
@@ -418,14 +418,14 @@ async function uploadChatImage(file) {
         
         return urlData.publicUrl;
     } catch (error) {
-        console.error('[DM] Erreur:', error);
+        // console.error('[DM] Erreur:', error);
         return null;
     }
 }
 
 // S'abonner aux nouveaux messages privés
 function subscribeToDMs() {
-    console.log('[DM] Abonnement aux messages privés...');
+    // console.log('[DM] Abonnement aux messages privés...');
     
     dmSubscription = supabase
         .channel('guild-dm')
@@ -435,7 +435,7 @@ function subscribeToDMs() {
             table: 'guild_chat',
             filter: `is_private=eq.true`
         }, (payload) => {
-            console.log('[DM] Nouveau message privé:', payload.new);
+            // console.log('[DM] Nouveau message privé:', payload.new);
             
             const msg = payload.new;
             
@@ -476,7 +476,7 @@ async function updateDmBadge() {
             tabBtn.classList.remove('has-unread');
         }
     } catch (error) {
-        console.error('[DM] Erreur badge:', error);
+        // console.error('[DM] Erreur badge:', error);
     }
 }
 
@@ -512,4 +512,4 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-console.log('✅ Module guild-dm.js chargé');
+// console.log('✅ Module guild-dm.js chargé');

@@ -15,7 +15,6 @@ let currentSortDirection = 'desc'; // 'asc' ou 'desc'
 
 // Fonction de gestion des onglets du dashboard
 function switchDashboardTab(tabName) {
-    console.log('🔄 Changement d\'onglet vers:', tabName);
     
     // Retirer la classe active de tous les boutons et contenus
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -43,7 +42,6 @@ function switchDashboardTab(tabName) {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('📊 Initialisation du dashboard admin...');
     
     // Attendre que auth-supabase.js soit chargé ET que l'utilisateur soit connecté
     await waitForAuthAndUser();
@@ -64,15 +62,9 @@ function waitForAuthAndUser() {
             // Vérifier que Supabase ET window.currentUser sont prêts
             if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
-                console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
-                console.error('❌ Timeout: utilisateur non connecté après 10s');
-                console.log('État:', {
-                    supabase: typeof supabase !== 'undefined',
-                    currentUser: window.currentUser
-                });
                 showError('Vous devez être connecté pour accéder au dashboard.');
                 setTimeout(() => {
                     window.location.href = 'connexion.html';
@@ -88,14 +80,12 @@ async function checkAdminAccess() {
     try {
         // Utiliser la session globale depuis auth-supabase.js
         if (!window.currentUser) {
-            console.error('❌ Pas d\'utilisateur connecté');
             showError('Vous devez être connecté pour accéder au dashboard.');
             setTimeout(() => {
                 window.location.href = 'connexion.html';
             }, 2000);
             return;
         }        localCurrentUser = window.currentUser;
-        console.log('✅ Utilisateur connecté:', localCurrentUser.email);
         
         // Récupérer le profil et vérifier le rôle
         const { data: profile, error } = await supabase
@@ -105,7 +95,6 @@ async function checkAdminAccess() {
             .single();
             
         if (error || !profile) {
-            console.error('❌ Erreur chargement profil:', error);
             showError('Impossible de vérifier vos droits d\'accès.');
             return;
         }
@@ -114,7 +103,6 @@ async function checkAdminAccess() {
         
         // Vérifier si l'utilisateur est admin
         if (profile.role !== 'admin') {
-            console.error('❌ Accès refusé: utilisateur non admin');
             showError('Vous devez être administrateur pour accéder à cette page.');
             setTimeout(() => {
                 window.location.href = '../index.html';
@@ -122,7 +110,6 @@ async function checkAdminAccess() {
             return;
         }
         
-        console.log('✅ Accès admin confirmé');
         
         // Charger les utilisateurs
         await loadUsers();
@@ -151,7 +138,6 @@ async function checkAdminAccess() {
         }
         
     } catch (error) {
-        console.error('❌ Erreur lors de la vérification admin:', error);
         showError('Une erreur technique est survenue.');
     }
 }
@@ -166,7 +152,6 @@ async function loadUsers() {
             filteredUsers = allUsers;
             updateStats();
             displayUsers();
-            console.log(`📦 ${allUsers.length} utilisateurs chargés depuis le cache`);
             return;
         }
 
@@ -176,7 +161,6 @@ async function loadUsers() {
             .order('created_at', { ascending: false });
             
         if (error) {
-            console.error('❌ Erreur chargement utilisateurs:', error);
             showError('Impossible de charger les utilisateurs.');
             return;
         }
@@ -189,7 +173,6 @@ async function loadUsers() {
             window.cacheManager.set('all_users', allUsers);
         }
         
-        console.log(`✅ ${allUsers.length} utilisateurs chargés`);
         
         // Mettre à jour les statistiques
         updateStats();
@@ -198,7 +181,6 @@ async function loadUsers() {
         displayUsers();
         
     } catch (error) {
-        console.error('❌ Erreur lors du chargement des utilisateurs:', error);
     }
 }
 
@@ -536,12 +518,10 @@ async function confirmRoleChange() {
             .eq('id', editingUserId);
             
         if (error) {
-            console.error('❌ Erreur modification rôle:', error);
             alert('Erreur lors de la modification du rôle.');
             return;
         }
         
-        console.log('✅ Rôle modifié avec succès');
         alert('Rôle modifié avec succès !');
         
         // Invalider le cache des utilisateurs
@@ -556,7 +536,6 @@ async function confirmRoleChange() {
         closeRoleModal();
         
     } catch (error) {
-        console.error('❌ Erreur lors de la modification du rôle:', error);
         alert('Une erreur technique est survenue.');
     }
 }
@@ -581,19 +560,16 @@ async function deleteUser(userId) {
         });
             
         if (error) {
-            console.error('❌ Erreur suppression utilisateur:', error);
             alert('Erreur lors de la suppression de l\'utilisateur : ' + error.message);
             return;
         }
         
-        console.log('✅ Utilisateur supprimé complètement (auth.users + user_profiles)');
         alert('Utilisateur supprimé avec succès !');
         
         // Recharger les utilisateurs
         await loadUsers();
         
     } catch (error) {
-        console.error('❌ Erreur lors de la suppression:', error);
         alert('Une erreur technique est survenue : ' + error.message);
     }
 }
@@ -668,7 +644,6 @@ async function loadAdminPlanning() {
         `).join('');
         
     } catch (error) {
-        console.error('Erreur chargement planning:', error);
     }
 }
 
@@ -710,7 +685,6 @@ async function loadAdminObjectives() {
         `).join('');
         
     } catch (error) {
-        console.error('Erreur chargement objectifs:', error);
     }
 }
 
@@ -753,14 +727,12 @@ async function loadAdminPresence() {
         `).join('');
         
     } catch (error) {
-        console.error('Erreur chargement présences:', error);
     }
 }
 
 // Charger la liste des membres pour le formulaire de présence
 async function loadMembersForPresence() {
     try {
-        console.log('🔄 Chargement des membres pour le select présence...');
         
         const { data, error } = await supabase
             .from('user_profiles')
@@ -770,21 +742,17 @@ async function loadMembersForPresence() {
         
         if (error) throw error;
         
-        console.log('✅ Membres récupérés:', data?.length);
         
         const select = document.getElementById('presence-user');
         if (!select) {
-            console.error('❌ Select #presence-user introuvable !');
             return;
         }
         
         select.innerHTML = '<option value="">Sélectionner un membre</option>' +
             data.map(user => `<option value="${user.id}">${escapeHtml(user.username)}</option>`).join('');
         
-        console.log('✅ Select mis à jour avec', data.length, 'membres');
         
     } catch (error) {
-        console.error('❌ Erreur chargement membres:', error);
     }
 }
 
@@ -808,7 +776,6 @@ async function deleteGuildItem(table, id, type) {
         else if (type === 'presence') loadAdminPresence();
         
     } catch (error) {
-        console.error('Erreur suppression:', error);
         alert('❌ Erreur lors de la suppression');
     }
 }
@@ -839,7 +806,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadAdminPlanning();
                 
             } catch (error) {
-                console.error('Erreur:', error);
                 alert('❌ Erreur lors de l\'ajout');
             }
         });
@@ -871,7 +837,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadAdminObjectives();
                 
             } catch (error) {
-                console.error('Erreur:', error);
                 alert('❌ Erreur lors de la création');
             }
         });
@@ -926,7 +891,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadAdminPresence();
                 
             } catch (error) {
-                console.error('Erreur:', error);
                 alert('❌ Erreur lors de l\'enregistrement');
             }
         });
@@ -1006,7 +970,6 @@ async function loadPresences() {
             .in('role', ['membre', 'admin']);
         
         if (membersError) {
-            console.error('[ERREUR] Erreur chargement membres:', membersError);
             return;
         }
         
@@ -1017,7 +980,6 @@ async function loadPresences() {
             .eq('date_presence', today);
         
         if (presencesError) {
-            console.error('[ERREUR] Erreur chargement presences:', presencesError);
             return;
         }
         
@@ -1071,10 +1033,8 @@ async function loadPresences() {
         document.getElementById('stat-absents').textContent = absents;
         document.getElementById('stat-missions').textContent = enMission;
         
-        console.log('[OK] Presences chargees:', { presents, absents, enMission });
         
     } catch (error) {
-        console.error('[ERREUR] Erreur chargement presences:', error);
     }
 }
 
@@ -1095,7 +1055,6 @@ let editingActivityId = null;
 // Charger les activités dans l'admin
 async function loadAdminActivities() {
     try {
-        console.log('[ADMIN] Chargement des activités...');
         
         const { data, error } = await supabase
             .from('guild_activity_wall')
@@ -1103,17 +1062,14 @@ async function loadAdminActivities() {
             .order('created_at', { ascending: false });
         
         if (error) {
-            console.error('[ERREUR] Erreur chargement activités:', error);
             document.getElementById('admin-activities-list').innerHTML = 
                 '<div style="text-align: center; padding: 40px; color: #e74c3c;">Erreur de chargement</div>';
             return;
         }
         
         displayAdminActivities(data || []);
-        console.log('[OK] Activités chargées:', (data || []).length);
         
     } catch (error) {
-        console.error('[ERREUR]:', error);
     }
 }
 
@@ -1212,7 +1168,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Soumettre une activité (créer ou modifier)
 window.submitActivity = async function() {
     try {
-        console.log('[ACTIVITY] Début de la soumission...');
         const title = document.getElementById('activity-title').value.trim();
         const type = document.getElementById('activity-type').value;
         const content = document.getElementById('activity-content').value.trim();
@@ -1241,7 +1196,6 @@ window.submitActivity = async function() {
                 .upload(filePath, file);
             
             if (uploadError) {
-                console.error('[ERREUR] Upload image:', uploadError);
                 alert('Erreur lors de l\'upload de l\'image. La publication sera créée sans image.');
             } else {
                 const { data: urlData } = supabase.storage
@@ -1259,13 +1213,9 @@ window.submitActivity = async function() {
             author_name: currentUserProfile?.username || localCurrentUser?.email || 'Admin'
         };
         
-        console.log('[ACTIVITY] Données à publier:', activityData);
-        console.log('[ACTIVITY] User actuel:', window.currentUser);
-        console.log('[ACTIVITY] Profile:', currentUserProfile);
         
         if (editingActivityId) {
             // Mode édition
-            console.log('[ACTIVITY] Mode édition, ID:', editingActivityId);
             const { data, error } = await supabase
                 .from('guild_activity_wall')
                 .update(activityData)
@@ -1273,34 +1223,27 @@ window.submitActivity = async function() {
                 .select();
             
             if (error) {
-                console.error('[ERREUR] Modification activité:', error);
-                console.error('[ERREUR] Détails:', error.message, error.details, error.hint);
                 alert(`Erreur lors de la modification: ${error.message}`);
                 submitBtn.disabled = false;
                 submitBtn.querySelector('#submit-btn-text').textContent = 'Modifier';
                 return;
             }
             
-            console.log('[SUCCESS] Publication modifiée:', data);
             alert('Publication modifiée avec succès !');
         } else {
             // Mode création
-            console.log('[ACTIVITY] Mode création');
             const { data, error } = await supabase
                 .from('guild_activity_wall')
                 .insert([activityData])
                 .select();
             
             if (error) {
-                console.error('[ERREUR] Création activité:', error);
-                console.error('[ERREUR] Détails:', error.message, error.details, error.hint);
                 alert(`Erreur lors de la création: ${error.message}`);
                 submitBtn.disabled = false;
                 submitBtn.querySelector('#submit-btn-text').textContent = 'Publier';
                 return;
             }
             
-            console.log('[SUCCESS] Publication créée:', data);
             
             alert('Publication créée avec succès !');
         }
@@ -1312,7 +1255,6 @@ window.submitActivity = async function() {
         await loadAdminActivities();
         
     } catch (error) {
-        console.error('[ERREUR]:', error);
         alert('Une erreur est survenue.');
         const submitBtn = document.getElementById('submit-activity-btn');
         submitBtn.disabled = false;
@@ -1329,7 +1271,6 @@ async function editActivity(activityId) {
             .single();
         
         if (error || !data) {
-            console.error('[ERREUR] Récupération activité:', error);
             alert('Impossible de charger l\'activité.');
             return;
         }
@@ -1357,7 +1298,6 @@ async function editActivity(activityId) {
         document.querySelector('.activity-form').scrollIntoView({ behavior: 'smooth' });
         
     } catch (error) {
-        console.error('[ERREUR]:', error);
         alert('Une erreur est survenue.');
     }
 }
@@ -1413,7 +1353,6 @@ async function deleteActivity(activityId) {
             .eq('id', activityId);
         
         if (error) {
-            console.error('[ERREUR] Suppression activité:', error);
             alert('Erreur lors de la suppression.');
             return;
         }
@@ -1422,7 +1361,6 @@ async function deleteActivity(activityId) {
         await loadAdminActivities();
         
     } catch (error) {
-        console.error('[ERREUR]:', error);
         alert('Une erreur est survenue.');
     }
 }
@@ -1431,6 +1369,5 @@ async function deleteActivity(activityId) {
 window.editActivity = editActivity;
 window.deleteActivity = deleteActivity;
 
-console.log('✅ Module admin-dashboard.js chargé');
 
 

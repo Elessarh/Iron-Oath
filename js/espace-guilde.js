@@ -2,7 +2,7 @@
 
 // Fonction pour changer d'onglet
 function switchGuildeTab(tabName) {
-    console.log('[GUILDE] Changement d\'onglet vers:', tabName);
+    // console.log('[GUILDE] Changement d\'onglet vers:', tabName);
     
     // Retirer la classe active de tous les boutons et contenus
     document.querySelectorAll('.guilde-tab-btn').forEach(btn => {
@@ -29,7 +29,7 @@ function switchGuildeTab(tabName) {
 
 // Attendre que l'auth soit prête
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('[GUILDE] Initialisation de l espace guilde...');
+    // console.log('[GUILDE] Initialisation de l espace guilde...');
     
     // Cacher le lien "Guilde" du menu (on est déjà sur la page)
     hideGuildeLinkFromMenu();
@@ -48,7 +48,7 @@ function hideGuildeLinkFromMenu() {
         const guildeLink = navMenu.querySelector('a[href="espace-guilde.html"]');
         if (guildeLink && guildeLink.parentElement) {
             guildeLink.parentElement.style.display = 'none';
-            console.log('[OK] Lien Guilde cache du menu');
+            // console.log('[OK] Lien Guilde cache du menu');
         }
     }
 }
@@ -64,11 +64,11 @@ function waitForAuthAndUser() {
             
             if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
-                console.log('[OK] Auth prete et utilisateur connecte');
+                // console.log('[OK] Auth prete et utilisateur connecte');
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
-                console.error('[ERREUR] Timeout: utilisateur non connecte');
+                // console.error('[ERREUR] Timeout: utilisateur non connecte');
                 showAccessDenied();
                 resolve();
             }
@@ -80,7 +80,7 @@ function waitForAuthAndUser() {
 async function checkMemberAccess() {
     try {
         if (!window.currentUser) {
-            console.error('[ERREUR] Pas d utilisateur connecte');
+            // console.error('[ERREUR] Pas d utilisateur connecte');
             showAccessDenied();
             return;
         }
@@ -93,7 +93,7 @@ async function checkMemberAccess() {
             .single();
         
         if (error || !profile) {
-            console.error('[ERREUR] Erreur profil:', error);
+            // console.error('[ERREUR] Erreur profil:', error);
             showAccessDenied();
             return;
         }
@@ -102,7 +102,7 @@ async function checkMemberAccess() {
         const role = (profile.role || '').trim();
         
         if (role === 'membre' || role === 'admin') {
-            console.log('[OK] Acces autorise - Role:', role);
+            // console.log('[OK] Acces autorise - Role:', role);
             await loadGuildeData();
             
             // Restaurer l'onglet actif depuis localStorage
@@ -111,12 +111,12 @@ async function checkMemberAccess() {
                 switchGuildeTab(savedTab);
             }
         } else {
-            console.warn('[ATTENTION] Acces refuse - Role:', role);
+            // console.warn('[ATTENTION] Acces refuse - Role:', role);
             showAccessDenied();
         }
         
     } catch (error) {
-        console.error('[ERREUR] Erreur verification acces:', error);
+        // console.error('[ERREUR] Erreur verification acces:', error);
         showAccessDenied();
     }
 }
@@ -155,7 +155,7 @@ async function loadPlanning() {
         
         if (cached) {
             displayPlanning(cached);
-            console.log('[OK] Planning charge depuis cache');
+            // console.log('[OK] Planning charge depuis cache');
             return;
         }
         
@@ -168,7 +168,7 @@ async function loadPlanning() {
             .limit(10);
         
         if (error) {
-            console.error('[ERREUR] Erreur chargement planning:', error);
+            // console.error('[ERREUR] Erreur chargement planning:', error);
             return;
         }
         
@@ -178,10 +178,10 @@ async function loadPlanning() {
         }
         
         displayPlanning(data || []);
-        console.log('[OK] Planning charge:', (data || []).length, 'evenements');
+        // console.log('[OK] Planning charge:', (data || []).length, 'evenements');
         
     } catch (error) {
-        console.error('[ERREUR]:', error);
+        // console.error('[ERREUR]:', error);
     }
 }
 
@@ -214,7 +214,7 @@ async function loadObjectives() {
         
         if (cached) {
             displayObjectives(cached);
-            console.log('[OK] Objectifs charges depuis cache');
+            // console.log('[OK] Objectifs charges depuis cache');
             return;
         }
         
@@ -227,7 +227,7 @@ async function loadObjectives() {
             .order('created_at', { ascending: true });
         
         if (error) {
-            console.error('[ERREUR] Erreur chargement objectifs:', error);
+            // console.error('[ERREUR] Erreur chargement objectifs:', error);
             return;
         }
         
@@ -237,10 +237,10 @@ async function loadObjectives() {
         }
         
         displayObjectives(data || []);
-        console.log('[OK] Objectifs charges:', (data || []).length);
+        // console.log('[OK] Objectifs charges:', (data || []).length);
         
     } catch (error) {
-        console.error('[ERREUR]:', error);
+        // console.error('[ERREUR]:', error);
     }
 }
 
@@ -273,7 +273,7 @@ async function loadPresence() {
     try {
         const today = new Date().toISOString().split('T')[0];
         
-        console.log('[DEBUG] Chargement presences pour:', today);
+        // console.log('[DEBUG] Chargement presences pour:', today);
         
         // Récupérer toutes les présences du jour
         const { data: presences, error: presencesError } = await supabase
@@ -283,13 +283,13 @@ async function loadPresence() {
             .order('statut', { ascending: true });
         
         if (presencesError) {
-            console.error('[ERREUR] Erreur chargement presences:', presencesError);
+            // console.error('[ERREUR] Erreur chargement presences:', presencesError);
             const container = document.getElementById('presence-list');
             container.innerHTML = '<div class="no-data">Erreur de chargement des presences</div>';
             return;
         }
         
-        console.log('[DEBUG] Presences recues:', presences);
+        // console.log('[DEBUG] Presences recues:', presences);
         
         const container = document.getElementById('presence-list');
         
@@ -306,7 +306,7 @@ async function loadPresence() {
             .in('id', userIds);
         
         if (profilesError) {
-            console.error('[ERREUR] Erreur chargement profils:', profilesError);
+            // console.error('[ERREUR] Erreur chargement profils:', profilesError);
             const container = document.getElementById('presence-list');
             container.innerHTML = '<div class="no-data">Erreur de chargement des profils</div>';
             return;
@@ -318,7 +318,7 @@ async function loadPresence() {
             profileMap[p.id] = p;
         });
         
-        console.log('[DEBUG] Profils recus:', profiles);
+        // console.log('[DEBUG] Profils recus:', profiles);
         
         container.innerHTML = presences.map(presence => {
             const profile = profileMap[presence.user_id];
@@ -334,10 +334,10 @@ async function loadPresence() {
             `;
         }).join('');
         
-        console.log('[OK] Presences chargees:', presences.length);
+        // console.log('[OK] Presences chargees:', presences.length);
         
     } catch (error) {
-        console.error('[ERREUR]:', error);
+        // console.error('[ERREUR]:', error);
         const container = document.getElementById('presence-list');
         if (container) {
             container.innerHTML = '<div class="no-data">Erreur technique lors du chargement</div>';
@@ -367,7 +367,7 @@ async function markPresence(statut = 'present') {
                     .eq('id', existing.id);
                 
                 if (updateError) {
-                    console.error('[ERREUR] Erreur mise a jour statut:', updateError);
+                    // console.error('[ERREUR] Erreur mise a jour statut:', updateError);
                     alert('Impossible de mettre a jour votre statut.');
                     return;
                 }
@@ -395,7 +395,7 @@ async function markPresence(statut = 'present') {
             });
         
         if (error) {
-            console.error('[ERREUR] Erreur marquage presence:', error);
+            // console.error('[ERREUR] Erreur marquage presence:', error);
             alert('Impossible de marquer votre statut. Reessayez.');
             return;
         }
@@ -405,7 +405,7 @@ async function markPresence(statut = 'present') {
         await loadPresence(); // Recharger la liste
         
     } catch (error) {
-        console.error('[ERREUR]:', error);
+        // console.error('[ERREUR]:', error);
         alert('Une erreur est survenue.');
     }
 }
@@ -472,7 +472,7 @@ function escapeHtml(text) {
 // ========== MUR D'ACTIVITÉ ==========
 async function loadActivityWall() {
     try {
-        console.log('[GUILDE] Chargement du mur d\'activité...');
+        // console.log('[GUILDE] Chargement du mur d\'activité...');
         
         // Utiliser le cache
         const cacheKey = 'guild_activity_wall';
@@ -480,7 +480,7 @@ async function loadActivityWall() {
         
         if (cached) {
             displayActivityWall(cached);
-            console.log('[OK] Mur d\'activité chargé depuis cache');
+            // console.log('[OK] Mur d\'activité chargé depuis cache');
             return;
         }
         
@@ -492,7 +492,7 @@ async function loadActivityWall() {
             .limit(20);
         
         if (error) {
-            console.error('[ERREUR] Erreur chargement activités:', error);
+            // console.error('[ERREUR] Erreur chargement activités:', error);
             return;
         }
         
@@ -502,10 +502,10 @@ async function loadActivityWall() {
         }
         
         displayActivityWall(data || []);
-        console.log('[OK] Mur d\'activité chargé:', (data || []).length, 'publications');
+        // console.log('[OK] Mur d\'activité chargé:', (data || []).length, 'publications');
         
     } catch (error) {
-        console.error('[ERREUR] Erreur mur d\'activité:', error);
+        // console.error('[ERREUR] Erreur mur d\'activité:', error);
     }
 }
 

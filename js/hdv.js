@@ -14,12 +14,12 @@ class HDVSystem {
             // Vérification de l'authentification
             const userInfo = this.getCurrentUserInfo();
             if (!userInfo) {
-                console.log('❌ Utilisateur non connecté, redirection...');
+                // console.log('❌ Utilisateur non connecté, redirection...');
                 this.redirectToLogin();
                 return;
             }
             
-            console.log('✅ Utilisateur connecté:', userInfo.username);
+            // console.log('✅ Utilisateur connecté:', userInfo.username);
             await this.initializeHDV();
         }, 500);
     }
@@ -117,12 +117,12 @@ class HDVSystem {
             // Le catalogue d'items est défini dans items-catalog-hdv.js
             if (typeof itemsCatalog !== 'undefined') {
                 this.itemsCatalog = itemsCatalog;
-                console.log('✅ Catalogue d\'items chargé avec', this.getTotalItemsCount(), 'items');
+                // console.log('✅ Catalogue d\'items chargé avec', this.getTotalItemsCount(), 'items');
             } else {
-                console.warn('⚠️ Catalogue d\'items non trouvé - utilisation du système de déduction par défaut');
+                // console.warn('⚠️ Catalogue d\'items non trouvé - utilisation du système de déduction par défaut');
             }
         } catch (error) {
-            console.warn('⚠️ Erreur lors du chargement du catalogue d\'items:', error);
+            // console.warn('⚠️ Erreur lors du chargement du catalogue d\'items:', error);
         }
     }
 
@@ -228,7 +228,7 @@ class HDVSystem {
 
     // Système d'auto-actualisation optimisé
     startAutoRefresh() {
-        console.log('🔄 Démarrage auto-actualisation HDV intelligente (60s)');
+        // console.log('🔄 Démarrage auto-actualisation HDV intelligente (60s)');
         
         // Variables pour l'optimisation
         this.lastUpdateTime = Date.now();
@@ -238,7 +238,7 @@ class HDVSystem {
         document.addEventListener('visibilitychange', () => {
             this.isPageVisible = !document.hidden;
             if (this.isPageVisible) {
-                console.log('�️ Page redevenue visible, actualisation immédiate');
+                // console.log('�️ Page redevenue visible, actualisation immédiate');
                 this.performOptimizedRefresh();
             }
         });
@@ -248,7 +248,7 @@ class HDVSystem {
             if (this.isPageVisible) {
                 this.performOptimizedRefresh();
             } else {
-                console.log('🔄 Actualisation ignorée (page non visible)');
+                // console.log('🔄 Actualisation ignorée (page non visible)');
             }
         }, 60000); // Intervalle augmenté à 60 secondes
         
@@ -266,11 +266,11 @@ class HDVSystem {
         
         // Éviter les actualisations trop fréquentes (min 30 secondes)
         if (now - this.lastUpdateTime < 30000) {
-            console.log('🔄 Actualisation trop récente, ignorée');
+            // console.log('🔄 Actualisation trop récente, ignorée');
             return;
         }
         
-        console.log('🔄 Auto-actualisation HDV optimisée...');
+        // console.log('🔄 Auto-actualisation HDV optimisée...');
         this.lastUpdateTime = now;
         
         try {
@@ -279,13 +279,13 @@ class HDVSystem {
             
             // Actualiser l'affichage seulement si les données ont changé
             if (this.orders.length !== previousOrderCount) {
-                console.log('📊 Données modifiées, mise à jour de l\'affichage');
+                // console.log('📊 Données modifiées, mise à jour de l\'affichage');
                 await this.displayOrders(this.orders);
             } else {
-                console.log('📊 Aucun changement détecté, affichage conservé');
+                // console.log('📊 Aucun changement détecté, affichage conservé');
             }
         } catch (error) {
-            console.error('❌ Erreur lors de l\'actualisation optimisée:', error);
+            // console.error('❌ Erreur lors de l\'actualisation optimisée:', error);
         }
     }
 
@@ -305,7 +305,7 @@ class HDVSystem {
 
     // DEBUG: Méthode pour forcer l'accès (temporaire)
     forceAccess(username = 'TestUser') {
-        console.log('🔧 Force access pour:', username);
+        // console.log('🔧 Force access pour:', username);
         const fakeUser = {
             id: 'force_' + Date.now(),
             username: username,
@@ -317,16 +317,11 @@ class HDVSystem {
 
     // DEBUG: Méthode pour vérifier l'état d'authentification
     checkAuthStatus() {
-        console.log('=== ÉTAT AUTHENTIFICATION ===');
-        console.log('window.getCurrentUser:', typeof window.getCurrentUser);
-        console.log('localStorage currentUser:', localStorage.getItem('currentUser'));
-        console.log('window.currentUser:', window.currentUser);
-        console.log('Tokens:', {
-            supabase: localStorage.getItem('supabase.auth.token'),
-            authToken: localStorage.getItem('authToken'),
-            token: localStorage.getItem('token')
-        });
-        console.log('getCurrentUserInfo():', this.getCurrentUserInfo());
+        // console.log('=== ÉTAT AUTHENTIFICATION ===');
+        // console.log('window.getCurrentUser:', typeof window.getCurrentUser);
+        // console.log('localStorage currentUser:', localStorage.getItem('currentUser'));
+        // console.log('window.currentUser:', window.currentUser);
+        // console.log('getCurrentUserInfo():', this.getCurrentUserInfo());
     }
 
     // Afficher un message d'erreur d'authentification
@@ -364,14 +359,14 @@ class HDVSystem {
     getCurrentUserInfo() {
         try {
             // DEBUG temporaire - à supprimer après correction
-            console.log('🔍 HDV - Vérification utilisateur...');
+            // console.log('🔍 HDV - Vérification utilisateur...');
             
             // Essayer d'abord avec le profil Supabase (contient le username)
             if (window.getUserProfile) {
                 const profile = window.getUserProfile();
-                console.log('🟣 Supabase profile:', profile);
+                // console.log('🟣 Supabase profile:', profile);
                 if (profile && profile.username) {
-                    console.log('✅ Profil Supabase trouvé:', profile.username);
+                    // console.log('✅ Profil Supabase trouvé:', profile.username);
                     return {
                         id: profile.id,
                         username: profile.username,
@@ -383,7 +378,7 @@ class HDVSystem {
             // Essayer avec getCurrentUser (objet Supabase brut)
             if (window.getCurrentUser) {
                 const user = window.getCurrentUser();
-                console.log('🔵 Supabase user:', user);
+                // console.log('🔵 Supabase user:', user);
                 if (user) {
                     // Chercher username dans différentes propriétés possibles
                     const username = user.username || 
@@ -392,7 +387,7 @@ class HDVSystem {
                                    user.email?.split('@')[0];
                     
                     if (username) {
-                        console.log('✅ Utilisateur Supabase trouvé:', username);
+                        // console.log('✅ Utilisateur Supabase trouvé:', username);
                         return {
                             id: user.id,
                             username: username,
@@ -404,7 +399,7 @@ class HDVSystem {
             
             // Vérifier window.currentUserProfile si c'est différent
             if (window.currentUserProfile && window.currentUserProfile.username) {
-                console.log('🟣 CurrentUserProfile trouvé:', window.currentUserProfile.username);
+                // console.log('🟣 CurrentUserProfile trouvé:', window.currentUserProfile.username);
                 return {
                     id: window.currentUserProfile.id || 'profile_' + Date.now(),
                     username: window.currentUserProfile.username,
@@ -414,13 +409,13 @@ class HDVSystem {
             
             // Fallback vers localStorage
             const currentUserJSON = localStorage.getItem('currentUser');
-            console.log('💾 localStorage currentUser:', currentUserJSON);
+            // console.log('💾 localStorage currentUser:', currentUserJSON);
             
             if (currentUserJSON) {
                 const currentUser = JSON.parse(currentUserJSON);
-                console.log('🟡 localStorage user:', currentUser);
+                // console.log('🟡 localStorage user:', currentUser);
                 if (currentUser && (currentUser.username || currentUser.email)) {
-                    console.log('✅ Utilisateur localStorage trouvé:', currentUser.username || currentUser.email);
+                    // console.log('✅ Utilisateur localStorage trouvé:', currentUser.username || currentUser.email);
                     return {
                         id: currentUser.id || 'local_' + Date.now(),
                         username: currentUser.username || currentUser.email,
@@ -431,7 +426,7 @@ class HDVSystem {
             
             // Essayer avec le système d'authentification global
             if (window.currentUser && (window.currentUser.username || window.currentUser.email)) {
-                console.log('🟢 Global currentUser trouvé:', window.currentUser);
+                // console.log('🟢 Global currentUser trouvé:', window.currentUser);
                 return {
                     id: window.currentUser.id || 'global_' + Date.now(),
                     username: window.currentUser.username || window.currentUser.email,
@@ -442,7 +437,7 @@ class HDVSystem {
             // Si on a un profil actif (d'après les logs on voit "Elessarh" quelque part)
             // Essayons de chercher dans d'autres variables globales
             if (window.userProfile && window.userProfile.username) {
-                console.log('🟦 UserProfile trouvé:', window.userProfile.username);
+                // console.log('🟦 UserProfile trouvé:', window.userProfile.username);
                 return {
                     id: window.userProfile.id || 'userprofile_' + Date.now(),
                     username: window.userProfile.username,
@@ -456,7 +451,7 @@ class HDVSystem {
                             localStorage.getItem('token');
             
             if (authToken) {
-                console.log('🔑 Token trouvé, création utilisateur temporaire');
+                // console.log('🔑 Token trouvé, création utilisateur temporaire');
                 // Si on a un token mais pas d'info utilisateur, créer un utilisateur temporaire
                 return {
                     id: 'token_user_' + Date.now(),
@@ -465,19 +460,12 @@ class HDVSystem {
                 };
             }
             
-            console.log('❌ Aucun utilisateur trouvé');
-            console.log('Variables disponibles:', {
-                getCurrentUser: typeof window.getCurrentUser,
-                getUserProfile: typeof window.getUserProfile,
-                currentUser: window.currentUser,
-                currentUserProfile: window.currentUserProfile,
-                userProfile: window.userProfile
-            });
+            // console.log('❌ Aucun utilisateur trouvé');
             
             // Utilisateur non connecté - rediriger vers la connexion
             return null;
         } catch (error) {
-            console.error('❌ Erreur récupération utilisateur:', error);
+            // console.error('❌ Erreur récupération utilisateur:', error);
             return null;
         }
     }
@@ -735,14 +723,14 @@ class HDVSystem {
             // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    console.log('🗑️ Suppression ordre de Supabase...');
+                    // console.log('🗑️ Suppression ordre de Supabase...');
                     const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
                     if (success) {
-                        console.log('✅ Ordre supprimé de Supabase');
+                        // console.log('✅ Ordre supprimé de Supabase');
                         orderDeleted = true;
                     }
                 } catch (supabaseError) {
-                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
+                    // console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
                 }
             }
 
@@ -762,7 +750,7 @@ class HDVSystem {
             
             this.showNotification('✅ Ordre supprimé avec succès', 'success');
         } catch (error) {
-            console.error('❌ Erreur lors de la suppression:', error);
+            // console.error('❌ Erreur lors de la suppression:', error);
             this.showNotification('❌ Erreur lors de la suppression: ' + error.message, 'error');
         }
     }
@@ -771,14 +759,6 @@ class HDVSystem {
     isMyOrder(order) {
         const userInfo = this.getCurrentUserInfo();
         const isOwner = userInfo && (order.creator === userInfo.username || order.creatorId === userInfo.id);
-        console.log('🔍 Vérification propriété ordre:', {
-            orderId: order.id,
-            orderCreator: order.creator,
-            orderCreatorId: order.creatorId,
-            currentUser: userInfo?.username,
-            currentUserId: userInfo?.id,
-            isOwner: isOwner
-        });
         return isOwner;
     }
 
@@ -804,11 +784,11 @@ class HDVSystem {
             // Essayer de charger depuis Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    console.log('📥 Chargement historique depuis Supabase...');
+                    // console.log('📥 Chargement historique depuis Supabase...');
                     history = await window.hdvSupabaseManager.getUserPurchaseHistory(userInfo.id);
-                    console.log('✅ Historique chargé:', history);
+                    // console.log('✅ Historique chargé:', history);
                 } catch (supabaseError) {
-                    console.warn('⚠️ Échec chargement Supabase, fallback localStorage:', supabaseError);
+                    // console.warn('⚠️ Échec chargement Supabase, fallback localStorage:', supabaseError);
                 }
             }
 
@@ -892,7 +872,7 @@ class HDVSystem {
                 </div>
             `;
         } catch (error) {
-            console.error('❌ Erreur chargement historique:', error);
+            // console.error('❌ Erreur chargement historique:', error);
             historyList.innerHTML = `
                 <div class="empty-state">
                     <h3>❌ Erreur</h3>
@@ -905,7 +885,7 @@ class HDVSystem {
 
     // Supprimer un ordre depuis le marketplace
     async deleteOrderFromMarketplace(orderId) {
-        console.log('🗑️ Tentative de suppression ordre ID:', orderId, 'Type:', typeof orderId);
+        // console.log('🗑️ Tentative de suppression ordre ID:', orderId, 'Type:', typeof orderId);
         
         if (!confirm('❓ Êtes-vous sûr de vouloir supprimer cet ordre ?')) return;
 
@@ -913,19 +893,19 @@ class HDVSystem {
             let orderDeleted = false;
             
             // Utiliser l'ID tel quel (UUID ou numérique)
-            console.log('🗑️ ID à supprimer:', orderId);
+            // console.log('🗑️ ID à supprimer:', orderId);
             
             // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    console.log('🗑️ Suppression ordre de Supabase...');
+                    // console.log('🗑️ Suppression ordre de Supabase...');
                     const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
                     if (success) {
-                        console.log('✅ Ordre supprimé de Supabase');
+                        // console.log('✅ Ordre supprimé de Supabase');
                         orderDeleted = true;
                     }
                 } catch (supabaseError) {
-                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
+                    // console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
                 }
             }
 
@@ -943,7 +923,7 @@ class HDVSystem {
             
             this.showNotification('✅ Ordre supprimé avec succès', 'success');
         } catch (error) {
-            console.error('❌ Erreur lors de la suppression:', error);
+            // console.error('❌ Erreur lors de la suppression:', error);
             this.showNotification('❌ Erreur lors de la suppression: ' + error.message, 'error');
         }
     }
@@ -981,7 +961,7 @@ class HDVSystem {
             this.startDeletionCountdown(orderId, itemName, orderType);
 
         } catch (error) {
-            console.error('❌ Erreur lors de la finalisation:', error);
+            // console.error('❌ Erreur lors de la finalisation:', error);
             this.showNotification('❌ Erreur lors de la finalisation', 'error');
         }
     }
@@ -1042,7 +1022,7 @@ class HDVSystem {
                 this.deletionTimers.delete(orderId);
             }
         } catch (error) {
-            console.error('❌ Erreur suppression auto:', error);
+            // console.error('❌ Erreur suppression auto:', error);
             this.showNotification('❌ Erreur lors de la suppression automatique', 'error');
         }
     }
@@ -1145,7 +1125,7 @@ class HDVSystem {
         const actionText = orderType === 'sell' ? 'vente' : 'achat';
         
         try {
-            console.log('⚡ Finalisation instantanée:', { orderId, itemName, orderType, otherPartyName });
+            // console.log('⚡ Finalisation instantanée:', { orderId, itemName, orderType, otherPartyName });
             
             // Récupérer l'ordre complet pour avoir toutes les informations
             const order = this.orders.find(o => String(o.id) === String(orderId)) || 
@@ -1196,7 +1176,7 @@ class HDVSystem {
                 transactionType: orderType
             };
 
-            console.log('📊 Données transaction pour historique:', transactionData);
+            // console.log('📊 Données transaction pour historique:', transactionData);
 
             // Sauvegarder dans l'historique (Supabase + localStorage)
             let historySaved = false;
@@ -1204,25 +1184,25 @@ class HDVSystem {
             // Essayer de sauvegarder dans Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    console.log('💾 Sauvegarde transaction dans l\'historique Supabase...');
+                    // console.log('💾 Sauvegarde transaction dans l\'historique Supabase...');
                     await window.hdvSupabaseManager.saveTransactionToHistory(transactionData);
-                    console.log('✅ Transaction sauvegardée dans l\'historique Supabase');
+                    // console.log('✅ Transaction sauvegardée dans l\'historique Supabase');
                     historySaved = true;
                 } catch (supabaseError) {
-                    console.warn('⚠️ Échec sauvegarde historique Supabase:', supabaseError);
+                    // console.warn('⚠️ Échec sauvegarde historique Supabase:', supabaseError);
                 }
             }
 
             // Sauvegarder en localStorage comme fallback
             if (!historySaved) {
-                console.log('💾 Sauvegarde transaction dans localStorage...');
+                // console.log('💾 Sauvegarde transaction dans localStorage...');
                 const history = JSON.parse(localStorage.getItem('hdv_purchase_history') || '[]');
                 history.push({
                     ...transactionData,
                     timestamp: new Date().toISOString()
                 });
                 localStorage.setItem('hdv_purchase_history', JSON.stringify(history));
-                console.log('✅ Transaction sauvegardée dans localStorage');
+                // console.log('✅ Transaction sauvegardée dans localStorage');
             }
 
             // Supprimer immédiatement l'ordre
@@ -1231,14 +1211,14 @@ class HDVSystem {
             // Essayer de supprimer de Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    console.log('🗑️ Suppression ordre de Supabase...');
+                    // console.log('🗑️ Suppression ordre de Supabase...');
                     const success = await window.hdvSupabaseManager.deleteOrderFromSupabase(orderId);
                     if (success) {
-                        console.log('✅ Ordre supprimé de Supabase');
+                        // console.log('✅ Ordre supprimé de Supabase');
                         orderDeleted = true;
                     }
                 } catch (supabaseError) {
-                    console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
+                    // console.warn('⚠️ Échec suppression Supabase, suppression locale uniquement:', supabaseError);
                 }
             }
 
@@ -1257,7 +1237,7 @@ class HDVSystem {
             this.showNotification(`🎉 ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} de "${itemName}" finalisée et sauvegardée dans l'historique !`, 'success');
 
         } catch (error) {
-            console.error('❌ Erreur lors de la finalisation instantanée:', error);
+            // console.error('❌ Erreur lors de la finalisation instantanée:', error);
             this.showNotification('❌ Erreur lors de la finalisation: ' + error.message, 'error');
         }
     }
@@ -1268,7 +1248,7 @@ class HDVSystem {
 
         // Vérifier que orders est défini et est un tableau
         if (!orders || !Array.isArray(orders)) {
-            console.warn('⚠️ displayOrders: orders non défini ou pas un tableau:', orders);
+            // console.warn('⚠️ displayOrders: orders non défini ou pas un tableau:', orders);
             orders = [];
         }
 
@@ -1440,7 +1420,7 @@ class HDVSystem {
             openSelectorBtn.style.display = 'none';
         }
 
-        console.log('Item sélectionné:', item);
+        // console.log('Item sélectionné:', item);
     }
 
     // Effacer la sélection d'item
@@ -1565,24 +1545,24 @@ class HDVSystem {
             // Essayer de sauvegarder dans Supabase d'abord
             if (window.hdvSupabaseManager && window.hdvSupabaseManager.isSupabaseAvailable()) {
                 try {
-                    console.log('💾 Sauvegarde ordre dans Supabase...');
+                    // console.log('💾 Sauvegarde ordre dans Supabase...');
                     const savedOrder = await window.hdvSupabaseManager.saveOrderToSupabase(newOrder);
                     newOrder.id = savedOrder.id; // Utiliser l'ID généré par Supabase
-                    console.log('✅ Ordre sauvegardé dans Supabase avec ID:', savedOrder.id);
+                    // console.log('✅ Ordre sauvegardé dans Supabase avec ID:', savedOrder.id);
                     orderSaved = true;
                 } catch (supabaseError) {
-                    console.warn('⚠️ Échec sauvegarde Supabase, basculement vers localStorage:', supabaseError);
+                    // console.warn('⚠️ Échec sauvegarde Supabase, basculement vers localStorage:', supabaseError);
                 }
             }
             
             // Fallback vers localStorage si Supabase a échoué ou n'est pas disponible
             if (!orderSaved) {
-                console.log('💾 Sauvegarde locale dans localStorage...');
+                // console.log('💾 Sauvegarde locale dans localStorage...');
                 this.orders.push(newOrder);
                 this.myOrders.push(newOrder);
                 localStorage.setItem('hdv_orders', JSON.stringify(this.orders));
                 localStorage.setItem('hdv_my_orders', JSON.stringify(this.myOrders));
-                console.log('✅ Ordre sauvegardé localement');
+                // console.log('✅ Ordre sauvegardé localement');
             }
 
             // Invalider le cache
@@ -1601,7 +1581,7 @@ class HDVSystem {
             }, 500);
             
         } catch (error) {
-            console.error('❌ Erreur lors de la création de l\'ordre:', error);
+            // console.error('❌ Erreur lors de la création de l\'ordre:', error);
             this.showNotification('❌ Erreur lors de la création de l\'ordre: ' + error.message, 'error');
         }
     }
@@ -1609,7 +1589,7 @@ class HDVSystem {
     async saveOrdersToStorage() {
         // Nouvelle version avec Supabase - ne fait plus rien en local
         // Les ordres sont maintenant sauvegardés directement dans Supabase lors de leur création
-        console.log('ℹ️ saveOrdersToStorage: Les ordres sont maintenant gérés par Supabase');
+        // console.log('ℹ️ saveOrdersToStorage: Les ordres sont maintenant gérés par Supabase');
     }
 
     async loadOrdersFromStorage() {
@@ -1621,7 +1601,7 @@ class HDVSystem {
             if (localOrders) {
                 this.orders = JSON.parse(localOrders);
                 this.myOrders = localMyOrders ? JSON.parse(localMyOrders) : [];
-                console.log('⚡ Affichage rapide depuis localStorage:', this.orders.length, 'ordres');
+                // console.log('⚡ Affichage rapide depuis localStorage:', this.orders.length, 'ordres');
                 
                 // Mettre à jour l'affichage immédiatement
                 if (this.currentTab === 'marketplace') {
@@ -1632,15 +1612,15 @@ class HDVSystem {
             // 2. Vérifier le cache en mémoire
             const now = Date.now();
             if (this.cache.orders && this.cache.lastUpdate && (now - this.cache.lastUpdate < this.cache.cacheTimeout)) {
-                console.log('📦 Utilisation du cache mémoire (frais)');
+                // console.log('📦 Utilisation du cache mémoire (frais)');
                 return;
             }
 
             // 3. Charger depuis Supabase en arrière-plan pour mise à jour
-            console.log('� Mise à jour depuis Supabase en arrière-plan...');
+            // console.log('� Mise à jour depuis Supabase en arrière-plan...');
             
             if (!window.hdvSupabaseManager || !window.hdvSupabaseManager.isSupabaseAvailable()) {
-                console.warn('⚠️ HDV Supabase Manager non disponible, utilisation données locales');
+                // console.warn('⚠️ HDV Supabase Manager non disponible, utilisation données locales');
                 return;
             }
 
@@ -1650,7 +1630,7 @@ class HDVSystem {
             const hasChanged = JSON.stringify(orders) !== JSON.stringify(this.orders);
             
             if (hasChanged) {
-                console.log('🆕 Nouvelles données détectées, mise à jour...');
+                // console.log('🆕 Nouvelles données détectées, mise à jour...');
                 this.orders = orders;
                 this.myOrders = myOrders;
                 
@@ -1668,7 +1648,7 @@ class HDVSystem {
                     this.displayOrders(this.orders);
                 }
             } else {
-                console.log('✅ Données à jour depuis Supabase');
+                // console.log('✅ Données à jour depuis Supabase');
                 // Mettre à jour le cache quand même
                 this.cache.orders = orders;
                 this.cache.myOrders = myOrders;
@@ -1676,7 +1656,7 @@ class HDVSystem {
             }
             
         } catch (error) {
-            console.error('❌ Erreur chargement:', error);
+            // console.error('❌ Erreur chargement:', error);
             // En cas d'erreur, on garde les données locales déjà chargées
         }
     }
@@ -1694,7 +1674,7 @@ class HDVSystem {
             this.myOrders = JSON.parse(savedMyOrders);
         }
         
-        console.log('📦 Données chargées depuis localStorage (fallback)');
+        // console.log('📦 Données chargées depuis localStorage (fallback)');
     }
 
     resetCreateOrderForm() {
@@ -1771,11 +1751,6 @@ class HDVSystem {
     contactTrader(traderName, itemName) {
         const currentUser = this.getCurrentUserInfo();
         
-        console.log('📞 Contact trader - Informations:', {
-            trader: traderName,
-            item: itemName,
-            currentUser: currentUser
-        });
         
         // Vérifier l'authentification
         if (!currentUser) {
@@ -1797,7 +1772,7 @@ class HDVSystem {
         );
         
         if (!order) {
-            console.warn('❌ Ordre non trouvé pour le contact');
+            // console.warn('❌ Ordre non trouvé pour le contact');
             this.showNotification('❌ Impossible de trouver les détails de l\'ordre', 'error');
             return;
         }
@@ -1962,7 +1937,7 @@ Exemples:
                 relatedItem: itemName
             };
             
-            console.log('📤 Envoi message personnalisé:', message);
+            // console.log('📤 Envoi message personnalisé:', message);
             
             // Essayer d'envoyer via Supabase d'abord
             let messageSent = false;
@@ -1971,10 +1946,10 @@ Exemples:
                     const success = await window.mailboxSystem.sendMessage(message.to, message.subject, message.content);
                     if (success) {
                         messageSent = true;
-                        console.log('✅ Message envoyé via système Supabase');
+                        // console.log('✅ Message envoyé via système Supabase');
                     }
                 } catch (supabaseError) {
-                    console.warn('⚠️ Échec envoi Supabase, sauvegarde locale:', supabaseError);
+                    // console.warn('⚠️ Échec envoi Supabase, sauvegarde locale:', supabaseError);
                 }
             }
             
@@ -1983,7 +1958,7 @@ Exemples:
                 const messages = JSON.parse(localStorage.getItem('hdv_messages') || '[]');
                 messages.push(message);
                 localStorage.setItem('hdv_messages', JSON.stringify(messages));
-                console.log('💾 Message sauvegardé localement');
+                // console.log('💾 Message sauvegardé localement');
             }
             
             // Fermer la modal
@@ -1992,7 +1967,7 @@ Exemples:
             this.showNotification(`✅ Message envoyé à ${traderName} avec succès !`, 'success');
             
         } catch (error) {
-            console.error('❌ Erreur envoi message:', error);
+            // console.error('❌ Erreur envoi message:', error);
             this.showNotification('❌ Erreur lors de l\'envoi du message: ' + error.message, 'error');
         }
     }

@@ -9,7 +9,7 @@ function decodeKey(encodedKey) {
         // Décoder le Base64 directement
         return atob(encodedKey);
     } catch (error) {
-        console.error('❌ Erreur décodage clé:', error);
+        // console.error('❌ Erreur décodage clé:', error);
         return null;
     }
 }
@@ -37,7 +37,7 @@ function encodeKey(plainKey) {
         // Encoder en Base64
         return btoa(rotated);
     } catch (error) {
-        console.error('❌ Erreur encodage clé:', error);
+        // console.error('❌ Erreur encodage clé:', error);
         return null;
     }
 }
