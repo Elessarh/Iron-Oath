@@ -421,6 +421,34 @@
         padding: 1rem;
     }
     
+    /* Améliorer la visibilité des items sur mobile */
+    .item-card {
+        padding: 1.25rem 0.75rem;
+    }
+    
+    .item-image {
+        width: 80px !important;
+        height: 80px !important;
+        margin-bottom: 1rem;
+    }
+    
+    .item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .item-name {
+        font-size: 0.95rem !important;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+    
+    .item-category {
+        font-size: 0.85rem !important;
+        margin-top: 0.5rem;
+    }
+    
     .selector-actions {
         flex-direction: column;
     }
