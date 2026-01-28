@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carte - Iron Oath</title>
+    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
     <link rel="stylesheet" href="../css/components/map.css?v=20251109i">
@@ -13,28 +14,28 @@
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
     
-    <!-- Script anti-flash immédiat -->
+    <!-- Script anti-flash immÃ©diat -->
     <script>
-        // Masquage immédiat des éléments de connexion pour éviter le flash
+        // Masquage immÃ©diat des Ã©lÃ©ments de connexion pour Ã©viter le flash
         document.addEventListener('DOMContentLoaded', function() {
             const userInfo = document.getElementById('user-info');
             
-            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            // Masquer les infos utilisateur par dÃ©faut - elles ne s'affichent que si connectÃ©
             if (userInfo) {
                 userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
                 userInfo.classList.remove('js-visible');
             }
             
-            // Le bouton de connexion reste visible par défaut
-            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
+            // Le bouton de connexion reste visible par dÃ©faut
+            // Il sera masquÃ© par checkAuthState() si l'utilisateur est connectÃ©
         });
     </script>
     
-    <!-- Suppression du supabase-loader - géré par auth-supabase.js?v=20251109 -->
+    <!-- Suppression du supabase-loader - gÃ©rÃ© par auth-supabase.js?v=20251109 -->
 </head>
 <body>
-    <!-- Écran de chargement supprimé -->
+    <!-- Ã‰cran de chargement supprimÃ© -->
 
     <!-- Header et Navigation -->
     <header class="header">
@@ -48,12 +49,12 @@
                 <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
                 <li><a href="items.html" class="nav-link">Items</a></li>
                 <li><a href="hdv.html" class="nav-link">HDV</a></li>
-                <li><a href="quetes.html">Quêtes</a></li>
+                <li><a href="quetes.html">QuÃªtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">DÃ©connexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
@@ -68,45 +69,45 @@
     <!-- Contenu principal -->
     <main class="map-container">
         <div class="map-header">
-            <h1 class="map-title">🗺️ Aincrad</h1>
-            <p class="map-subtitle">Découvrez les territoires de votre guilde</p>
+            <h1 class="map-title">ðŸ—ºï¸ Aincrad</h1>
+            <p class="map-subtitle">DÃ©couvrez les territoires de votre guilde</p>
         </div>
         
-        <!-- Contrôles de la carte modernisés -->
+        <!-- ContrÃ´les de la carte modernisÃ©s -->
         <div class="map-controls-container">
-            <!-- Sélecteur de palier -->
+            <!-- SÃ©lecteur de palier -->
             <div class="palier-selector">
-                <label for="floor-select" class="palier-label">🏰 Palier</label>
+                <label for="floor-select" class="palier-label">ðŸ° Palier</label>
                 <select id="floor-select" class="palier-dropdown">
                     <option value="1">Palier 1</option>
-                    <option value="2" disabled>Palier 2 (Bientôt)</option>
-                    <option value="3" disabled>Palier 3 (Bientôt)</option>
-                    <option value="4" disabled>Palier 4 (Bientôt)</option>
-                    <option value="5" disabled>Palier 5 (Bientôt)</option>
+                    <option value="2" disabled>Palier 2 (BientÃ´t)</option>
+                    <option value="3" disabled>Palier 3 (BientÃ´t)</option>
+                    <option value="4" disabled>Palier 4 (BientÃ´t)</option>
+                    <option value="5" disabled>Palier 5 (BientÃ´t)</option>
                 </select>
             </div>
             
-            <!-- Panneau de contrôle des éléments -->
+            <!-- Panneau de contrÃ´le des Ã©lÃ©ments -->
             <div class="element-toggles">
-                <h3 class="toggles-title">🎛️ Affichage des Éléments</h3>
+                <h3 class="toggles-title">ðŸŽ›ï¸ Affichage des Ã‰lÃ©ments</h3>
                 <div class="toggles-grid">
                     <div class="toggle-item">
                         <input type="checkbox" id="toggle-quetes-principales" checked>
-                        <label for="toggle-quetes-principales" class="toggle-label" title="Quêtes Principales">
+                        <label for="toggle-quetes-principales" class="toggle-label" title="QuÃªtes Principales">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Quêtes Principales.png" alt="Quêtes Principales" loading="lazy">
+                                <img src="../assets/map_assets/QuÃªtes Principales.png" alt="QuÃªtes Principales" loading="lazy">
                             </div>
-                            <span class="toggle-text">Quêtes Principales</span>
+                            <span class="toggle-text">QuÃªtes Principales</span>
                         </label>
                     </div>
                     
                     <div class="toggle-item">
                         <input type="checkbox" id="toggle-quetes-secondaires" checked>
-                        <label for="toggle-quetes-secondaires" class="toggle-label" title="Quêtes Secondaires">
+                        <label for="toggle-quetes-secondaires" class="toggle-label" title="QuÃªtes Secondaires">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Quêtes Secondaires.png" alt="Quêtes Secondaires" loading="lazy">
+                                <img src="../assets/map_assets/QuÃªtes Secondaires.png" alt="QuÃªtes Secondaires" loading="lazy">
                             </div>
-                            <span class="toggle-text">Quêtes Secondaires</span>
+                            <span class="toggle-text">QuÃªtes Secondaires</span>
                         </label>
                     </div>
                     
@@ -150,11 +151,11 @@
                         </label>
                     </div>
                     
-                    <!-- Mode édition (admin) -->
+                    <!-- Mode Ã©dition (admin) -->
                     <div class="toggle-item admin-only" style="display: none;">
                         <button id="place-mode-btn" class="admin-toggle-btn">
-                            <div class="toggle-icon">✏️</div>
-                            <span class="toggle-text">Mode Édition</span>
+                            <div class="toggle-icon">âœï¸</div>
+                            <span class="toggle-text">Mode Ã‰dition</span>
                         </button>
                     </div>
                 </div>
@@ -184,7 +185,7 @@
                     <div class="hexagon hex-4"></div>
                 </div>
                 
-                <!-- Lignes de code/données -->
+                <!-- Lignes de code/donnÃ©es -->
                 <div class="data-lines">
                     <div class="data-line line-1"></div>
                     <div class="data-line line-2"></div>
@@ -233,8 +234,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     
     <!-- Notre JavaScript -->
-    <script src="../js/crypto-keys.js"></script>
-    <script src="../js/auth-supabase.js?v=20251109f"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth-supabase.js?v=20251109g"></script>
     <script src="../js/map.js?v=20251110j"></script>
     <script src="../js/navbar-mobile.js"></script>
 </body>

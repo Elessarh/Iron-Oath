@@ -1,29 +1,30 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalogue d'Items - Iron Oath</title>
+    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
     <link rel="stylesheet" href="../css/components/items.css">
 
     
-    <!-- Script anti-flash immédiat -->
+    <!-- Script anti-flash immÃ©diat -->
     <script>
-        // Masquage immédiat des éléments de connexion pour éviter le flash
+        // Masquage immÃ©diat des Ã©lÃ©ments de connexion pour Ã©viter le flash
         document.addEventListener('DOMContentLoaded', function() {
             const userInfo = document.getElementById('user-info');
             
-            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            // Masquer les infos utilisateur par dÃ©faut - elles ne s'affichent que si connectÃ©
             if (userInfo) {
                 userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
                 userInfo.classList.remove('js-visible');
             }
             
-            // Le bouton de connexion reste visible par défaut
-            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
+            // Le bouton de connexion reste visible par dÃ©faut
+            // Il sera masquÃ© par checkAuthState() si l'utilisateur est connectÃ©
         });
     </script>
 </head>
@@ -40,12 +41,12 @@
                 <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
                 <li><a href="items.html" class="nav-link active">Items</a></li>
                 <li><a href="hdv.html" class="nav-link">HDV</a></li>
-                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
+                <li><a href="quetes.html" class="nav-link">QuÃªtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">DÃ©connexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
@@ -63,7 +64,7 @@
         <section class="hero-section">
             <div class="hero-content">
                 <h1 class="hero-title">Catalogue d'Items</h1>
-                <p class="hero-subtitle">Découvrez tous les trésors et équipements d'Aincrad</p>
+                <p class="hero-subtitle">DÃ©couvrez tous les trÃ©sors et Ã©quipements d'Aincrad</p>
                 <div class="hero-stats">
                     <div class="stat-item">
                         <span class="stat-number" id="total-items">50+</span>
@@ -71,11 +72,11 @@
                     </div>
                     <div class="stat-item">
                         <span class="stat-number">9</span>
-                        <span class="stat-label">Catégories</span>
+                        <span class="stat-label">CatÃ©gories</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-number">5</span>
-                        <span class="stat-label">Raretés</span>
+                        <span class="stat-label">RaretÃ©s</span>
                     </div>
                 </div>
             </div>
@@ -91,14 +92,14 @@
                     <div class="search-container">
                         <div class="search-wrapper">
                             <input type="text" id="search-input" placeholder="Rechercher un item..." class="search-input">
-                            <i class="search-icon">🔍</i>
+                            <i class="search-icon">ðŸ”</i>
                         </div>
                     </div>
                     <div class="filter-controls">
                         <div class="filter-group">
-                            <label for="category-filter">Catégorie</label>
+                            <label for="category-filter">CatÃ©gorie</label>
                             <select id="category-filter" class="filter-select">
-                                <option value="all">Toutes les catégories</option>
+                                <option value="all">Toutes les catÃ©gories</option>
                                 <option value="Accessoires">Accessoires</option>
                                 <option value="Armes">Armes</option>
                                 <option value="Armures">Armures</option>
@@ -111,18 +112,18 @@
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label for="rarity-filter">Rareté</label>
+                            <label for="rarity-filter">RaretÃ©</label>
                             <select id="rarity-filter" class="filter-select">
-                                <option value="all">Toutes les raretés</option>
+                                <option value="all">Toutes les raretÃ©s</option>
                                 <option value="common">Commun</option>
                                 <option value="uncommon">Peu commun</option>
                                 <option value="rare">Rare</option>
-                                <option value="epic">Épique</option>
-                                <option value="legendary">Légendaire</option>
+                                <option value="epic">Ã‰pique</option>
+                                <option value="legendary">LÃ©gendaire</option>
                             </select>
                         </div>
-                        <button class="reset-filters" id="reset-filters">Réinitialiser</button>
-                        <button class="admin-btn admin-only" id="add-item-btn" style="display: none;">➕ Ajouter Item</button>
+                        <button class="reset-filters" id="reset-filters">RÃ©initialiser</button>
+                        <button class="admin-btn admin-only" id="add-item-btn" style="display: none;">âž• Ajouter Item</button>
                     </div>
                 </div>
             </div>
@@ -134,35 +135,35 @@
                 <div class="catalog-header">
                     <h2>Catalogue des items</h2>
                     <div class="results-info">
-                        <span id="items-count">25 items trouvés</span>
+                        <span id="items-count">25 items trouvÃ©s</span>
                     </div>
                 </div>
                 <div class="items-grid" id="items-grid">
-                    <!-- Les cartes d'items seront générées ici par JavaScript -->
+                    <!-- Les cartes d'items seront gÃ©nÃ©rÃ©es ici par JavaScript -->
                     <div id="items-loader" class="items-loader" style="display: none;">
                         <div class="spinner"></div>
                         <p>Chargement des items...</p>
                     </div>
                 </div>
 
-                <!-- Contrôles de pagination pour les items -->
+                <!-- ContrÃ´les de pagination pour les items -->
                 <div class="pagination-container" id="items-pagination-container" style="display: none;">
                     <div class="pagination-info">
                         <span id="items-pagination-info-text">Affichage de 1-12 sur 45 items</span>
                     </div>
                     <div class="pagination-controls">
                         <button class="pagination-btn" id="items-prev-page" disabled>
-                            <i class="fas fa-chevron-left"></i> Précédent
+                            <i class="fas fa-chevron-left"></i> PrÃ©cÃ©dent
                         </button>
                         <div class="pagination-numbers" id="items-pagination-numbers">
-                            <!-- Numéros de pages générés dynamiquement -->
+                            <!-- NumÃ©ros de pages gÃ©nÃ©rÃ©s dynamiquement -->
                         </div>
                         <button class="pagination-btn" id="items-next-page">
                             Suivant <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                     <div class="pagination-settings">
-                        <label for="items-per-page-select">Éléments par page:</label>
+                        <label for="items-per-page-select">Ã‰lÃ©ments par page:</label>
                         <select id="items-per-page-select">
                             <option value="12">12</option>
                             <option value="24">24</option>
@@ -175,9 +176,9 @@
         </section>
     </main>
 
-    <!-- Plus de modal statique - sera créé dynamiquement comme le bestiaire -->
+    <!-- Plus de modal statique - sera crÃ©Ã© dynamiquement comme le bestiaire -->
 
-    <!-- Modal d'ajout/édition d'item (Admin seulement) -->
+    <!-- Modal d'ajout/Ã©dition d'item (Admin seulement) -->
     <div id="admin-item-modal" class="modal admin-only" style="display: none;">
         <div class="modal-content admin-modal-content">
             <div class="modal-header">
@@ -192,9 +193,9 @@
                             <input type="text" id="admin-item-name" required>
                         </div>
                         <div class="form-group">
-                            <label for="admin-item-category">Catégorie *</label>
+                            <label for="admin-item-category">CatÃ©gorie *</label>
                             <select id="admin-item-category" required>
-                                <option value="">Sélectionner...</option>
+                                <option value="">SÃ©lectionner...</option>
                                 <option value="Accessoires">Accessoires</option>
                                 <option value="Armes">Armes</option>
                                 <option value="Armures">Armures</option>
@@ -211,17 +212,17 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="admin-item-type">Type d'item *</label>
-                            <input type="text" id="admin-item-type" required placeholder="ex: Anneau, Épée, Potion...">
+                            <input type="text" id="admin-item-type" required placeholder="ex: Anneau, Ã‰pÃ©e, Potion...">
                         </div>
                         <div class="form-group">
-                            <label for="admin-item-rarity">Rareté *</label>
+                            <label for="admin-item-rarity">RaretÃ© *</label>
                             <select id="admin-item-rarity" required>
-                                <option value="">Sélectionner...</option>
+                                <option value="">SÃ©lectionner...</option>
                                 <option value="common">Commun</option>
                                 <option value="uncommon">Peu commun</option>
                                 <option value="rare">Rare</option>
-                                <option value="epic">Épique</option>
-                                <option value="legendary">Légendaire</option>
+                                <option value="epic">Ã‰pique</option>
+                                <option value="legendary">LÃ©gendaire</option>
                             </select>
                         </div>
                     </div>
@@ -250,7 +251,7 @@
                     <div class="form-group">
                         <label for="admin-item-image">Nom du fichier image *</label>
                         <input type="text" id="admin-item-image" required placeholder="ex: AnneaudelaFaucheuse.png">
-                        <small>Le fichier doit être dans assets/items/[Catégorie]/</small>
+                        <small>Le fichier doit Ãªtre dans assets/items/[CatÃ©gorie]/</small>
                     </div>
                     
                     <div class="form-group">
@@ -261,7 +262,7 @@
                     
                     <div class="form-group">
                         <label for="admin-item-loot">Sources de loot (JSON)</label>
-                        <textarea id="admin-item-loot" rows="2" placeholder='["Boss X", "Quête Y", "Coffre Z"]'></textarea>
+                        <textarea id="admin-item-loot" rows="2" placeholder='["Boss X", "QuÃªte Y", "Coffre Z"]'></textarea>
                         <small>Format JSON: ["source1", "source2", ...]</small>
                     </div>
                     
@@ -275,11 +276,11 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/config.js"></script>
     <script src="../js/auth-supabase.js?v=20251109f"></script>
     <script src="../js/items-catalog-hdv.js"></script>
     <script>
-        // Système de cartes d'items
+        // SystÃ¨me de cartes d'items
         class ItemCardsSystem {
             constructor() {
                 this.filteredItems = [];
@@ -289,7 +290,7 @@
                     search: ''
                 };
                 
-                // Propriétés de pagination
+                // PropriÃ©tÃ©s de pagination
                 this.currentPage = 1;
                 this.itemsPerPage = 12;
                 this.totalPages = 1;
@@ -327,21 +328,21 @@
                 this.filteredItems = [...this.allItems];
             }
             
-            // Générer une description basique pour les items
+            // GÃ©nÃ©rer une description basique pour les items
             generateDescription(item) {
                 const descriptions = {
                     'common': 'Un objet ordinaire mais utile.',
-                    'uncommon': 'Un objet de qualité supérieure avec des propriétés intéressantes.',
-                    'rare': 'Un objet rare aux capacités remarquables.',
-                    'epic': 'Un objet épique aux pouvoirs exceptionnels.',
-                    'legendary': 'Un objet légendaire aux capacités extraordinaires.'
+                    'uncommon': 'Un objet de qualitÃ© supÃ©rieure avec des propriÃ©tÃ©s intÃ©ressantes.',
+                    'rare': 'Un objet rare aux capacitÃ©s remarquables.',
+                    'epic': 'Un objet Ã©pique aux pouvoirs exceptionnels.',
+                    'legendary': 'Un objet lÃ©gendaire aux capacitÃ©s extraordinaires.'
                 };
                 return descriptions[item.rarity] || descriptions['common'];
             }
 
-            // Configuration des écouteurs d'événements de pagination
+            // Configuration des Ã©couteurs d'Ã©vÃ©nements de pagination
             setupPaginationListeners() {
-                // Boutons précédent/suivant
+                // Boutons prÃ©cÃ©dent/suivant
                 const prevBtn = document.getElementById('items-prev-page');
                 const nextBtn = document.getElementById('items-next-page');
                 
@@ -367,12 +368,12 @@
                     });
                 }
                 
-                // Sélecteur d'éléments par page
+                // SÃ©lecteur d'Ã©lÃ©ments par page
                 const itemsPerPageSelect = document.getElementById('items-per-page-select');
                 if (itemsPerPageSelect) {
                     itemsPerPageSelect.addEventListener('change', (e) => {
                         this.itemsPerPage = parseInt(e.target.value);
-                        this.currentPage = 1; // Reset à la première page
+                        this.currentPage = 1; // Reset Ã  la premiÃ¨re page
                         this.calculatePagination();
                         this.displayItems();
                         this.updatePaginationUI();
@@ -390,7 +391,7 @@
                 }
             }
 
-            // Mise à jour de l'interface de pagination
+            // Mise Ã  jour de l'interface de pagination
             updatePaginationUI() {
                 const paginationContainer = document.getElementById('items-pagination-container');
                 const prevBtn = document.getElementById('items-prev-page');
@@ -400,7 +401,7 @@
                 
                 if (!paginationContainer) return;
                 
-                // Afficher/masquer la pagination selon le nombre d'éléments
+                // Afficher/masquer la pagination selon le nombre d'Ã©lÃ©ments
                 if (this.filteredItems.length <= this.itemsPerPage) {
                     paginationContainer.style.display = 'none';
                     return;
@@ -408,7 +409,7 @@
                     paginationContainer.style.display = 'block';
                 }
                 
-                // Mise à jour des boutons précédent/suivant
+                // Mise Ã  jour des boutons prÃ©cÃ©dent/suivant
                 if (prevBtn) {
                     prevBtn.disabled = this.currentPage <= 1;
                 }
@@ -416,20 +417,20 @@
                     nextBtn.disabled = this.currentPage >= this.totalPages;
                 }
                 
-                // Mise à jour du texte informatif
+                // Mise Ã  jour du texte informatif
                 if (paginationInfo) {
                     const startItem = (this.currentPage - 1) * this.itemsPerPage + 1;
                     const endItem = Math.min(this.currentPage * this.itemsPerPage, this.filteredItems.length);
                     paginationInfo.textContent = `Affichage de ${startItem}-${endItem} sur ${this.filteredItems.length} items`;
                 }
                 
-                // Génération des numéros de pages
+                // GÃ©nÃ©ration des numÃ©ros de pages
                 if (paginationNumbers) {
                     paginationNumbers.innerHTML = this.generatePageNumbers();
                 }
             }
 
-            // Génération des numéros de pages avec ellipses
+            // GÃ©nÃ©ration des numÃ©ros de pages avec ellipses
             generatePageNumbers() {
                 let pages = [];
                 const maxVisiblePages = 7;
@@ -466,7 +467,7 @@
                 return pages.join('');
             }
 
-            // Création d'un bouton de page
+            // CrÃ©ation d'un bouton de page
             createPageButton(pageNumber) {
                 const isActive = pageNumber === this.currentPage ? 'active' : '';
                 return `
@@ -476,7 +477,7 @@
                 `;
             }
 
-            // Navigation vers une page spécifique
+            // Navigation vers une page spÃ©cifique
             goToPage(pageNumber) {
                 if (pageNumber >= 1 && pageNumber <= this.totalPages) {
                     this.currentPage = pageNumber;
@@ -528,7 +529,7 @@
                         item.name.toLowerCase().includes(this.currentFilter.search) ||
                         (item.description && item.description.toLowerCase().includes(this.currentFilter.search));
                     
-                    // Améliorer la correspondance des catégories
+                    // AmÃ©liorer la correspondance des catÃ©gories
                     const matchesCategory = this.currentFilter.category === 'all' || 
                         this.categoryMatches(item.category, this.currentFilter.category);
                     
@@ -538,33 +539,33 @@
                     return matchesSearch && matchesCategory && matchesRarity;
                 });
 
-                // Recalculer la pagination après filtrage
-                this.currentPage = 1; // Reset à la première page
+                // Recalculer la pagination aprÃ¨s filtrage
+                this.currentPage = 1; // Reset Ã  la premiÃ¨re page
                 this.calculatePagination();
                 this.displayItems();
                 this.updateStats();
                 this.updatePaginationUI();
             }
 
-            // Vérifier si une catégorie d'item correspond au filtre
+            // VÃ©rifier si une catÃ©gorie d'item correspond au filtre
             categoryMatches(itemCategory, filterCategory) {
-                // Mapping des catégories avec émojis vers les noms simples
+                // Mapping des catÃ©gories avec Ã©mojis vers les noms simples
                 const categoryMap = {
-                    '💍 Accessoires': 'Accessoires',
-                    '⚔️ Armes': 'Armes',
-                    '🧪 Consommables': 'Consommables', 
-                    '🔧 Ressources': 'Ressources',
-                    '� Outils': 'Outils',
-                    '🐾 Familiers': 'Familiers',
-                    '🐴 Montures': 'Montures',
-                    '🔮 Runes': 'Runes',
-                    '🛡️ Armures': 'Armures'
+                    'ðŸ’ Accessoires': 'Accessoires',
+                    'âš”ï¸ Armes': 'Armes',
+                    'ðŸ§ª Consommables': 'Consommables', 
+                    'ðŸ”§ Ressources': 'Ressources',
+                    'ï¿½ Outils': 'Outils',
+                    'ðŸ¾ Familiers': 'Familiers',
+                    'ðŸ´ Montures': 'Montures',
+                    'ðŸ”® Runes': 'Runes',
+                    'ðŸ›¡ï¸ Armures': 'Armures'
                 };
                 
                 return categoryMap[itemCategory] === filterCategory;
             }
 
-            // Réinitialiser les filtres
+            // RÃ©initialiser les filtres
             resetFilters() {
                 this.currentFilter = { category: 'all', rarity: 'all', search: '' };
                 document.getElementById('search-input').value = '';
@@ -592,12 +593,12 @@
                     }
                     
                     if (this.filteredItems.length === 0) {
-                        grid.innerHTML = '<div class="no-items">Aucun item trouvé</div>';
+                        grid.innerHTML = '<div class="no-items">Aucun item trouvÃ©</div>';
                         this.updatePaginationUI();
                         return;
                     }
 
-                    // Calcul des items à afficher pour la page actuelle
+                    // Calcul des items Ã  afficher pour la page actuelle
                     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
                     const endIndex = startIndex + this.itemsPerPage;
                     const itemsToShow = this.filteredItems.slice(startIndex, endIndex);
@@ -607,12 +608,12 @@
                         grid.appendChild(card);
                     });
                     
-                    // Mettre à jour l'interface de pagination après l'affichage
+                    // Mettre Ã  jour l'interface de pagination aprÃ¨s l'affichage
                     this.updatePaginationUI();
                 }, 300);
             }
 
-            // Créer une carte d'item améliorée
+            // CrÃ©er une carte d'item amÃ©liorÃ©e
             createItemCard(item) {
                 const card = document.createElement('div');
                 card.className = `item-card rarity-${item.rarity || 'common'}`;
@@ -621,8 +622,8 @@
                     'common': 'COMMUN',
                     'uncommon': 'PEU COMMUN', 
                     'rare': 'RARE',
-                    'epic': 'ÉPIQUE',
-                    'legendary': 'LÉGENDAIRE'
+                    'epic': 'Ã‰PIQUE',
+                    'legendary': 'LÃ‰GENDAIRE'
                 }[item.rarity] || 'COMMUN';
 
                 const rarityColor = {
@@ -652,16 +653,16 @@
                         
                         <div class="item-card-footer">
                             <button class="view-details-btn">
-                                <span>ℹ️</span>
+                                <span>â„¹ï¸</span>
                                 INFO
                             </button>
                         </div>
                     </div>
                 `;
 
-                // Ajouter l'événement de clic sur toute la carte - VERSION SIMPLIFIÉE (comme bestiaire)
+                // Ajouter l'Ã©vÃ©nement de clic sur toute la carte - VERSION SIMPLIFIÃ‰E (comme bestiaire)
                 card.addEventListener('click', (event) => {
-                    console.log('Carte cliquée:', item.name); // Debug
+                    console.log('Carte cliquÃ©e:', item.name); // Debug
                     event.preventDefault();
                     event.stopPropagation();
                     this.showModal(item);
@@ -670,66 +671,66 @@
                 return card;
             }
 
-            // Obtenir l'icône de catégorie
+            // Obtenir l'icÃ´ne de catÃ©gorie
             getCategoryIcon(category) {
                 const icons = {
-                    '💍 Accessoires': '💍',
-                    '⚔️ Armes': '⚔️',
-                    '🧪 Consommables': '🧪',
-                    '🔧 Ressources': '🔨', // Marteau d'artisanat
-                    '� Outils': '🔧', // Clé à molette pour les outils
-                    '🐾 Familiers': '🐾',
-                    '🐴 Montures': '🐴',
-                    '🔮 Runes': '�',
-                    '🛡️ Armures': '🛡️'
+                    'ðŸ’ Accessoires': 'ðŸ’',
+                    'âš”ï¸ Armes': 'âš”ï¸',
+                    'ðŸ§ª Consommables': 'ðŸ§ª',
+                    'ðŸ”§ Ressources': 'ðŸ”¨', // Marteau d'artisanat
+                    'ï¿½ Outils': 'ðŸ”§', // ClÃ© Ã  molette pour les outils
+                    'ðŸ¾ Familiers': 'ðŸ¾',
+                    'ðŸ´ Montures': 'ðŸ´',
+                    'ðŸ”® Runes': 'ï¿½',
+                    'ðŸ›¡ï¸ Armures': 'ðŸ›¡ï¸'
                 };
-                return icons[category] || '📦';
+                return icons[category] || 'ðŸ“¦';
             }
 
             // Obtenir une description riche de l'item
             getItemDescription(item) {
                 const descriptions = {
                     'common': 'Un objet courant mais utile pour l\'aventure.',
-                    'uncommon': 'Un objet de qualité supérieure aux propriétés intéressantes.',
-                    'rare': 'Un objet rare doté de capacités remarquables.',
-                    'epic': 'Un objet épique aux pouvoirs exceptionnels.',
-                    'legendary': 'Un objet légendaire aux capacités extraordinaires.'
+                    'uncommon': 'Un objet de qualitÃ© supÃ©rieure aux propriÃ©tÃ©s intÃ©ressantes.',
+                    'rare': 'Un objet rare dotÃ© de capacitÃ©s remarquables.',
+                    'epic': 'Un objet Ã©pique aux pouvoirs exceptionnels.',
+                    'legendary': 'Un objet lÃ©gendaire aux capacitÃ©s extraordinaires.'
                 };
 
-                // Descriptions spécifiques selon le type d'item
+                // Descriptions spÃ©cifiques selon le type d'item
                 if (item.name.includes('Potion')) {
-                    return 'Consommable magique qui restaure ou améliore les capacités.';
-                } else if (item.name.includes('Clé')) {
-                    return 'Ouvre l\'accès à des zones ou contenus spéciaux.';
+                    return 'Consommable magique qui restaure ou amÃ©liore les capacitÃ©s.';
+                } else if (item.name.includes('ClÃ©')) {
+                    return 'Ouvre l\'accÃ¨s Ã  des zones ou contenus spÃ©ciaux.';
                 } else if (item.name.includes('Cristal')) {
-                    return 'Gemme magique concentrant des énergies mystiques.';
+                    return 'Gemme magique concentrant des Ã©nergies mystiques.';
                 } else if (item.name.includes('Lingot') || item.name.includes('Minerai')) {
-                    return 'Matériau précieux utilisé en artisanat avancé.';
-                } else if (item.name.includes('Âme')) {
-                    return 'Essence spirituelle d\'une créature légendaire.';
+                    return 'MatÃ©riau prÃ©cieux utilisÃ© en artisanat avancÃ©.';
+                } else if (item.name.includes('Ã‚me')) {
+                    return 'Essence spirituelle d\'une crÃ©ature lÃ©gendaire.';
                 }
 
                 return descriptions[item.rarity] || descriptions['common'];
             }
 
-            // Aperçu des statistiques
+            // AperÃ§u des statistiques
             getStatsPreview(item) {
-                if (item.category === '🧪 Consommables') {
-                    return '<div class="stat-tag healing">🔥 Consommable</div>';
-                } else if (item.category === '🔧 Ressources') {
-                    return '<div class="stat-tag crafting">🔨 Artisanat</div>';
-                } else if (item.category === '⚔️ Armes') {
-                    return '<div class="stat-tag weapon">⚔️ Combat</div>';
+                if (item.category === 'ðŸ§ª Consommables') {
+                    return '<div class="stat-tag healing">ðŸ”¥ Consommable</div>';
+                } else if (item.category === 'ðŸ”§ Ressources') {
+                    return '<div class="stat-tag crafting">ðŸ”¨ Artisanat</div>';
+                } else if (item.category === 'âš”ï¸ Armes') {
+                    return '<div class="stat-tag weapon">âš”ï¸ Combat</div>';
                 }
-                return '<div class="stat-tag misc">✨ Divers</div>';
+                return '<div class="stat-tag misc">âœ¨ Divers</div>';
             }
 
-            // Afficher les détails d'un item dans le modal - COPIE DE LA LOGIQUE BESTIAIRE
+            // Afficher les dÃ©tails d'un item dans le modal - COPIE DE LA LOGIQUE BESTIAIRE
             showModal(item) {
                 console.log('=== OUVERTURE MODAL (logique bestiaire) ===');
-                console.log('showModal appelée pour:', item.name);
+                console.log('showModal appelÃ©e pour:', item.name);
 
-                // Créer le modal s'il n'existe pas - COMME LE BESTIAIRE
+                // CrÃ©er le modal s'il n'existe pas - COMME LE BESTIAIRE
                 let modal = document.querySelector('.item-modal');
                 if (!modal) {
                     modal = document.createElement('div');
@@ -737,7 +738,7 @@
                     document.body.appendChild(modal);
                 }
 
-                // Générer le contenu du modal - INSPIRÉ DU BESTIAIRE
+                // GÃ©nÃ©rer le contenu du modal - INSPIRÃ‰ DU BESTIAIRE
                 const rarityColor = {
                     'common': '#9e9e9e',
                     'uncommon': '#4caf50',
@@ -760,19 +761,19 @@
                                 <div class="item-badges">
                                     <span class="badge badge-rarity" style="background-color: ${rarityColor}">${this.getRarityText(item.rarity)}</span>
                                     <span class="badge badge-category">${item.category}</span>
-                                    ${item.price ? `<span class="badge badge-price">💰 ${item.price} cols</span>` : ''}
+                                    ${item.price ? `<span class="badge badge-price">ðŸ’° ${item.price} cols</span>` : ''}
                                 </div>
                             </div>
                         </div>
                         
                         <div class="item-section">
-                            <h4 class="section-title">📖 Description</h4>
+                            <h4 class="section-title">ðŸ“– Description</h4>
                             <p class="section-content">${item.description || 'Aucune description disponible.'}</p>
                         </div>
                         
                         ${item.stats ? `
                             <div class="item-section">
-                                <h4 class="section-title">📊 Statistiques</h4>
+                                <h4 class="section-title">ðŸ“Š Statistiques</h4>
                                 <div class="stats-grid">
                                     ${Object.entries(item.stats).map(([stat, value]) => `
                                         <div class="stat-row">
@@ -786,7 +787,7 @@
                         
                         ${item.source ? `
                             <div class="item-section">
-                                <h4 class="section-title">📍 Source</h4>
+                                <h4 class="section-title">ðŸ“ Source</h4>
                                 <p class="section-content">${item.source}</p>
                             </div>
                         ` : ''}
@@ -797,7 +798,7 @@
                 modal.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
                 
-                console.log('Modal créé et affiché avec succès!');
+                console.log('Modal crÃ©Ã© et affichÃ© avec succÃ¨s!');
             }
 
             // Fermer le modal - COPIE EXACTE DE LA LOGIQUE BESTIAIRE
@@ -807,7 +808,7 @@
                 if (modal) {
                     modal.style.display = 'none';
                     document.body.style.overflow = 'auto';
-                    console.log('Modal fermé avec succès');
+                    console.log('Modal fermÃ© avec succÃ¨s');
                 }
             }
 
@@ -816,58 +817,58 @@
                     'common': 'Commun',
                     'uncommon': 'Peu commun',
                     'rare': 'Rare',
-                    'epic': 'Épique',
-                    'legendary': 'Légendaire'
+                    'epic': 'Ã‰pique',
+                    'legendary': 'LÃ©gendaire'
                 };
                 return rarityTexts[rarity] || 'Commun';
             }
 
-            // Mettre à jour les statistiques
+            // Mettre Ã  jour les statistiques
             updateStats() {
                 const totalElement = document.getElementById('total-items');
                 const countElement = document.getElementById('items-count');
                 
                 if (totalElement) totalElement.textContent = `${this.allItems.length}+`;
-                if (countElement) countElement.textContent = `${this.filteredItems.length} items trouvés`;
+                if (countElement) countElement.textContent = `${this.filteredItems.length} items trouvÃ©s`;
             }
 
             // Ajouter aux favoris (placeholder)
             addToWishlist(itemId) {
                 console.log('Ajout aux favoris:', itemId);
                 // Ici on pourrait sauvegarder en localStorage ou envoyer au serveur
-                alert('Item ajouté aux favoris ! (fonctionnalité à implémenter)');
+                alert('Item ajoutÃ© aux favoris ! (fonctionnalitÃ© Ã  implÃ©menter)');
             }
         }
 
-        // Initialiser le système quand le DOM est chargé
+        // Initialiser le systÃ¨me quand le DOM est chargÃ©
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Initialisation ItemCardsSystem...'); // Debug
             window.itemCards = new ItemCardsSystem();
-            // Aussi assigner à une variable globale pour compatibilité
+            // Aussi assigner Ã  une variable globale pour compatibilitÃ©
             window.itemCardsSystem = window.itemCards;
-            console.log('ItemCardsSystem initialisé:', window.itemCards); // Debug
+            console.log('ItemCardsSystem initialisÃ©:', window.itemCards); // Debug
             
-            // Vérifier si on arrive depuis le bestiaire avec un item à rechercher
+            // VÃ©rifier si on arrive depuis le bestiaire avec un item Ã  rechercher
             const searchItemName = localStorage.getItem('searchItemFromBestiaire');
             if (searchItemName) {
                 // Supprimer de localStorage
                 localStorage.removeItem('searchItemFromBestiaire');
                 
-                // Attendre que tout soit chargé et rechercher l'item
+                // Attendre que tout soit chargÃ© et rechercher l'item
                 setTimeout(() => {
                     const searchInput = document.getElementById('search-input');
                     if (searchInput) {
                         searchInput.value = searchItemName;
                         searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        // Scroll vers les résultats
+                        // Scroll vers les rÃ©sultats
                         searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }, 500);
             }
         });
 
-        // Variable pour empêcher les conflits d'événements - VERSION SIMPLIFIÉE
-        // Gestion des événements de modal - COPIE EXACTE DU BESTIAIRE
+        // Variable pour empÃªcher les conflits d'Ã©vÃ©nements - VERSION SIMPLIFIÃ‰E
+        // Gestion des Ã©vÃ©nements de modal - COPIE EXACTE DU BESTIAIRE
         document.addEventListener('click', function(e) {
             // Fermer le modal si on clique sur l'overlay ou le bouton de fermeture
             if (e.target.classList.contains('item-modal') || e.target.classList.contains('modal-close')) {
@@ -901,7 +902,7 @@
     
     <script src="../js/navbar-mobile.js"></script>
     
-    <!-- Système de sécurité -->
+    <!-- SystÃ¨me de sÃ©curitÃ© -->
 
 </body>
 </html>

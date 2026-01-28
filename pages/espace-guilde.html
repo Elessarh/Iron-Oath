@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace Guilde - Iron Oath</title>
+    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -211,13 +212,13 @@
         }
     </style>
     
-    <!-- Script anti-flash immédiat -->
+    <!-- Script anti-flash immÃ©diat -->
     <script>
-        // Masquage immédiat des éléments de connexion pour éviter le flash
+        // Masquage immÃ©diat des Ã©lÃ©ments de connexion pour Ã©viter le flash
         document.addEventListener('DOMContentLoaded', function() {
             const userInfo = document.getElementById('user-info');
             
-            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            // Masquer les infos utilisateur par dÃ©faut - elles ne s'affichent que si connectÃ©
             if (userInfo) {
                 userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
@@ -239,13 +240,13 @@
                 <li><a href="bestiaire.html">Bestiaire</a></li>
                 <li><a href="items.html">Items</a></li>
                 <li><a href="hdv.html">HDV</a></li>
-                <li><a href="quetes.html">Quêtes</a></li>
+                <li><a href="quetes.html">QuÃªtes</a></li>
                 <li><a href="espace-guilde.html" class="active">Guilde</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">DÃ©connexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
@@ -260,27 +261,27 @@
     <!-- Contenu principal -->
     <main class="guilde-container">
         <div id="loading" class="loading">
-            <p>⏳ Chargement de l'espace guilde...</p>
+            <p>â³ Chargement de l'espace guilde...</p>
         </div>
         
         <div id="guilde-content" style="display: none;">
             <div class="guilde-header">
-                <h1>🛡️ Espace Guilde - Iron Oath</h1>
-                <p style="color: #f0f0f0; margin-top: 10px;">Espace réservé aux membres de la guilde</p>
+                <h1>ðŸ›¡ï¸ Espace Guilde - Iron Oath</h1>
+                <p style="color: #f0f0f0; margin-top: 10px;">Espace rÃ©servÃ© aux membres de la guilde</p>
             </div>
             
             <!-- Layout en deux colonnes -->
             <div class="guilde-two-columns">
-                <!-- Colonne gauche: Mur d'Activité -->
+                <!-- Colonne gauche: Mur d'ActivitÃ© -->
                 <div class="guilde-left-column">
                     <div class="activity-wall-container">
                         <div class="activity-wall-header">
-                            <h2 class="activity-wall-title">📢 Mur d'Activité</h2>
+                            <h2 class="activity-wall-title">ðŸ“¢ Mur d'ActivitÃ©</h2>
                         </div>
                         <div id="activity-wall-content" class="activity-wall-content">
                             <div class="no-activities">
-                                <div class="no-activities-icon">📋</div>
-                                <p class="no-activities-text">Aucune activité pour le moment</p>
+                                <div class="no-activities-icon">ðŸ“‹</div>
+                                <p class="no-activities-text">Aucune activitÃ© pour le moment</p>
                             </div>
                         </div>
                     </div>
@@ -288,26 +289,26 @@
                 
                 <!-- Colonne droite: Onglets (Planning, Objectifs, Appel) -->
                 <div class="guilde-right-column">
-                    <!-- Système d'onglets pour les sections -->
+                    <!-- SystÃ¨me d'onglets pour les sections -->
                     <div class="guilde-tabs-container">
                         <div class="guilde-tabs">
                             <button class="guilde-tab-btn active" data-tab="planning" onclick="switchGuildeTab('planning')">
-                                📅 Planning de la Semaine
+                                ðŸ“… Planning de la Semaine
                             </button>
                             <button class="guilde-tab-btn" data-tab="objectives" onclick="switchGuildeTab('objectives')">
-                                🎯 Objectifs de la Semaine
+                                ðŸŽ¯ Objectifs de la Semaine
                             </button>
                             <button class="guilde-tab-btn" data-tab="presence" onclick="switchGuildeTab('presence')">
-                                📋 Appel Quotidien
+                                ðŸ“‹ Appel Quotidien
                             </button>
                         </div>
                         
                         <!-- TAB: Planning -->
                         <div class="guilde-tab-content active" data-tab-content="planning">
                             <div class="guilde-section">
-                                <h2 class="section-title">📅 Planning de la Semaine</h2>
+                                <h2 class="section-title">ðŸ“… Planning de la Semaine</h2>
                                 <div id="planning-list">
-                                    <div class="no-data">Aucun événement planifié</div>
+                                    <div class="no-data">Aucun Ã©vÃ©nement planifiÃ©</div>
                                 </div>
                             </div>
                         </div>
@@ -315,9 +316,9 @@
                         <!-- TAB: Objectifs -->
                         <div class="guilde-tab-content" data-tab-content="objectives" style="display: none;">
                             <div class="guilde-section">
-                                <h2 class="section-title">🎯 Objectifs de la Semaine</h2>
+                                <h2 class="section-title">ðŸŽ¯ Objectifs de la Semaine</h2>
                                 <div id="objectives-list">
-                                    <div class="no-data">Aucun objectif défini</div>
+                                    <div class="no-data">Aucun objectif dÃ©fini</div>
                                 </div>
                             </div>
                         </div>
@@ -325,13 +326,13 @@
                         <!-- TAB: Appel Quotidien -->
                         <div class="guilde-tab-content" data-tab-content="presence" style="display: none;">
                             <div class="guilde-section">
-                                <h2 class="section-title">📋 Appel Quotidien</h2>
+                                <h2 class="section-title">ðŸ“‹ Appel Quotidien</h2>
                                 <div class="appel-actions">
-                                    <button id="mark-presence-btn" class="appel-btn present-btn">Marquer ma présence</button>
-                                    <button id="mark-absence-btn" class="appel-btn absent-btn">Déclarer une absence</button>
+                                    <button id="mark-presence-btn" class="appel-btn present-btn">Marquer ma prÃ©sence</button>
+                                    <button id="mark-absence-btn" class="appel-btn absent-btn">DÃ©clarer une absence</button>
                                 </div>
                                 <div id="presence-list" class="presence-grid">
-                                    <div class="no-data">Chargement des présences...</div>
+                                    <div class="no-data">Chargement des prÃ©sences...</div>
                                 </div>
                             </div>
                         </div>
@@ -341,46 +342,46 @@
         </div>
         
         <div id="access-denied" style="display: none; text-align: center; padding: 100px 20px;">
-            <h2 style="color: #e74c3c; font-size: 2rem; margin-bottom: 20px;">❌ Accès Refusé</h2>
-            <p style="color: #f0f0f0; font-size: 1.2rem;">Cet espace est réservé aux membres de la guilde Iron Oath.</p>
-            <p style="color: #888; margin-top: 20px;">Contactez un administrateur pour obtenir le rôle "Membre".</p>
+            <h2 style="color: #e74c3c; font-size: 2rem; margin-bottom: 20px;">âŒ AccÃ¨s RefusÃ©</h2>
+            <p style="color: #f0f0f0; font-size: 1.2rem;">Cet espace est rÃ©servÃ© aux membres de la guilde Iron Oath.</p>
+            <p style="color: #888; margin-top: 20px;">Contactez un administrateur pour obtenir le rÃ´le "Membre".</p>
         </div>
     </main>
 
     <!-- Bouton flottant pour le chat -->
     <button class="chat-float-button" id="chat-toggle-btn" style="display: none;">
-        💬
+        ðŸ’¬
         <span class="chat-badge" id="chat-badge" style="display: none;">0</span>
     </button>
 
-    <!-- Chat unifié de la guilde -->
+    <!-- Chat unifiÃ© de la guilde -->
     <div class="chat-container" id="guild-chat">
         <div class="chat-header">
-            <h3 class="chat-title">💬 Chat de la Guilde</h3>
+            <h3 class="chat-title">ðŸ’¬ Chat de la Guilde</h3>
             <div class="chat-header-actions">
-                <button class="chat-close-btn" id="chat-close-btn">✕</button>
+                <button class="chat-close-btn" id="chat-close-btn">âœ•</button>
             </div>
         </div>
         
         <!-- Onglets Chat -->
         <div class="chat-tabs">
             <button class="chat-tab-btn active" data-tab="general" id="tab-general-btn">
-                🌐 Général
+                ðŸŒ GÃ©nÃ©ral
             </button>
             <button class="chat-tab-btn" data-tab="private" id="tab-private-btn">
-                ✉️ Privés
+                âœ‰ï¸ PrivÃ©s
                 <span class="tab-badge" id="tab-private-badge" style="display: none;">0</span>
             </button>
         </div>
         
-        <!-- Contenu Chat Général -->
+        <!-- Contenu Chat GÃ©nÃ©ral -->
         <div class="chat-tab-content active" id="chat-general-content">
             <div class="chat-replying-to" id="chat-replying-to">
                 <div class="replying-to-text">
-                    <div class="replying-to-label">Répondre à <span id="reply-to-author"></span></div>
+                    <div class="replying-to-label">RÃ©pondre Ã  <span id="reply-to-author"></span></div>
                     <div class="replying-to-preview" id="reply-to-preview"></div>
                 </div>
-                <button class="cancel-reply-btn" id="cancel-reply-btn">✕</button>
+                <button class="cancel-reply-btn" id="cancel-reply-btn">âœ•</button>
             </div>
             
             <div class="chat-messages" id="chat-messages">
@@ -401,23 +402,23 @@
                         style="display: none;"
                     >
                     <button class="chat-image-btn" id="chat-image-btn" title="Joindre une image">
-                        📷
+                        ðŸ“·
                     </button>
                     <input 
                         type="text" 
                         class="chat-input" 
                         id="chat-input" 
-                        placeholder="Écrivez votre message..."
+                        placeholder="Ã‰crivez votre message..."
                         maxlength="500"
                     >
                     <button class="chat-send-btn" id="chat-send-btn">
-                        ➤
+                        âž¤
                     </button>
                 </div>
             </div>
         </div>
         
-        <!-- Contenu Messages Privés -->
+        <!-- Contenu Messages PrivÃ©s -->
         <div class="chat-tab-content" id="chat-private-content">
             <div class="dm-layout">
                 <div class="dm-sidebar">
@@ -426,7 +427,7 @@
                             type="text" 
                             id="dm-search-input" 
                             class="dm-search-input" 
-                            placeholder="🔍 Rechercher un membre..."
+                            placeholder="ðŸ” Rechercher un membre..."
                         >
                     </div>
                     <div class="dm-members-list" id="dm-members-list">
@@ -436,8 +437,8 @@
                 
                 <div class="dm-chat-area" id="dm-chat-area">
                     <div class="dm-placeholder" id="dm-placeholder">
-                        <div class="dm-placeholder-icon">✉️</div>
-                        <p>Sélectionnez un membre pour commencer une conversation privée</p>
+                        <div class="dm-placeholder-icon">âœ‰ï¸</div>
+                        <p>SÃ©lectionnez un membre pour commencer une conversation privÃ©e</p>
                     </div>
                     
                     <div class="dm-active-chat" id="dm-active-chat" style="display: none;">
@@ -446,7 +447,7 @@
                                 <span class="dm-recipient-name" id="dm-recipient-name"></span>
                                 <span class="dm-recipient-status">En ligne</span>
                             </div>
-                            <button class="dm-back-btn" id="dm-back-btn">← Retour</button>
+                            <button class="dm-back-btn" id="dm-back-btn">â† Retour</button>
                         </div>
                         
                         <div class="dm-messages" id="dm-messages">
@@ -467,17 +468,17 @@
                                     style="display: none;"
                                 >
                                 <button class="dm-image-btn" id="dm-image-btn" title="Joindre une image">
-                                    📷
+                                    ðŸ“·
                                 </button>
                                 <input 
                                     type="text" 
                                     class="dm-input" 
                                     id="dm-input" 
-                                    placeholder="Écrivez votre message privé..."
+                                    placeholder="Ã‰crivez votre message privÃ©..."
                                     maxlength="500"
                                 >
                                 <button class="dm-send-btn" id="dm-send-btn">
-                                    ➤
+                                    âž¤
                                 </button>
                             </div>
                         </div>
@@ -491,9 +492,9 @@
     <!-- Chargement Supabase via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     
+    <script src="../js/config.js"></script>
     <script src="../js/performance-monitor.js"></script>
     <script src="../js/cache-manager.js" defer></script>
-    <script src="../js/crypto-keys.js"></script>
     <script src="../js/auth-supabase.js"></script>
     <script src="../js/espace-guilde.js" defer></script>
     <script src="../js/guild-chat.js" defer></script>

@@ -1,33 +1,34 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bestiaire - Iron Oath</title>
+    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
     <link rel="stylesheet" href="../css/components/bestiaire.css">
     
-    <!-- Script anti-flash immédiat -->
+    <!-- Script anti-flash immÃ©diat -->
     <script>
-        // Masquage immédiat des éléments de connexion pour éviter le flash
+        // Masquage immÃ©diat des Ã©lÃ©ments de connexion pour Ã©viter le flash
         document.addEventListener('DOMContentLoaded', function() {
             const userInfo = document.getElementById('user-info');
             
-            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            // Masquer les infos utilisateur par dÃ©faut - elles ne s'affichent que si connectÃ©
             if (userInfo) {
                 userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
                 userInfo.classList.remove('js-visible');
             }
             
-            // Le bouton de connexion reste visible par défaut
-            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
+            // Le bouton de connexion reste visible par dÃ©faut
+            // Il sera masquÃ© par checkAuthState() si l'utilisateur est connectÃ©
         });
     </script>
 </head>
 <body>
-    <!-- Écran de chargement supprimé -->
+    <!-- Ã‰cran de chargement supprimÃ© -->
 
     <!-- Header et Navigation -->
     <header class="header">
@@ -41,12 +42,12 @@
                 <li><a href="bestiaire.html" class="nav-link active">Bestiaire</a></li>
                 <li><a href="items.html" class="nav-link">Items</a></li>
                 <li><a href="hdv.html" class="nav-link">HDV</a></li>
-                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
+                <li><a href="quetes.html" class="nav-link">QuÃªtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">DÃ©connexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
@@ -63,7 +64,7 @@
         <h1 style="text-align: center; margin-bottom: 2rem; color: var(--color-accent);">Bestiaire</h1>
         
         <div class="filters">
-            <input type="text" id="search" placeholder="Rechercher une créature...">
+            <input type="text" id="search" placeholder="Rechercher une crÃ©ature...">
             <div class="filter-group">
                 <select id="palier-filter">
                     <option value="">Tous les paliers</option>
@@ -72,10 +73,10 @@
                     <option value="3">Palier 3</option>
                 </select>
                 <select id="category-filter">
-                    <option value="">Toutes les catégories</option>
+                    <option value="">Toutes les catÃ©gories</option>
                     <option value="boss">Boss</option>
                     <option value="elite">Elite</option>
-                    <option value="creature">Créature</option>
+                    <option value="creature">CrÃ©ature</option>
                 </select>
                 <select id="level-filter">
                     <option value="">Niveau</option>
@@ -87,40 +88,40 @@
                 </select>
                 <select id="type-filter">
                     <option value="">Type</option>
-                    <option value="humanoide">Humanoïde</option>
-                    <option value="bête">Bête</option>
-                    <option value="créature">Créature</option>
+                    <option value="humanoide">HumanoÃ¯de</option>
+                    <option value="bÃªte">BÃªte</option>
+                    <option value="crÃ©ature">CrÃ©ature</option>
                     <option value="mort-vivant">Mort-vivant</option>
                     <option value="plante">Plante</option>
-                    <option value="démon">Démon</option>
-                    <option value="élémentaire">Élémentaire</option>
+                    <option value="dÃ©mon">DÃ©mon</option>
+                    <option value="Ã©lÃ©mentaire">Ã‰lÃ©mentaire</option>
                     <option value="dragon">Dragon</option>
                 </select>
             </div>
         </div>
 
         <div class="creatures-grid" id="creatures-grid">
-            <!-- Les créatures seront chargées dynamiquement par JavaScript -->
+            <!-- Les crÃ©atures seront chargÃ©es dynamiquement par JavaScript -->
         </div>
 
-        <!-- Contrôles de pagination -->
+        <!-- ContrÃ´les de pagination -->
         <div class="pagination-container" id="pagination-container" style="display: none;">
             <div class="pagination-info">
-                <span id="pagination-info-text">Affichage de 1-12 sur 45 créatures</span>
+                <span id="pagination-info-text">Affichage de 1-12 sur 45 crÃ©atures</span>
             </div>
             <div class="pagination-controls">
                 <button class="pagination-btn" id="prev-page" disabled>
-                    <i class="fas fa-chevron-left"></i> Précédent
+                    <i class="fas fa-chevron-left"></i> PrÃ©cÃ©dent
                 </button>
                 <div class="pagination-numbers" id="pagination-numbers">
-                    <!-- Numéros de pages générés dynamiquement -->
+                    <!-- NumÃ©ros de pages gÃ©nÃ©rÃ©s dynamiquement -->
                 </div>
                 <button class="pagination-btn" id="next-page">
                     Suivant <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
             <div class="pagination-settings">
-                <label for="items-per-page">Éléments par page:</label>
+                <label for="items-per-page">Ã‰lÃ©ments par page:</label>
                 <select id="items-per-page">
                     <option value="12">12</option>
                     <option value="24">24</option>
@@ -133,7 +134,7 @@
 
     <!-- Script du bestiaire -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/config.js"></script>
     <script src="../js/auth-supabase.js?v=20251109f"></script>
     <script src="../js/bestiaire.js?v=20251110c"></script>
     
