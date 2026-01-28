@@ -239,7 +239,7 @@ class ItemSelector {
             <div class="item-card" data-item-id="${item.id}" data-item-name="${item.name}" 
                  data-item-image="${item.image}" data-item-category="${item.categoryKey}">
                 <div class="item-image">
-                    <img src="../assets/items/${item.image}" alt="${item.name}" 
+                    <img src="${item.image}" alt="${item.name}" loading="lazy"
                          onerror="this.src='../assets/items/default.png'">
                 </div>
                 <div class="item-info">
