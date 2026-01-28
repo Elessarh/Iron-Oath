@@ -235,11 +235,14 @@ class ItemSelector {
         const { items, totalItems, totalPages, currentPage } = paginatedData;
 
         // Afficher les items
-        itemsGrid.innerHTML = items.map(item => `
+        itemsGrid.innerHTML = items.map(item => {
+            // Construire le chemin absolu depuis pages/
+            const imagePath = item.image.startsWith('http') ? item.image : `../assets/items/${item.image}`;
+            return `
             <div class="item-card" data-item-id="${item.id}" data-item-name="${item.name}" 
                  data-item-image="${item.image}" data-item-category="${item.categoryKey}">
                 <div class="item-image">
-                    <img src="${item.image}" alt="${item.name}" loading="lazy"
+                    <img src="${imagePath}" alt="${item.name}" loading="lazy"
                          onerror="this.src='../assets/items/default.png'">
                 </div>
                 <div class="item-info">
@@ -247,7 +250,8 @@ class ItemSelector {
                     <div class="item-category-tag">${item.categoryName}</div>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
 
         // Mettre à jour les informations
         itemsCount.textContent = `${totalItems} item(s) trouvé(s)`;

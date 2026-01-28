@@ -6,7 +6,7 @@ const itemsCatalog = {
         {
             id: "anneau_faucheuse",
             name: "Anneau de la Faucheuse",
-            image: "../assets/items/Accessoires/AnneaudelaFaucheuse.png",
+            image: "Accessoires/AnneaudelaFaucheuse.png",
             category: "Accessoires",
             rarity: "legendary",
             description: "Un anneau sombre imprégné de la puissance de la Faucheuse. Confère une aura terrifiante à son porteur.",
@@ -21,7 +21,7 @@ const itemsCatalog = {
         {
             id: "anneau_leviathan",
             name: "Anneau de Léviathan",
-            image: "../assets/items/Accessoires/AnneaudeLéviathan.png",
+            image: "Accessoires/AnneaudeLéviathan.png",
             category: "Accessoires",
             rarity: "epic",
             description: "Forgé dans les abysses marins, cet anneau octroie la maîtrise des eaux.",
@@ -36,7 +36,7 @@ const itemsCatalog = {
         {
             id: "anneau_pacte",
             name: "Anneau de Pacte",
-            image: "../assets/items/Accessoires/Anneaudepacte.png",
+            image: "Accessoires/Anneaudepacte.png",
             category: "Accessoires",
             rarity: "rare",
             description: "Sceau d'un pacte ancien entre les éléments. Augmente l'affinité magique.",
@@ -51,7 +51,7 @@ const itemsCatalog = {
         {
             id: "collier_aragorn",
             name: "Collier de Aragorn",
-            image: "../assets/items/Accessoires/CollierdeAragorn.png",
+            image: "Accessoires/CollierdeAragorn.png",
             category: "Accessoires",
             rarity: "legendary",
             description: "Collier royal porté par le légendaire roi Aragorn. Octroie noblesse et charisme.",
@@ -68,7 +68,7 @@ const itemsCatalog = {
         {
             id: "baton_sorcier_shaman",
             name: "Bâton du Sorcier du Shaman",
-            image: "../assets/items/Armes/BatonduSorcierduShaman.png",
+            image: "Armes/BatonduSorcierduShaman.png",
             category: "Armes",
             rarity: "legendary",
             description: "Bâton ancestral des shamans, capable de canaliser les esprits de la nature.",
@@ -86,7 +86,7 @@ const itemsCatalog = {
         {
             id: "cle_foret",
             name: "Clé de la Forêt",
-            image: "../assets/items/Consommables/Clédelaforêt.png",
+            image: "Consommables/Clédelaforêt.png",
             category: "Consommables",
             rarity: "rare",
             description: "Clé mystique qui ouvre les portails secrets de la grande forêt d'Aincrad.",
@@ -100,7 +100,7 @@ const itemsCatalog = {
         {
             id: "cle_dechus",
             name: "Clé des Déchus",
-            image: "../assets/items/Consommables/ClédesDechus.png",
+            image: "Consommables/ClédesDechus.png",
             category: "Consommables",
             rarity: "epic",
             description: "Clé forgée dans les flammes de l'enfer, permettant d'accéder aux terres maudites.",
@@ -114,7 +114,7 @@ const itemsCatalog = {
         {
             id: "potion_vie_1",
             name: "Potion de Vie I",
-            image: "../assets/items/Consommables/PotiondeVieI.png",
+            image: "Consommables/PotiondeVieI.png",
             category: "Consommables",
             rarity: "common",
             description: "Potion basique qui restaure une petite quantité de points de vie.",
@@ -128,7 +128,7 @@ const itemsCatalog = {
         {
             id: "potion_vie_2",
             name: "Potion de Vie II",
-            image: "../assets/items/Consommables/PotiondeVieII.png",
+            image: "Consommables/PotiondeVieII.png",
             category: "Consommables",
             rarity: "uncommon",
             description: "Potion améliorée qui restaure une quantité modérée de points de vie.",
@@ -142,7 +142,7 @@ const itemsCatalog = {
         {
             id: "potion_vie_3",
             name: "Potion de Vie III",
-            image: "../assets/items/Consommables/PotiondeVieIII.png",
+            image: "Consommables/PotiondeVieIII.png",
             category: "Consommables",
             rarity: "rare",
             description: "Potion puissante qui restaure une grande quantité de points de vie.",
@@ -156,7 +156,7 @@ const itemsCatalog = {
         {
             id: "potion_mana",
             name: "Potion de Mana",
-            image: "../assets/items/Consommables/PotiondeMana.png",
+            image: "Consommables/PotiondeMana.png",
             category: "Consommables",
             rarity: "common",
             description: "Élixir magique qui restaure l'énergie spirituelle du mage.",
@@ -172,7 +172,7 @@ const itemsCatalog = {
         {
             id: "lingot_fer",
             name: "Lingot de Fer",
-            image: "../assets/items/Ressources/LingotdeFer.png",
+            image: "Ressources/LingotdeFer.png",
             category: "Ressources",
             rarity: "common",
             description: "Lingot de fer pur, matériau de base pour la forge d'équipements.",
@@ -186,7 +186,7 @@ const itemsCatalog = {
         {
             id: "lingot_cuivre",
             name: "Lingot de Cuivre",
-            image: "../assets/items/Ressources/LingotdeCuivre.png",
+            image: "Ressources/LingotdeCuivre.png",
             category: "Ressources",
             rarity: "common",
             description: "Lingot de cuivre, utilisé pour les créations d'alchimie et d'artisanat.",
@@ -200,7 +200,7 @@ const itemsCatalog = {
         {
             id: "coeur_arcanique",
             name: "Coeur Arcanique",
-            image: "../assets/items/Ressources/CoeurArcanique.png",
+            image: "Ressources/CoeurArcanique.png",
             category: "Ressources",
             rarity: "epic",
             description: "Cristal pulsant d'énergie magique pure, composant rare pour les objets enchantés.",
@@ -214,7 +214,7 @@ const itemsCatalog = {
         {
             id: "essence_miasme",
             name: "Essence de Miasme",
-            image: "../assets/items/Ressources/EssencedeMiasme.png",
+            image: "Ressources/EssencedeMiasme.png",
             category: "Ressources",
             rarity: "rare",
             description: "Essence corrompue extraite des créatures des ombres. Dangereuse mais puissante.",
@@ -230,7 +230,7 @@ const itemsCatalog = {
         {
             id: "armure_placeholder",
             name: "Armure Mystérieuse",
-            image: "../assets/items/default.png",
+            image: "default.png",
             category: "Armures",
             rarity: "rare",
             description: "Une armure légendaire dont les secrets restent à découvrir. Bientôt disponible !",
@@ -246,7 +246,7 @@ const itemsCatalog = {
         {
             id: "familier_placeholder",
             name: "Familier Mystérieux",
-            image: "../assets/items/default.png",
+            image: "default.png",
             category: "Familiers",
             rarity: "epic",
             description: "Un compagnon fidèle dont l'apparence reste un mystère. Bientôt révélé !",
@@ -262,7 +262,7 @@ const itemsCatalog = {
         {
             id: "monture_placeholder",
             name: "Monture Légendaire",
-            image: "../assets/items/default.png",
+            image: "default.png",
             category: "Montures",
             rarity: "legendary",
             description: "Une monture extraordinaire qui vous mènera vers de nouveaux horizons !",
@@ -278,7 +278,7 @@ const itemsCatalog = {
         {
             id: "outil_placeholder",
             name: "Outil Ancien",
-            image: "../assets/items/default.png",
+            image: "default.png",
             category: "Outils",
             rarity: "uncommon",
             description: "Un outil d'artisan dont les capacités seront bientôt dévoilées.",
@@ -294,7 +294,7 @@ const itemsCatalog = {
         {
             id: "rune_placeholder",
             name: "Rune Primordiale",
-            image: "../assets/items/default.png",
+            image: "default.png",
             category: "Runes",
             rarity: "epic",
             description: "Une rune ancienne contenant des pouvoirs mystiques incommensurables.",
