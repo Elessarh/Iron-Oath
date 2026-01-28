@@ -1162,16 +1162,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Créer les icônes personnalisées pour les quêtes
     // Détecter si on est dans le dossier pages/ ou à la racine
     const basePath = window.location.pathname.includes('/pages/') ? '../assets/map_assets/' : './assets/map_assets/';
+    const cacheBuster = '?v=20260128';
     
     const questSecondaryIcon = L.icon({
-        iconUrl: basePath + 'Quetes-Secondaires.png',
+        iconUrl: basePath + 'Quetes-Secondaires.png' + cacheBuster,
         iconSize: [32, 32],
         iconAnchor: [16, 16],
         popupAnchor: [0, -16]
     });
     
     const questMainIcon = L.icon({
-        iconUrl: basePath + 'Quetes-Principales.png',
+        iconUrl: basePath + 'Quetes-Principales.png' + cacheBuster,
         iconSize: [40, 40], // Plus grande pour les quêtes principales
         iconAnchor: [20, 20],
         popupAnchor: [0, -20]
@@ -1179,7 +1180,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Icônes pour les villes
     const villeIcon = L.icon({
-        iconUrl: basePath + 'Ville.png',
+        iconUrl: basePath + 'Ville.png' + cacheBuster,
         iconSize: [36, 36],
         iconAnchor: [18, 18],
         popupAnchor: [0, -18]
@@ -1187,7 +1188,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Icônes pour les donjons
     const donjonIcon = L.icon({
-        iconUrl: basePath + 'Donjon.png',
+        iconUrl: basePath + 'Donjon.png' + cacheBuster,
         iconSize: [38, 38],
         iconAnchor: [19, 19],
         popupAnchor: [0, -19]
@@ -1195,7 +1196,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Icônes pour les marchands
     const marchandIcon = L.icon({
-        iconUrl: basePath + 'Marchand.png',
+        iconUrl: basePath + 'Marchand.png' + cacheBuster,
         iconSize: [34, 34],
         iconAnchor: [17, 17],
         popupAnchor: [0, -17]
@@ -1203,7 +1204,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Icônes pour les zones de monstres
     const monstreIcon = L.icon({
-        iconUrl: basePath + 'Monstre.png',
+        iconUrl: basePath + 'Monstre.png' + cacheBuster,
         iconSize: [35, 35],
         iconAnchor: [17.5, 17.5],
         popupAnchor: [0, -17.5]
