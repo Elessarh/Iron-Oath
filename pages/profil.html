@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
     <link rel="stylesheet" href="../css/components/profil.css">
     
-    <!-- Script anti-flash immÃ©diat -->
+    <!-- Script anti-flash immédiat -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const userInfo = document.getElementById('user-info');
@@ -36,12 +36,12 @@
                 <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
                 <li><a href="items.html" class="nav-link">Items</a></li>
                 <li><a href="hdv.html" class="nav-link">HDV</a></li>
-                <li><a href="quetes.html" class="nav-link">QuÃªtes</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn">DÃ©connexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
@@ -56,7 +56,7 @@
     <!-- Contenu principal -->
     <main class="profil-container">
         <div id="loading" class="loading-spinner">
-            <p>â³ Chargement de votre profil...</p>
+            <p>⏳ Chargement de votre profil...</p>
         </div>
         
         <div id="profil-content" style="display: none;">
@@ -64,34 +64,34 @@
                 <h1>Mon Profil</h1>
                 <!-- Bouton Dashboard pour admins uniquement -->
                 <a href="admin-dashboard.html" id="dashboard-btn" class="dashboard-btn" style="display: none;">
-                    ðŸ›¡ï¸ AccÃ©der au Dashboard Admin
+                    🛡️ Accéder au Dashboard Admin
                 </a>
                 <!-- Bouton Guilde pour membres et admins -->
                 <a href="espace-guilde.html" id="guilde-btn" class="dashboard-btn" style="display: none;">
-                    ðŸ›ï¸ Espace Iron Oath
+                    🏛️ Espace Iron Oath
                 </a>
             </div>
             
             <div class="profil-info">
                 <div class="info-row">
-                    <span class="info-label">ðŸ‘¤ Pseudo Joueur</span>
+                    <span class="info-label">👤 Pseudo Joueur</span>
                     <span class="info-value" id="profile-username">-</span>
                 </div>
                 
                 <div class="info-row">
-                    <span class="info-label">ðŸ“§ Email</span>
+                    <span class="info-label">📧 Email</span>
                     <span class="info-value" id="profile-email">-</span>
                 </div>
                 
                 <div class="info-row">
-                    <span class="info-label">ðŸŽ–ï¸ RÃ´le</span>
+                    <span class="info-label">🎖️ Rôle</span>
                     <span class="info-value">
                         <span id="profile-role" class="role-badge role-joueur">Joueur</span>
                     </span>
                 </div>
                 
                 <div class="info-row">
-                    <span class="info-label">âš”ï¸ Classe</span>
+                    <span class="info-label">⚔️ Classe</span>
                     <span class="info-value">
                         <select id="profile-classe" class="profile-select">
                             <option value="Shaman">Shaman</option>
@@ -104,30 +104,30 @@
                 </div>
                 
                 <div class="info-row">
-                    <span class="info-label">ðŸ”¢ Niveau</span>
+                    <span class="info-label">🔢 Niveau</span>
                     <span class="info-value">
                         <input type="number" id="profile-niveau" class="profile-input" min="1" max="100" value="1">
                     </span>
                 </div>
                 
                 <div class="info-row">
-                    <span class="info-label">ðŸ“… Membre depuis</span>
+                    <span class="info-label">📅 Membre depuis</span>
                     <span class="info-value" id="profile-created">-</span>
                 </div>
                 
                 <div class="info-row" style="justify-content: center; margin-top: 20px;">
-                    <button id="save-profile-btn" class="save-profile-btn">ðŸ’¾ Sauvegarder les modifications</button>
+                    <button id="save-profile-btn" class="save-profile-btn">💾 Sauvegarder les modifications</button>
                 </div>
             </div>
             
             <div class="profil-stats">
                 <div class="stat-card">
-                    <div class="stat-label">Messages EnvoyÃ©s</div>
+                    <div class="stat-label">Messages Envoyés</div>
                     <div class="stat-value" id="stat-messages">0</div>
                 </div>
                 
                 <div class="stat-card">
-                    <div class="stat-label">Items PossÃ©dÃ©s</div>
+                    <div class="stat-label">Items Possédés</div>
                     <div class="stat-value" id="stat-items">0</div>
                 </div>
                 
@@ -139,14 +139,14 @@
         </div>
         
         <div id="error-content" class="error-message" style="display: none;">
-            <h2>âš ï¸ Erreur</h2>
+            <h2>⚠️ Erreur</h2>
             <p id="error-text">Une erreur est survenue lors du chargement du profil.</p>
         </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 Iron Oath. Tous droits rÃ©servÃ©s.</p>
+        <p>&copy; 2024 Iron Oath. Tous droits réservés.</p>
     </footer>
 
     <!-- Scripts -->

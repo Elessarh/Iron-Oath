@@ -535,6 +535,13 @@ function isMemberOrAdmin() {
 
 // ========== INITIALISATION AUTOMATIQUE ==========
 document.addEventListener('DOMContentLoaded', async function() {
+    // Afficher immédiatement le bouton connexion (masqué plus tard si connecté)
+    const loginLink = document.getElementById('login-link');
+    if (loginLink) {
+        loginLink.style.display = 'block';
+        loginLink.classList.add('show');
+        loginLink.classList.add('js-visible');
+    }
     
     const supabaseReady = await initSupabase();
     if (!supabaseReady) {
@@ -635,9 +642,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                     
                     await registerUser(username, email, password, confirmPassword);
                 });
-            } else {
-                console.error('Formulaire inscription non trouve dans le DOM');
             }
+            // Message d'erreur supprimé - c'est normal de ne pas trouver le formulaire sur les pages sans inscription
         }, 500);
     }
     

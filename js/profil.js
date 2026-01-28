@@ -32,9 +32,9 @@ function waitForAuthAndUser() {
                 clearInterval(checkAuth);
                 console.error('❌ Timeout: utilisateur non connecté après 10s');
                 // console.log('État:', {
-                    supabase: typeof supabase !== 'undefined',
-                    currentUser: window.currentUser
-                });
+                //     supabase: typeof supabase !== 'undefined',
+                //     currentUser: window.currentUser
+                // });
                 showError('Vous devez être connecté pour voir votre profil.');
                 setTimeout(() => {
                     window.location.href = 'connexion.html';

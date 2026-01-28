@@ -1553,11 +1553,11 @@ function initializeToggles() {
     // Log de débogage pour vérifier que la fonction est appelée
     // console.log('=== initializeToggles() completed ===');
     // console.log('Found toggles:', Object.keys(toggles).map(id => ({
-        id: id,
-        element: document.getElementById(id) ? 'Found' : 'Not Found',
-        layerCount: toggles[id].getLayers().length,
-        onMap: map.hasLayer(toggles[id])
-    })));
+    //     id: id,
+    //     element: document.getElementById(id) ? 'Found' : 'Not Found',
+    //     layerCount: toggles[id].getLayers().length,
+    //     onMap: map.hasLayer(toggles[id])
+    // })));
     
     // Test direct : forcer l'affichage de tous les layers
     // console.log('=== Force adding all layers to map ===');

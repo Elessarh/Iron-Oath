@@ -489,7 +489,7 @@ class MailboxSupabaseManager {
                 // console.log('👤 Expéditeur:', message.sender_id);
                 // console.log('📥 Destinataire:', message.recipient_id);
                 // console.log('🔐 User peut supprimer:', 
-                    message.sender_id === user?.id || message.recipient_id === user?.id);
+                //     message.sender_id === user?.id || message.recipient_id === user?.id);
             }
 
             return true;

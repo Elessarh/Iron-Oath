@@ -322,10 +322,10 @@ class HDVSystem {
         // console.log('localStorage currentUser:', localStorage.getItem('currentUser'));
         // console.log('window.currentUser:', window.currentUser);
         // console.log('Tokens:', {
-            supabase: localStorage.getItem('supabase.auth.token'),
-            authToken: localStorage.getItem('authToken'),
-            token: localStorage.getItem('token')
-        });
+        //     supabase: localStorage.getItem('supabase.auth.token'),
+        //     authToken: localStorage.getItem('authToken'),
+        //     token: localStorage.getItem('token')
+        // });
         // console.log('getCurrentUserInfo():', this.getCurrentUserInfo());
     }
 

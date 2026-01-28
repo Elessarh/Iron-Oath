@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuÃªtes - Iron Oath</title>
+    <title>Quêtes - Iron Oath</title>
     <link rel="icon" type="image/png" href="../assets/Logo_3.png">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
     <link rel="stylesheet" href="../css/components/quetes.css">
     
-    <!-- Script anti-flash immÃ©diat -->
+    <!-- Script anti-flash immédiat -->
     <script>
-        // Masquage immÃ©diat des Ã©lÃ©ments de connexion pour Ã©viter le flash
+        // Masquage immédiat des éléments de connexion pour éviter le flash
         document.addEventListener('DOMContentLoaded', function() {
             const userInfo = document.getElementById('user-info');
             
-            // Masquer les infos utilisateur par dÃ©faut - elles ne s'affichent que si connectÃ©
+            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
             if (userInfo) {
                 userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
                 userInfo.classList.remove('js-visible');
             }
             
-            // Le bouton de connexion reste visible par dÃ©faut
-            // Il sera masquÃ© par checkAuthState() si l'utilisateur est connectÃ©
+            // Le bouton de connexion reste visible par défaut
+            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
         });
     </script>
 </head>
 <body>
-    <!-- Ã‰cran de chargement supprimÃ© -->
+    <!-- Écran de chargement supprimé -->
 
     <!-- Header et Navigation -->
     <header class="header">
@@ -42,12 +42,12 @@
                 <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
                 <li><a href="items.html" class="nav-link">Items</a></li>
                 <li><a href="hdv.html" class="nav-link">HDV</a></li>
-                <li><a href="quetes.html" class="nav-link active">QuÃªtes</a></li>
+                <li><a href="quetes.html" class="nav-link active">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn">DÃ©connexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="nav-link connexion-link" id="login-link">Connexion</a>
             </div>
@@ -61,14 +61,14 @@
 
     <!-- Contenu principal -->
     <main class="quetes-container">
-        <h1 style="text-align: center; margin-bottom: 2rem; color: var(--color-accent); font-family: var(--font-title);">QuÃªtes d'Aincrad</h1>
+        <h1 style="text-align: center; margin-bottom: 2rem; color: var(--color-accent); font-family: var(--font-title);">Quêtes d'Aincrad</h1>
         
         <!-- Filtres -->
         <div class="quest-filters">
             <div class="quest-type-filters">
-                <button class="quest-filter-btn active" data-filter="all">Toutes les QuÃªtes</button>
-                <button class="quest-filter-btn" data-filter="principale">QuÃªte Principale</button>
-                <button class="quest-filter-btn" data-filter="secondaire">QuÃªtes Secondaires</button>
+                <button class="quest-filter-btn active" data-filter="all">Toutes les Quêtes</button>
+                <button class="quest-filter-btn" data-filter="principale">Quête Principale</button>
+                <button class="quest-filter-btn" data-filter="secondaire">Quêtes Secondaires</button>
             </div>
             <div class="quest-tier-selector">
                 <label for="tier-select">Palier :</label>

@@ -10,21 +10,21 @@
     <link rel="stylesheet" href="../css/components/items.css">
 
     
-    <!-- Script anti-flash immÃ©diat -->
+    <!-- Script anti-flash immédiat -->
     <script>
-        // Masquage immÃ©diat des Ã©lÃ©ments de connexion pour Ã©viter le flash
+        // Masquage immédiat des éléments de connexion pour éviter le flash
         document.addEventListener('DOMContentLoaded', function() {
             const userInfo = document.getElementById('user-info');
             
-            // Masquer les infos utilisateur par dÃ©faut - elles ne s'affichent que si connectÃ©
+            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
             if (userInfo) {
                 userInfo.style.display = 'none';
                 userInfo.classList.remove('show');
                 userInfo.classList.remove('js-visible');
             }
             
-            // Le bouton de connexion reste visible par dÃ©faut
-            // Il sera masquÃ© par checkAuthState() si l'utilisateur est connectÃ©
+            // Le bouton de connexion reste visible par défaut
+            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
         });
     </script>
 </head>
@@ -41,12 +41,12 @@
                 <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
                 <li><a href="items.html" class="nav-link active">Items</a></li>
                 <li><a href="hdv.html" class="nav-link">HDV</a></li>
-                <li><a href="quetes.html" class="nav-link">QuÃªtes</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn">DÃ©connexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
@@ -64,7 +64,7 @@
         <section class="hero-section">
             <div class="hero-content">
                 <h1 class="hero-title">Catalogue d'Items</h1>
-                <p class="hero-subtitle">DÃ©couvrez tous les trÃ©sors et Ã©quipements d'Aincrad</p>
+                <p class="hero-subtitle">Découvrez tous les trésors et équipements d'Aincrad</p>
                 <div class="hero-stats">
                     <div class="stat-item">
                         <span class="stat-number" id="total-items">50+</span>
@@ -72,11 +72,11 @@
                     </div>
                     <div class="stat-item">
                         <span class="stat-number">9</span>
-                        <span class="stat-label">CatÃ©gories</span>
+                        <span class="stat-label">Catégories</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-number">5</span>
-                        <span class="stat-label">RaretÃ©s</span>
+                        <span class="stat-label">Raretés</span>
                     </div>
                 </div>
             </div>
@@ -92,14 +92,14 @@
                     <div class="search-container">
                         <div class="search-wrapper">
                             <input type="text" id="search-input" placeholder="Rechercher un item..." class="search-input">
-                            <i class="search-icon">ðŸ”</i>
+                            <i class="search-icon">🔍</i>
                         </div>
                     </div>
                     <div class="filter-controls">
                         <div class="filter-group">
-                            <label for="category-filter">CatÃ©gorie</label>
+                            <label for="category-filter">Catégorie</label>
                             <select id="category-filter" class="filter-select">
-                                <option value="all">Toutes les catÃ©gories</option>
+                                <option value="all">Toutes les catégories</option>
                                 <option value="Accessoires">Accessoires</option>
                                 <option value="Armes">Armes</option>
                                 <option value="Armures">Armures</option>
@@ -112,14 +112,14 @@
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label for="rarity-filter">RaretÃ©</label>
+                            <label for="rarity-filter">Rareté</label>
                             <select id="rarity-filter" class="filter-select">
-                                <option value="all">Toutes les raretÃ©s</option>
+                                <option value="all">Toutes les raretés</option>
                                 <option value="common">Commun</option>
                                 <option value="uncommon">Peu commun</option>
                                 <option value="rare">Rare</option>
-                                <option value="epic">Ã‰pique</option>
-                                <option value="legendary">LÃ©gendaire</option>
+                                <option value="epic">Épique</option>
+                                <option value="legendary">Légendaire</option>
                             </select>
                         </div>
                         <button class="reset-filters" id="reset-filters">RÃ©initialiser</button>
@@ -135,7 +135,7 @@
                 <div class="catalog-header">
                     <h2>Catalogue des items</h2>
                     <div class="results-info">
-                        <span id="items-count">25 items trouvÃ©s</span>
+                        <span id="items-count">25 items trouvés</span>
                     </div>
                 </div>
                 <div class="items-grid" id="items-grid">
@@ -153,17 +153,17 @@
                     </div>
                     <div class="pagination-controls">
                         <button class="pagination-btn" id="items-prev-page" disabled>
-                            <i class="fas fa-chevron-left"></i> PrÃ©cÃ©dent
+                            <i class="fas fa-chevron-left"></i> Précédent
                         </button>
-                        <div class="pagination-numbers" id="items-pagination-numbers">
-                            <!-- NumÃ©ros de pages gÃ©nÃ©rÃ©s dynamiquement -->
+                        <div class="pagination-numbers" id="pagination-numbers">
+                            <!-- Numéros de pages générés dynamiquement -->
                         </div>
                         <button class="pagination-btn" id="items-next-page">
                             Suivant <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                     <div class="pagination-settings">
-                        <label for="items-per-page-select">Ã‰lÃ©ments par page:</label>
+                        <label for="items-per-page-select">Éléments par page:</label>
                         <select id="items-per-page-select">
                             <option value="12">12</option>
                             <option value="24">24</option>
@@ -176,9 +176,9 @@
         </section>
     </main>
 
-    <!-- Plus de modal statique - sera crÃ©Ã© dynamiquement comme le bestiaire -->
+    <!-- Plus de modal statique - sera créé dynamiquement comme le bestiaire -->
 
-    <!-- Modal d'ajout/Ã©dition d'item (Admin seulement) -->
+    <!-- Modal d'ajout/édition d'item (Admin seulement) -->
     <div id="admin-item-modal" class="modal admin-only" style="display: none;">
         <div class="modal-content admin-modal-content">
             <div class="modal-header">
@@ -193,9 +193,9 @@
                             <input type="text" id="admin-item-name" required>
                         </div>
                         <div class="form-group">
-                            <label for="admin-item-category">CatÃ©gorie *</label>
+                            <label for="admin-item-category">Catégorie *</label>
                             <select id="admin-item-category" required>
-                                <option value="">SÃ©lectionner...</option>
+                                <option value="">Sélectionner...</option>
                                 <option value="Accessoires">Accessoires</option>
                                 <option value="Armes">Armes</option>
                                 <option value="Armures">Armures</option>
@@ -212,17 +212,17 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="admin-item-type">Type d'item *</label>
-                            <input type="text" id="admin-item-type" required placeholder="ex: Anneau, Ã‰pÃ©e, Potion...">
+                            <input type="text" id="admin-item-type" required placeholder="ex: Anneau, Épée, Potion...">
                         </div>
                         <div class="form-group">
-                            <label for="admin-item-rarity">RaretÃ© *</label>
+                            <label for="admin-item-rarity">Rareté *</label>
                             <select id="admin-item-rarity" required>
-                                <option value="">SÃ©lectionner...</option>
+                                <option value="">Sélectionner...</option>
                                 <option value="common">Commun</option>
                                 <option value="uncommon">Peu commun</option>
                                 <option value="rare">Rare</option>
-                                <option value="epic">Ã‰pique</option>
-                                <option value="legendary">LÃ©gendaire</option>
+                                <option value="epic">Épique</option>
+                                <option value="legendary">Légendaire</option>
                             </select>
                         </div>
                     </div>
@@ -251,7 +251,7 @@
                     <div class="form-group">
                         <label for="admin-item-image">Nom du fichier image *</label>
                         <input type="text" id="admin-item-image" required placeholder="ex: AnneaudelaFaucheuse.png">
-                        <small>Le fichier doit Ãªtre dans assets/items/[CatÃ©gorie]/</small>
+                        <small>Le fichier doit être dans assets/items/[Catégorie]/</small>
                     </div>
                     
                     <div class="form-group">
@@ -289,7 +289,7 @@
                     search: ''
                 };
                 
-                // PropriÃ©tÃ©s de pagination
+                // Propriétés de pagination
                 this.currentPage = 1;
                 this.itemsPerPage = 12;
                 this.totalPages = 1;
@@ -327,21 +327,21 @@
                 this.filteredItems = [...this.allItems];
             }
             
-            // GÃ©nÃ©rer une description basique pour les items
+            // Générer une description basique pour les items
             generateDescription(item) {
                 const descriptions = {
                     'common': 'Un objet ordinaire mais utile.',
-                    'uncommon': 'Un objet de qualitÃ© supÃ©rieure avec des propriÃ©tÃ©s intÃ©ressantes.',
-                    'rare': 'Un objet rare aux capacitÃ©s remarquables.',
-                    'epic': 'Un objet Ã©pique aux pouvoirs exceptionnels.',
-                    'legendary': 'Un objet lÃ©gendaire aux capacitÃ©s extraordinaires.'
+                    'uncommon': 'Un objet de qualité supérieure avec des propriétés intéressantes.',
+                    'rare': 'Un objet rare aux capacités remarquables.',
+                    'epic': 'Un objet épique aux pouvoirs exceptionnels.',
+                    'legendary': 'Un objet légendaire aux capacités extraordinaires.'
                 };
                 return descriptions[item.rarity] || descriptions['common'];
             }
 
-            // Configuration des Ã©couteurs d'Ã©vÃ©nements de pagination
+            // Configuration des écouteurs d'événements de pagination
             setupPaginationListeners() {
-                // Boutons prÃ©cÃ©dent/suivant
+                // Boutons précédent/suivant
                 const prevBtn = document.getElementById('items-prev-page');
                 const nextBtn = document.getElementById('items-next-page');
                 
