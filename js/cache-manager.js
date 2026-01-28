@@ -76,11 +76,11 @@ class CacheManager {
         // Vérifier le cache d'abord
         const cached = this.get(key);
         if (cached !== null) {
-            // console.log(`📦 Cache HIT pour: ${key}`);
+            console.log(`📦 Cache HIT pour: ${key}`);
             return cached;
         }
 
-        // console.log(`🔄 Cache MISS pour: ${key} - Fetching...`);
+        console.log(`🔄 Cache MISS pour: ${key} - Fetching...`);
         // Exécuter la requête
         const result = await fetchFunction();
         
@@ -100,4 +100,4 @@ class CacheManager {
 
 // Instance globale du cache
 window.cacheManager = new CacheManager();
-// console.log('✅ Cache Manager initialisé');
+console.log('✅ Cache Manager initialisé');

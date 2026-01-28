@@ -23,6 +23,12 @@ async function initSupabase() {
         const SUPABASE_URL = decodeKey(ENCODED_SUPABASE_URL);
         const SUPABASE_ANON_KEY = decodeKey(ENCODED_SUPABASE_KEY);
         
+        console.log('🔍 Debug Supabase URLs:');
+        console.log('URL décodée:', SUPABASE_URL);
+        console.log('URL valide?', SUPABASE_URL && SUPABASE_URL.startsWith('http'));
+        console.log('Clé décodée (premières 20 chars):', SUPABASE_ANON_KEY ? SUPABASE_ANON_KEY.substring(0, 20) + '...' : 'null');
+        console.log('Clé valide?', SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.startsWith('eyJ'));
+        
         if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
             throw new Error('Erreur de décodage des clés');
         }
@@ -31,14 +37,22 @@ async function initSupabase() {
         const supabaseLib = window.supabase || (window.supabasejs && window.supabasejs.supabase);
         
         if (!supabaseLib || typeof supabaseLib.createClient !== 'function') {
+            console.log('⏳ Chargement de la bibliothèque Supabase...');
             await new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
-                script.onload = () => resolve();
+                script.onload = () => {
+                    console.log('✅ Script Supabase chargé depuis jsdelivr');
+                    resolve();
+                };
                 script.onerror = () => {
+                    console.warn('⚠️ Échec jsdelivr, essai avec unpkg...');
                     const altScript = document.createElement('script');
                     altScript.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js';
-                    altScript.onload = () => resolve();
+                    altScript.onload = () => {
+                        console.log('✅ Script Supabase chargé depuis unpkg');
+                        resolve();
+                    };
                     altScript.onerror = () => reject(new Error('Impossible de charger Supabase depuis aucun CDN'));
                     document.head.appendChild(altScript);
                 };
@@ -57,9 +71,19 @@ async function initSupabase() {
         }
         
         supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Client Supabase créé:', !!supabase);
+        console.log('🔍 Client Supabase URL:', supabase.supabaseUrl);
         
         // Partager l'instance Supabase globalement pour les autres modules
         window.globalSupabase = supabase;
+        
+        // Test rapide de connectivité
+        try {
+            const { data, error } = await supabase.auth.getUser();
+            console.log('🔍 Test connectivité Supabase:', { data: !!data, error: error?.message });
+        } catch (testError) {
+            console.warn('⚠️ Test connectivité échoué:', testError.message);
+        }
         
         return true;
     } catch (error) {
@@ -90,6 +114,13 @@ function checkAuthState() {
         const loginLink = document.getElementById('login-link');
         const usernameSpan = document.getElementById('username');
         
+        console.log('🔍 Debug checkAuthState:', {
+            userInfo: !!userInfo,
+            loginLink: !!loginLink,
+            currentUser: !!currentUser,
+            userProfile: userProfile?.username
+        });
+        
         if (typeof window !== 'undefined') {
             window.currentUser = currentUser;
             window.userProfile = userProfile;
@@ -97,6 +128,7 @@ function checkAuthState() {
         
         if (currentUser) {
             // Utilisateur connecté
+            console.log('✅ Utilisateur connecté:', currentUser.email);
             
             if (userInfo) {
                 userInfo.style.display = 'flex';
@@ -121,6 +153,7 @@ function checkAuthState() {
             }
         } else {
             // Utilisateur non connecté
+            console.log('👤 Utilisateur non connecté - affichage du bouton connexion');
             
             if (userInfo) {
                 userInfo.style.display = 'none';
@@ -129,9 +162,13 @@ function checkAuthState() {
             }
             
             if (loginLink) {
+                console.log('🔗 Affichage du bouton connexion');
                 loginLink.style.display = 'block';
                 loginLink.classList.add('show');
                 loginLink.classList.add('js-visible');
+                console.log('🔗 Classes appliquées:', loginLink.className);
+            } else {
+                console.error('❌ Bouton login-link non trouvé dans le DOM');
             }
         }
     } catch (error) {
@@ -248,6 +285,7 @@ async function registerUser(username, email, password, confirmPassword) {
         
         // Si l'inscription réussit, créer le profil utilisateur
         if (authData.user) {
+            console.log('✅ Compte Supabase créé, vérification du profil...');
             
             // Vérifier d'abord si le profil existe déjà
             const { data: existingProfile, error: checkError } = await supabase
@@ -257,6 +295,7 @@ async function registerUser(username, email, password, confirmPassword) {
                 .single();
                 
             if (existingProfile) {
+                console.log('ℹ️ Profil déjà existant pour cet utilisateur');
                 showMessage('Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte.', 'success');
             } else {
                 // Le profil n'existe pas, le créer
@@ -299,11 +338,17 @@ async function registerUser(username, email, password, confirmPassword) {
 }
 
 async function loginUser(email, password) {
+    console.log('🔑 Tentative de connexion pour:', email);
+    console.log('🔍 Supabase client disponible?', !!supabase);
+    console.log('🔍 Supabase auth disponible?', !!supabase?.auth);
+    
     try {
         const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
             email: email,
             password: password
         });
+        
+        console.log('🔍 Réponse Supabase:', { authData: !!authData, error: signInError });
         
         if (signInError) {
             console.error('❌ Erreur de connexion détaillée:', signInError);
@@ -535,13 +580,7 @@ function isMemberOrAdmin() {
 
 // ========== INITIALISATION AUTOMATIQUE ==========
 document.addEventListener('DOMContentLoaded', async function() {
-    // Afficher immédiatement le bouton connexion (masqué plus tard si connecté)
-    const loginLink = document.getElementById('login-link');
-    if (loginLink) {
-        loginLink.style.display = 'block';
-        loginLink.classList.add('show');
-        loginLink.classList.add('js-visible');
-    }
+    console.log('🚀 Démarrage de l\'initialisation auth...');
     
     const supabaseReady = await initSupabase();
     if (!supabaseReady) {
@@ -567,19 +606,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
+            console.warn('⚠️ Erreur récupération session:', error);
             currentUser = null;
             userProfile = null;
         } else if (session?.user) {
+            console.log('✅ Session trouvée pour:', session.user.email);
             currentUser = session.user;
             window.currentUser = currentUser;
             await loadUserProfile();
         } else {
+            console.log('ℹ️ Aucune session active');
             currentUser = null;
             userProfile = null;
             window.currentUser = null;
             window.userProfile = null;
         }
     } catch (error) {
+        console.error('❌ Erreur lors de la vérification de session:', error);
         currentUser = null;
         userProfile = null;
     }
@@ -589,6 +632,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Écouter les changements d'authentification
     supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('🔄 État auth changé:', event);
         
         if (event === 'SIGNED_IN' && session?.user) {
             currentUser = session.user;
@@ -642,8 +686,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                     
                     await registerUser(username, email, password, confirmPassword);
                 });
+            } else {
+                console.error('Formulaire inscription non trouve dans le DOM');
             }
-            // Message d'erreur supprimé - c'est normal de ne pas trouver le formulaire sur les pages sans inscription
         }, 500);
     }
     
@@ -664,6 +709,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', logoutUser);
     }
+    
+    console.log('✅ Système d\'authentification Supabase initialisé');
+    console.log('📊 Utilisateur actuel:', currentUser ? userProfile?.username || currentUser.email : 'Aucun');
     
     // Rendre les fonctions et variables accessibles globalement
     window.getCurrentUser = getCurrentUser;

@@ -5,7 +5,7 @@ let localUserProfile = null;
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async function() {
-    // console.log('📄 Initialisation de la page profil...');
+    console.log('📄 Initialisation de la page profil...');
     
     // Attendre que auth-supabase.js soit chargé ET que l'utilisateur soit connecté
     await waitForAuthAndUser();
@@ -26,15 +26,15 @@ function waitForAuthAndUser() {
             // Vérifier que Supabase ET window.currentUser sont prêts
             if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
-                // console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
+                console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
                 console.error('❌ Timeout: utilisateur non connecté après 10s');
-                // console.log('État:', {
-                //     supabase: typeof supabase !== 'undefined',
-                //     currentUser: window.currentUser
-                // });
+                console.log('État:', {
+                    supabase: typeof supabase !== 'undefined',
+                    currentUser: window.currentUser
+                });
                 showError('Vous devez être connecté pour voir votre profil.');
                 setTimeout(() => {
                     window.location.href = 'connexion.html';
@@ -58,14 +58,14 @@ async function loadProfilePage() {
             return;
         }
         
-        // console.log('✅ Utilisateur connecté:', window.currentUser.email);
+        console.log('✅ Utilisateur connecté:', window.currentUser.email);
         
         // Essayer de charger depuis le cache d'abord
         const cacheKey = `user_profile_${window.currentUser.id}`;
         const cachedProfile = window.cacheManager?.get(cacheKey);
         
         if (cachedProfile) {
-            // console.log('📦 Profil chargé depuis le cache');
+            console.log('📦 Profil chargé depuis le cache');
             localUserProfile = cachedProfile;
             displayProfile(cachedProfile);
             return;
@@ -91,7 +91,7 @@ async function loadProfilePage() {
         }
         
         localUserProfile = profile;
-        // console.log('✅ Profil chargé:', profile);
+        console.log('✅ Profil chargé:', profile);
         
         // Mettre en cache pour 5 minutes
         if (window.cacheManager) {
@@ -132,29 +132,29 @@ function displayProfile(profile) {
     
     // Afficher le bouton Dashboard si admin
     const dashboardBtn = document.getElementById('dashboard-btn');
-    // console.log('[DEBUG] Role de l utilisateur:', role);
-    // console.log('[DEBUG] Bouton dashboard:', dashboardBtn ? 'trouve' : 'non trouve');
+    console.log('[DEBUG] Role de l utilisateur:', role);
+    console.log('[DEBUG] Bouton dashboard:', dashboardBtn ? 'trouve' : 'non trouve');
     
     if (dashboardBtn) {
         if (role === 'admin') {
-            // console.log('[OK] Affichage bouton Dashboard (admin)');
+            console.log('[OK] Affichage bouton Dashboard (admin)');
             dashboardBtn.style.setProperty('display', 'inline-block', 'important');
         } else {
-            // console.log('[INFO] Bouton Dashboard cache (role:', role, ')');
+            console.log('[INFO] Bouton Dashboard cache (role:', role, ')');
             dashboardBtn.style.setProperty('display', 'none', 'important');
         }
     }
     
     // Afficher le bouton Guilde si membre ou admin
     const guildeBtn = document.getElementById('guilde-btn');
-    // console.log('[DEBUG] Bouton guilde:', guildeBtn ? 'trouve' : 'non trouve');
+    console.log('[DEBUG] Bouton guilde:', guildeBtn ? 'trouve' : 'non trouve');
     
     if (guildeBtn) {
         if (role === 'membre' || role === 'admin') {
-            // console.log('[OK] Affichage bouton Guilde (membre/admin)');
+            console.log('[OK] Affichage bouton Guilde (membre/admin)');
             guildeBtn.style.setProperty('display', 'inline-block', 'important');
         } else {
-            // console.log('[INFO] Bouton Guilde cache (role:', role, ')');
+            console.log('[INFO] Bouton Guilde cache (role:', role, ')');
             guildeBtn.style.setProperty('display', 'none', 'important');
         }
     }
@@ -215,7 +215,7 @@ async function saveProfileChanges() {
             return;
         }
         
-        // console.log('✅ Profil mis à jour');
+        console.log('✅ Profil mis à jour');
         showSuccess('Modifications sauvegardées avec succès !');
         
         // Invalider le cache du profil
@@ -272,4 +272,4 @@ function formatDate(dateString) {
     return `Il y a ${Math.floor(diffDays / 365)} ans`;
 }
 
-// console.log('✅ Module profil.js chargé');
+console.log('✅ Module profil.js chargé');

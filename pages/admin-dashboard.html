@@ -1,10 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Iron Oath</title>
-    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -163,7 +162,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 25px;
-            /* RetirÃ© overflow-x: auto pour Ã©viter le scroll horizontal */
+            /* Retiré overflow-x: auto pour éviter le scroll horizontal */
         }
         
         .users-table table {
@@ -842,7 +841,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
-        /* Section PrÃ©sences */
+        /* Section Présences */
         .presence-section {
             background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(78, 205, 196, 0.05));
             padding: 30px;
@@ -1093,17 +1092,17 @@
     <!-- Contenu principal -->
     <main class="dashboard-container">
         <div class="dashboard-header">
-            <h1>ðŸ‘‘ Dashboard Administrateur</h1>
-            <p style="color: #e0e0e0;">Gestion des utilisateurs et des rÃ´les</p>
+            <h1>👑 Dashboard Administrateur</h1>
+            <p style="color: #e0e0e0;">Gestion des utilisateurs et des rôles</p>
         </div>
         
         <div id="loading" class="loading-spinner">
-            <p>â³ Chargement du dashboard...</p>
+            <p>⏳ Chargement du dashboard...</p>
         </div>
         
         <div id="error-content" class="error-message" style="display: none;">
-            <h2>âš ï¸ AccÃ¨s RefusÃ©</h2>
-            <p id="error-text">Vous devez Ãªtre administrateur pour accÃ©der Ã  cette page.</p>
+            <h2>⚠️ Accès Refusé</h2>
+            <p id="error-text">Vous devez être administrateur pour accéder à cette page.</p>
         </div>
         
         <div id="dashboard-content" style="display: none;">
@@ -1130,22 +1129,22 @@
             <!-- Navigation par onglets -->
             <div class="dashboard-tabs">
                 <button class="tab-btn active" data-tab="presence">
-                    ðŸ“Š Appel Quotidien
+                    📊 Appel Quotidien
                 </button>
                 <button class="tab-btn" data-tab="users">
-                    ðŸ‘¥ Gestion Utilisateurs
+                    👥 Gestion Utilisateurs
                 </button>
                 <button class="tab-btn" data-tab="guild">
-                    ðŸ›ï¸ Gestion Guilde
+                    🏛️ Gestion Guilde
                 </button>
                 <button class="tab-btn" data-tab="activity">
-                    ðŸ“¢ Mur d'ActivitÃ©
+                    📢 Mur d'Activité
                 </button>
             </div>
             
             <!-- TAB: Appel Quotidien -->
             <div class="tab-content active" data-tab-content="presence">
-                <!-- Section PrÃ©sences du Jour -->
+                <!-- Section Présences du Jour -->
                 <div class="presence-section">
                     <div class="presence-header">
                         <h2>Appel Quotidien - Aujourd'hui</h2>
@@ -1185,9 +1184,9 @@
                     <div class="users-header">
                         <h2>Gestion des Utilisateurs</h2>
                         <div class="search-filter">
-                            <input type="text" id="search-input" class="search-input" placeholder="ðŸ” Rechercher un utilisateur...">
+                            <input type="text" id="search-input" class="search-input" placeholder="🔍 Rechercher un utilisateur...">
                             <select id="role-filter" class="filter-select">
-                                <option value="all">Tous les rÃ´les</option>
+                                <option value="all">Tous les rôles</option>
                                 <option value="admin">Administrateurs</option>
                                 <option value="membre">Membres</option>
                                 <option value="joueur">Joueurs</option>
@@ -1216,19 +1215,19 @@
                         <thead>
                             <tr>
                                 <th class="sortable" data-sort="username">
-                                    Pseudo <span class="sort-icon">â‡…</span>
+                                    Pseudo <span class="sort-icon">⇅</span>
                                 </th>
                                 <th class="sortable" data-sort="classe">
-                                    Classe <span class="sort-icon">â‡…</span>
+                                    Classe <span class="sort-icon">⇅</span>
                                 </th>
                                 <th class="sortable" data-sort="niveau">
-                                    Niveau <span class="sort-icon">â‡…</span>
+                                    Niveau <span class="sort-icon">⇅</span>
                                 </th>
                                 <th class="sortable" data-sort="role">
-                                    RÃ´le <span class="sort-icon">â‡…</span>
+                                    Rôle <span class="sort-icon">⇅</span>
                                 </th>
                                 <th class="sortable" data-sort="created_at">
-                                    Membre depuis <span class="sort-icon">â‡…</span>
+                                    Membre depuis <span class="sort-icon">⇅</span>
                                 </th>
                                 <th>Actions</th>
                             </tr>
@@ -1241,9 +1240,9 @@
                 
                 <!-- Pagination -->
                 <div class="pagination">
-                    <button id="prev-page" class="pagination-btn" disabled>â† PrÃ©cÃ©dent</button>
+                    <button id="prev-page" class="pagination-btn" disabled>← Précédent</button>
                     <span id="page-info" class="page-info">Page 1 / 1</span>
-                    <button id="next-page" class="pagination-btn">Suivant â†’</button>
+                    <button id="next-page" class="pagination-btn">Suivant →</button>
                     <select id="items-per-page" class="filter-select" style="margin-left: 15px;">
                         <option value="10">10 par page</option>
                         <option value="15" selected>15 par page</option>
@@ -1261,45 +1260,45 @@
                 <!-- Section Gestion Guilde -->
                 <div class="guild-management-section" style="margin-top: 0px;">
                     <h2 style="color: #ff6b35; font-size: 2rem; margin-bottom: 30px; border-bottom: 3px solid rgba(255, 107, 53, 0.4); padding-bottom: 15px;">
-                        ðŸ›ï¸ Gestion de la Guilde Iron Oath
+                        🏛️ Gestion de la Guilde Iron Oath
                     </h2>
                     
                     <!-- Tabs Navigation -->
                     <div class="guild-tabs" style="display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid rgba(78, 205, 196, 0.3);">
                         <button class="guild-tab active" onclick="switchGuildTab('planning')" id="tab-planning">
-                            ðŸ“… Planning
+                            📅 Planning
                         </button>
                         <button class="guild-tab" onclick="switchGuildTab('objectives')" id="tab-objectives">
-                        ðŸŽ¯ Objectifs
+                        🎯 Objectifs
                     </button>
                     <button class="guild-tab" onclick="switchGuildTab('presence')" id="tab-presence">
-                        âœ… PrÃ©sences
+                        ✅ Présences
                     </button>
                 </div>
                 
                 <!-- Planning Management -->
                 <div id="guild-planning-tab" class="guild-tab-content active">
                     <div class="guild-form-container">
-                        <h3>Ajouter un Ã©vÃ©nement au planning</h3>
+                        <h3>Ajouter un événement au planning</h3>
                         <form id="add-planning-form" style="display: grid; gap: 15px; max-width: 700px;">
-                            <input type="text" id="planning-titre" placeholder="Titre de l'Ã©vÃ©nement" required>
+                            <input type="text" id="planning-titre" placeholder="Titre de l'événement" required>
                             <textarea id="planning-description" placeholder="Description (optionnel)" rows="3"></textarea>
                             <input type="datetime-local" id="planning-date" required>
                             <select id="planning-type" required>
-                                <option value="">SÃ©lectionner le type</option>
-                                <option value="reunion">ðŸ—£ï¸ RÃ©union</option>
-                                <option value="raid">âš”ï¸ Raid</option>
-                                <option value="event">ðŸŽ‰ Ã‰vÃ©nement</option>
-                                <option value="pvp">ðŸ—¡ï¸ PvP</option>
-                                <option value="construction">ðŸ—ï¸ Construction</option>
-                                <option value="autre">ðŸ“Œ Autre</option>
+                                <option value="">Sélectionner le type</option>
+                                <option value="reunion">🗣️ Réunion</option>
+                                <option value="raid">⚔️ Raid</option>
+                                <option value="event">🎉 Événement</option>
+                                <option value="pvp">🗡️ PvP</option>
+                                <option value="construction">🏗️ Construction</option>
+                                <option value="autre">📌 Autre</option>
                             </select>
                             <button type="submit" class="btn-submit">Ajouter au Planning</button>
                         </form>
                     </div>
                     
                     <div class="guild-list-container" style="margin-top: 30px;">
-                        <h3>Ã‰vÃ©nements planifiÃ©s</h3>
+                        <h3>Événements planifiés</h3>
                         <div id="admin-planning-list" class="guild-items-list"></div>
                     </div>
                 </div>
@@ -1307,21 +1306,21 @@
                 <!-- Objectives Management -->
                 <div id="guild-objectives-tab" class="guild-tab-content" style="display: none;">
                     <div class="guild-form-container">
-                        <h3>CrÃ©er un objectif hebdomadaire</h3>
+                        <h3>Créer un objectif hebdomadaire</h3>
                         <form id="add-objective-form" style="display: grid; gap: 15px; max-width: 700px;">
                             <input type="text" id="objective-titre" placeholder="Titre de l'objectif" required>
-                            <textarea id="objective-description" placeholder="Description dÃ©taillÃ©e" rows="3" required></textarea>
+                            <textarea id="objective-description" placeholder="Description détaillée" rows="3" required></textarea>
                             <label style="color: #4ecdc4;">Semaine:</label>
-                            <input type="number" id="objective-semaine" placeholder="NumÃ©ro de semaine" required min="1" max="53">
-                            <input type="number" id="objective-annee" placeholder="AnnÃ©e" required min="2024">
+                            <input type="number" id="objective-semaine" placeholder="Numéro de semaine" required min="1" max="53">
+                            <input type="number" id="objective-annee" placeholder="Année" required min="2024">
                             <select id="objective-statut" required>
-                                <option value="en_cours">â³ En cours</option>
-                                <option value="termine">âœ… TerminÃ©</option>
-                                <option value="abandonne">âŒ AbandonnÃ©</option>
+                                <option value="en_cours">⏳ En cours</option>
+                                <option value="termine">✅ Terminé</option>
+                                <option value="abandonne">❌ Abandonné</option>
                             </select>
                             <label style="color: #4ecdc4;">Progression (%):</label>
                             <input type="number" id="objective-progression" placeholder="0-100" min="0" max="100" value="0" required>
-                            <button type="submit" class="btn-submit">CrÃ©er l'Objectif</button>
+                            <button type="submit" class="btn-submit">Créer l'Objectif</button>
                         </form>
                     </div>
                     
@@ -1334,24 +1333,24 @@
                 <!-- Presence Management -->
                 <div id="guild-presence-tab" class="guild-tab-content" style="display: none;">
                     <div class="guild-form-container">
-                        <h3>Marquer manuellement une prÃ©sence</h3>
+                        <h3>Marquer manuellement une présence</h3>
                         <form id="add-presence-form" style="display: grid; gap: 15px; max-width: 700px;">
                             <select id="presence-user" required>
-                                <option value="">SÃ©lectionner un membre</option>
+                                <option value="">Sélectionner un membre</option>
                             </select>
                             <input type="date" id="presence-date" required>
                             <select id="presence-statut" required>
-                                <option value="present">âœ… PrÃ©sent</option>
-                                <option value="absent">âŒ Absent</option>
-                                <option value="en_mission">ðŸŽ¯ En mission</option>
+                                <option value="present">✅ Présent</option>
+                                <option value="absent">❌ Absent</option>
+                                <option value="en_mission">🎯 En mission</option>
                             </select>
                             <textarea id="presence-commentaire" placeholder="Commentaire (optionnel)" rows="2"></textarea>
-                            <button type="submit" class="btn-submit">Enregistrer la PrÃ©sence</button>
+                            <button type="submit" class="btn-submit">Enregistrer la Présence</button>
                         </form>
                     </div>
                     
                     <div class="guild-list-container" style="margin-top: 30px;">
-                        <h3>Historique des prÃ©sences (Aujourd'hui)</h3>
+                        <h3>Historique des présences (Aujourd'hui)</h3>
                         <div id="admin-presence-list" class="guild-items-list"></div>
                     </div>
                 </div>
@@ -1359,15 +1358,15 @@
             </div>
             <!-- Fin TAB: Gestion Guilde -->
             
-            <!-- TAB: Mur d'ActivitÃ© -->
+            <!-- TAB: Mur d'Activité -->
             <div class="tab-content" data-tab-content="activity">
                 <div class="activity-admin-container">
                     <div class="activity-admin-header">
-                        <h2 class="activity-admin-title">ðŸ“¢ Gestion du Mur d'ActivitÃ©</h2>
-                        <p class="activity-admin-subtitle">CrÃ©ez et gÃ©rez les publications affichÃ©es sur l'espace guilde</p>
+                        <h2 class="activity-admin-title">📢 Gestion du Mur d'Activité</h2>
+                        <p class="activity-admin-subtitle">Créez et gérez les publications affichées sur l'espace guilde</p>
                     </div>
                     
-                    <!-- Formulaire de crÃ©ation/Ã©dition -->
+                    <!-- Formulaire de création/édition -->
                     <div class="activity-form">
                         <h3 style="color: #ff6b35; margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">
                             <span id="form-mode-title">Nouvelle Publication</span>
@@ -1381,10 +1380,10 @@
                         <div class="form-group">
                             <label for="activity-type">Type *</label>
                             <select id="activity-type" required>
-                                <option value="annonce">ðŸ“¢ Annonce</option>
-                                <option value="evenement">ðŸ“… Ã‰vÃ©nement</option>
-                                <option value="info">â„¹ï¸ Information</option>
-                                <option value="victoire">ðŸ† Victoire</option>
+                                <option value="annonce">📢 Annonce</option>
+                                <option value="evenement">📅 Événement</option>
+                                <option value="info">ℹ️ Information</option>
+                                <option value="victoire">🏆 Victoire</option>
                             </select>
                         </div>
                         
@@ -1397,7 +1396,7 @@
                             <label for="activity-image">Image (optionnel)</label>
                             <input type="file" id="activity-image" accept="image/*">
                             <div id="image-preview-container" class="image-preview-container" style="display: none;">
-                                <img id="image-preview" class="image-preview" alt="AperÃ§u">
+                                <img id="image-preview" class="image-preview" alt="Aperçu">
                             </div>
                         </div>
                         
@@ -1411,7 +1410,7 @@
                         </button>
                     </div>
                     
-                    <!-- Liste des activitÃ©s -->
+                    <!-- Liste des activités -->
                     <div class="activities-list">
                         <h3 class="activities-list-header">Publications actuelles</h3>
                         <div id="admin-activities-list">
@@ -1422,18 +1421,18 @@
                     </div>
                 </div>
             </div>
-            <!-- Fin TAB: Mur d'ActivitÃ© -->
+            <!-- Fin TAB: Mur d'Activité -->
         </div>
     </main>
 
-    <!-- Modal de modification de rÃ´le -->
+    <!-- Modal de modification de rôle -->
     <div id="role-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                Modifier le rÃ´le de <span id="modal-username"></span>
+                Modifier le rôle de <span id="modal-username"></span>
             </div>
             <div class="modal-body">
-                <label class="modal-label">Nouveau rÃ´le :</label>
+                <label class="modal-label">Nouveau rôle :</label>
                 <select id="modal-role-select" class="modal-select">
                     <option value="joueur">Joueur</option>
                     <option value="membre">Membre</option>
@@ -1449,7 +1448,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 Iron Oath. Tous droits rÃ©servÃ©s.</p>
+        <p>&copy; 2024 Iron Oath. Tous droits réservés.</p>
     </footer>
 
     <!-- Scripts -->
@@ -1459,6 +1458,7 @@
     <script src="../js/performance-monitor.js"></script>
     <script src="../js/cache-manager.js" defer></script>
     <script src="../js/navbar-mobile.js" defer></script>
+    <script src="../js/crypto-keys.js"></script>
     <script src="../js/auth-supabase.js"></script>
     <script src="../js/admin-dashboard.js"></script>
 </body>

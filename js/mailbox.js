@@ -19,7 +19,7 @@ class MailboxSystem {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         this.supabaseManager = window.mailboxSupabaseManager;
-        // console.log('✅ Mailbox Supabase Manager connecté');
+        console.log('✅ Mailbox Supabase Manager connecté');
         
         // Charger les messages initiaux
         await this.loadMessages();
@@ -27,11 +27,11 @@ class MailboxSystem {
 
     // Démarrer l'auto-actualisation
     startAutoRefresh() {
-        // console.log('📬 Démarrage auto-actualisation boîte mail (30s)');
+        console.log('📬 Démarrage auto-actualisation boîte mail (15s)');
         
-        // Actualiser toutes les 30 secondes au lieu de 15
+        // Actualiser toutes les 15 secondes
         this.refreshInterval = setInterval(async () => {
-            // console.log('📬 Auto-actualisation boîte mail...');
+            console.log('📬 Auto-actualisation boîte mail...');
             const previousMessageCount = this.messages.length;
             
             // Sauvegarder les IDs des messages actuellement supprimés localement
@@ -42,7 +42,7 @@ class MailboxSystem {
             // Après le rechargement, vérifier si de nouveaux messages sont apparus
             const newMessageCount = this.messages.length;
             if (newMessageCount !== previousMessageCount) {
-                // console.log(`📊 Messages: ${previousMessageCount} → ${newMessageCount}`);
+                console.log(`📊 Messages: ${previousMessageCount} → ${newMessageCount}`);
             }
             
             await this.updateUnreadCount();
@@ -50,11 +50,11 @@ class MailboxSystem {
             // Vérifier les nouveaux messages pour notifications HDV
             this.checkForNewItemMessages(previousMessageCount);
             
-            // Nettoyer le cache périodiquement (toutes les 10 actualisation = ~5 min)
+            // Nettoyer le cache périodiquement (toutes les 10 actualisation = ~2.5 min)
             if (Math.random() < 0.1) {
                 this.cleanDeletedMessagesCache();
             }
-        }, 30000); // 30 secondes au lieu de 15
+        }, 15000);
         
         // Nettoyer l'intervalle si on quitte la page
         window.addEventListener('beforeunload', () => {
@@ -200,7 +200,7 @@ class MailboxSystem {
 
     // Actualisation manuelle
     async refreshMessages() {
-        // console.log('🔄 Actualisation manuelle de la boîte mail...');
+        console.log('🔄 Actualisation manuelle de la boîte mail...');
         await this.loadMessages();
         await this.updateUnreadCount();
         
@@ -239,12 +239,12 @@ class MailboxSystem {
     // Charger les messages depuis Supabase
     async loadMessages() {
         if (!this.supabaseManager) {
-            // console.log('⏳ Attente Supabase Manager...');
+            console.log('⏳ Attente Supabase Manager...');
             return;
         }
 
         try {
-            // console.log('📥 Chargement messages depuis Supabase...');
+            console.log('📥 Chargement messages depuis Supabase...');
             
             // Charger tous les messages (reçus et envoyés)
             const [receivedMessages, sentMessages] = await Promise.all([
@@ -268,9 +268,9 @@ class MailboxSystem {
             const totalFiltered = this.messages.length;
             
             if (this.deletedMessageIds.size > 0) {
-                // console.log(`✅ ${totalFiltered} messages chargés depuis Supabase (${totalFromDb} total, ${this.deletedMessageIds.size} filtrés)`);
+                console.log(`✅ ${totalFiltered} messages chargés depuis Supabase (${totalFromDb} total, ${this.deletedMessageIds.size} filtrés)`);
             } else {
-                // console.log(`✅ ${totalFiltered} messages chargés depuis Supabase (${filteredReceived.length} reçus, ${filteredSent.length} envoyés)`);
+                console.log(`✅ ${totalFiltered} messages chargés depuis Supabase (${filteredReceived.length} reçus, ${filteredSent.length} envoyés)`);
             }
             
         } catch (error) {
@@ -309,7 +309,7 @@ class MailboxSystem {
                 return null;
             }
 
-            // console.log('✅ Profil mailbox récupéré:', profile);
+            console.log('✅ Profil mailbox récupéré:', profile);
             return {
                 id: profile.id,
                 username: profile.username,
@@ -324,7 +324,7 @@ class MailboxSystem {
     // Sauvegarder les messages (non utilisé avec Supabase)
     saveMessages() {
         // Méthode conservée pour compatibilité mais non utilisée avec Supabase
-        // console.log('💾 Méthode saveMessages() non utilisée avec Supabase');
+        console.log('💾 Méthode saveMessages() non utilisée avec Supabase');
     }
 
     // Sauvegarder utilisateur pour autocomplétion
@@ -372,7 +372,7 @@ class MailboxSystem {
     // Envoyer un message de trading spécifique
     async sendTradeMessage(recipientUsername, itemName, orderType, price) {
         try {
-            // console.log('📤 Envoi message de trading:', { recipientUsername, itemName, orderType, price });
+            console.log('📤 Envoi message de trading:', { recipientUsername, itemName, orderType, price });
             
             // S'assurer que l'utilisateur actuel est récupéré
             this.currentUser = await this.getCurrentUser();
@@ -393,7 +393,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
             const success = await this.sendMessage(recipientUsername, subject, content);
             
             if (success) {
-                // console.log('✅ Message de trading envoyé avec succès');
+                console.log('✅ Message de trading envoyé avec succès');
             }
             
             return success;
@@ -456,7 +456,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
     // Notification générale
     showNotification(message, type = 'info') {
-        // console.log(`📢 ${message}`);
+        console.log(`📢 ${message}`);
         
         // Essayer d'afficher dans l'interface si disponible
         const notificationArea = document.querySelector('.notification-area');
@@ -491,7 +491,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
     // Ouvrir un message spécifique (pour les notifications)
     openMessage(messageId) {
-        // console.log('📖 Ouverture du message:', messageId);
+        console.log('📖 Ouverture du message:', messageId);
         
         // Si on est dans le HDV, basculer vers l'onglet boîte mail
         if (window.hdvSystem && window.hdvSystem.switchTab) {
@@ -592,7 +592,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
             sentTab.textContent = `📤 Envoyés (${sentCount})`;
         }
         
-        // console.log(`📊 Compteurs mis à jour (cache): ${receivedCount} reçus, ${sentCount} envoyés, ${unreadCount} non lus`);
+        console.log(`📊 Compteurs mis à jour (cache): ${receivedCount} reçus, ${sentCount} envoyés, ${unreadCount} non lus`);
     }
 
     // Nouvelle méthode pour actualiser en arrière-plan
@@ -611,7 +611,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
                 this.showTab(tabName, modal);
             }
             
-            // console.log('📬 Données actualisées en arrière-plan');
+            console.log('📬 Données actualisées en arrière-plan');
         } catch (error) {
             console.error('❌ Erreur actualisation arrière-plan:', error);
         }
@@ -742,7 +742,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
                 }
             }
             
-            // console.log('📬 Boîte mail fermée - retour à l\'interface HDV');
+            console.log('📬 Boîte mail fermée - retour à l\'interface HDV');
         }, 300);
     }
 
@@ -899,7 +899,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
                 }
             }
         } catch (error) {
-            // console.log('⚠️ Impossible de charger la liste des utilisateurs:', error);
+            console.log('⚠️ Impossible de charger la liste des utilisateurs:', error);
         }
         
         // Combiner utilisateurs connus et tous les utilisateurs
@@ -917,7 +917,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
         // Combiner toutes les sources d'utilisateurs
         const availableUsers = [...new Set([...knownUsers, ...allUsers, ...messagesSenders])];
         
-        // console.log('👥 Utilisateurs disponibles:', availableUsers);
+        console.log('👥 Utilisateurs disponibles:', availableUsers);
         
         composeContainer.innerHTML = `
             <div class="compose-form-panel">
@@ -1252,7 +1252,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
     // Masquer le formulaire de composition (méthode héritée - pour compatibilité)
     hideComposeForm() {
         // Cette méthode est conservée pour compatibilité mais non utilisée avec la nouvelle interface
-        // console.log('📝 hideComposeForm() appelée (compatibilité)');
+        console.log('📝 hideComposeForm() appelée (compatibilité)');
     }
 
     // Envoyer le message composé
@@ -1390,27 +1390,27 @@ ${this.currentUser.username || 'Un aventurier'}`;
         }
 
         try {
-            // console.log('🗑️ Demande suppression message:', messageId);
+            console.log('🗑️ Demande suppression message:', messageId);
             const success = await this.supabaseManager.deleteMessage(messageId);
             
             if (success) {
-                // console.log('✅ Suppression Supabase réussie, mise à jour interface...');
+                console.log('✅ Suppression Supabase réussie, mise à jour interface...');
                 
                 // Initialiser le cache s'il n'existe pas
                 if (!this.deletedMessageIds) {
                     this.deletedMessageIds = new Set();
-                    // console.log('🔧 Cache des messages supprimés initialisé');
+                    console.log('🔧 Cache des messages supprimés initialisé');
                 }
                 
                 // Ajouter au cache des messages supprimés pour éviter qu'il réapparaisse
                 this.deletedMessageIds.add(messageId);
-                // console.log('🚫 Message ajouté au cache des supprimés:', messageId);
+                console.log('🚫 Message ajouté au cache des supprimés:', messageId);
                 
                 // Supprimer des données en mémoire (avec vérification d'existence)
                 try {
                     if (this.receivedMessages && Array.isArray(this.receivedMessages)) {
                         this.receivedMessages = this.receivedMessages.filter(msg => msg.id !== messageId);
-                        // console.log('✅ Supprimé des messages reçus');
+                        console.log('✅ Supprimé des messages reçus');
                     } else {
                         console.warn('⚠️ receivedMessages non initialisé ou pas un tableau');
                         this.receivedMessages = [];
@@ -1418,7 +1418,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
                     
                     if (this.sentMessages && Array.isArray(this.sentMessages)) {
                         this.sentMessages = this.sentMessages.filter(msg => msg.id !== messageId);
-                        // console.log('✅ Supprimé des messages envoyés');
+                        console.log('✅ Supprimé des messages envoyés');
                     } else {
                         console.warn('⚠️ sentMessages non initialisé ou pas un tableau');
                         this.sentMessages = [];
@@ -1426,7 +1426,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
                     
                     if (this.messages && Array.isArray(this.messages)) {
                         this.messages = this.messages.filter(msg => msg.id !== messageId);
-                        // console.log('✅ Supprimé des messages généraux');
+                        console.log('✅ Supprimé des messages généraux');
                     } else {
                         console.warn('⚠️ messages non initialisé ou pas un tableau');
                         this.messages = [];
@@ -1465,7 +1465,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
                 this.showNotification('✅ Message supprimé définitivement', 'success');
                 
                 // Ne pas recharger automatiquement - les données en mémoire sont déjà mises à jour
-                // console.log('📝 Suppression terminée, données en mémoire mises à jour');
+                console.log('📝 Suppression terminée, données en mémoire mises à jour');
                 
             } else {
                 console.error('❌ Échec suppression Supabase');
@@ -1479,7 +1479,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
     // Répondre à un message
     async replyToMessage(messageId, originalSender, originalSubject) {
-        // console.log('📧 replyToMessage appelée avec:', { messageId, originalSender, originalSubject });
+        console.log('📧 replyToMessage appelée avec:', { messageId, originalSender, originalSubject });
         
         // Ajouter l'expéditeur aux utilisateurs connus pour validation
         if (originalSender) {
@@ -1487,7 +1487,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
             if (!knownUsers.includes(originalSender)) {
                 knownUsers.push(originalSender);
                 localStorage.setItem('knownUsers', JSON.stringify(knownUsers));
-                // console.log('👥 Utilisateur ajouté aux connus:', originalSender);
+                console.log('👥 Utilisateur ajouté aux connus:', originalSender);
             }
         }
         
@@ -1563,7 +1563,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
     getUnreadCount() {
         // Cette méthode est gardée pour compatibilité avec l'ancien code
         // La vraie logique est dans updateUnreadCount() qui est async
-        // console.log('📬 getUnreadCount() appelée (compatibilité)');
+        console.log('📬 getUnreadCount() appelée (compatibilité)');
         return 0; // Retourne 0 par défaut, la vraie valeur sera mise à jour par updateUnreadCount()
     }
 
@@ -1665,18 +1665,18 @@ ${this.currentUser.username || 'Un aventurier'}`;
             // Gestionnaire pour boutons de réponse
             if (e.target.matches('.reply-btn')) {
                 e.preventDefault();
-                // console.log('🔄 Clic sur bouton répondre détecté');
+                console.log('🔄 Clic sur bouton répondre détecté');
                 const messageId = e.target.getAttribute('data-message-id');
                 const sender = this.unescapeAttribute(e.target.getAttribute('data-sender'));
                 const subject = this.unescapeAttribute(e.target.getAttribute('data-subject'));
-                // console.log('📧 Données récupérées:', { messageId, sender, subject });
+                console.log('📧 Données récupérées:', { messageId, sender, subject });
                 this.replyToMessage(messageId, sender, subject);
             }
             
             // Gestionnaire pour boutons marquer comme lu
             if (e.target.matches('.mark-read-btn')) {
                 e.preventDefault();
-                // console.log('✅ Clic sur bouton marquer comme lu');
+                console.log('✅ Clic sur bouton marquer comme lu');
                 const messageId = e.target.getAttribute('data-message-id');
                 this.markAsRead(messageId);
             }
@@ -1700,7 +1700,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
     // Test complet du système de messagerie
     async testMailboxSystem() {
-        // console.log('🧪 === TEST SYSTÈME MESSAGERIE ===');
+        console.log('🧪 === TEST SYSTÈME MESSAGERIE ===');
         
         try {
             // Test de la connectivité Supabase
@@ -1718,17 +1718,17 @@ ${this.currentUser.username || 'Un aventurier'}`;
             if (!this.currentUser) {
                 throw new Error('Impossible de récupérer l\'utilisateur actuel');
             }
-            // console.log('✅ Utilisateur actuel:', this.currentUser.username);
+            console.log('✅ Utilisateur actuel:', this.currentUser.username);
 
             // Test de chargement des messages
             await this.loadMessages();
-            // console.log(`✅ Messages chargés: ${this.messages.length} total`);
+            console.log(`✅ Messages chargés: ${this.messages.length} total`);
 
             // Test de comptage des non lus
             await this.updateUnreadCount();
-            // console.log('✅ Compteur de messages non lus mis à jour');
+            console.log('✅ Compteur de messages non lus mis à jour');
 
-            // console.log('🎉 === TOUS LES TESTS RÉUSSIS ===');
+            console.log('🎉 === TOUS LES TESTS RÉUSSIS ===');
             this.showNotification('🎉 Système de messagerie opérationnel !', 'success');
             return true;
 
@@ -1741,7 +1741,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
 
     // Fonction de diagnostic rapide
     async diagnoseMailboxIssues() {
-        // console.log('🔍 === DIAGNOSTIC MESSAGERIE ===');
+        console.log('🔍 === DIAGNOSTIC MESSAGERIE ===');
         
         const issues = [];
         
@@ -1749,14 +1749,14 @@ ${this.currentUser.username || 'Un aventurier'}`;
         if (!window.supabase) {
             issues.push('❌ window.supabase non disponible');
         } else {
-            // console.log('✅ window.supabase disponible');
+            console.log('✅ window.supabase disponible');
         }
         
         // Vérifier MailboxSupabaseManager
         if (!window.mailboxSupabaseManager) {
             issues.push('❌ window.mailboxSupabaseManager non disponible');
         } else {
-            // console.log('✅ window.mailboxSupabaseManager disponible');
+            console.log('✅ window.mailboxSupabaseManager disponible');
         }
         
         // Vérifier l'authentification
@@ -1765,17 +1765,17 @@ ${this.currentUser.username || 'Un aventurier'}`;
             if (!user) {
                 issues.push('❌ Utilisateur non connecté');
             } else {
-                // console.log('✅ Utilisateur connecté:', user.email);
+                console.log('✅ Utilisateur connecté:', user.email);
             }
         } catch (error) {
             issues.push(`❌ Erreur authentification: ${error.message}`);
         }
         
         if (issues.length === 0) {
-            // console.log('✅ === DIAGNOSTIC RÉUSSI - AUCUN PROBLÈME ===');
+            console.log('✅ === DIAGNOSTIC RÉUSSI - AUCUN PROBLÈME ===');
             return true;
         } else {
-            // console.log('❌ === PROBLÈMES DÉTECTÉS ===');
+            console.log('❌ === PROBLÈMES DÉTECTÉS ===');
             issues.forEach(issue => console.log(issue));
             return false;
         }
@@ -1877,7 +1877,7 @@ ${this.currentUser.username || 'Un aventurier'}`;
             const idsArray = Array.from(this.deletedMessageIds);
             const recentIds = idsArray.slice(-50); // Garder les 50 plus récents
             this.deletedMessageIds = new Set(recentIds);
-            // console.log('🧹 Cache des messages supprimés nettoyé, gardé:', recentIds.length);
+            console.log('🧹 Cache des messages supprimés nettoyé, gardé:', recentIds.length);
         }
     }
 }
@@ -1899,10 +1899,10 @@ window.testMailbox = async () => {
 
 window.testDeleteMessage = async (messageId) => {
     if (window.mailboxSupabaseManager) {
-        // console.log('🧪 Test suppression message:', messageId);
+        console.log('🧪 Test suppression message:', messageId);
         await window.mailboxSupabaseManager.testDeletePermissions(messageId);
         const result = await window.mailboxSupabaseManager.deleteMessage(messageId);
-        // console.log('🧪 Résultat suppression:', result);
+        console.log('🧪 Résultat suppression:', result);
         return result;
     } else {
         console.error('❌ Mailbox Supabase Manager non initialisé');
@@ -1932,8 +1932,8 @@ window.sendTestMessage = async (toUsername, subject = 'Message de test', content
 // Fonction pour voir l'état du cache de suppression
 window.checkDeletedCache = () => {
     if (window.mailboxSystem) {
-        // console.log('🗑️ Messages supprimés en cache:', Array.from(window.mailboxSystem.deletedMessageIds));
-        // console.log('📊 Nombre total en cache:', window.mailboxSystem.deletedMessageIds.size);
+        console.log('🗑️ Messages supprimés en cache:', Array.from(window.mailboxSystem.deletedMessageIds));
+        console.log('📊 Nombre total en cache:', window.mailboxSystem.deletedMessageIds.size);
         return Array.from(window.mailboxSystem.deletedMessageIds);
     } else {
         console.error('❌ Mailbox System non initialisé');
@@ -1941,4 +1941,4 @@ window.checkDeletedCache = () => {
     }
 };
 
-// console.log('📬 Mailbox System chargé. Utilisez testMailbox(), diagnoseMailbox() ou sendTestMessage() pour tester.');
+console.log('📬 Mailbox System chargé. Utilisez testMailbox(), diagnoseMailbox() ou sendTestMessage() pour tester.');

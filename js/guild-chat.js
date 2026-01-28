@@ -8,7 +8,7 @@ let selectedImage = null; // Image sélectionnée pour upload
 
 // Initialisation du chat
 document.addEventListener('DOMContentLoaded', async function() {
-    // console.log('[CHAT] Initialisation du chat de la guilde...');
+    console.log('[CHAT] Initialisation du chat de la guilde...');
     
     // Attendre que l'utilisateur soit connecté
     await waitForChatAuth();
@@ -30,11 +30,11 @@ function waitForChatAuth() {
             
             if (typeof supabase !== 'undefined' && window.currentUser) {
                 clearInterval(checkAuth);
-                // console.log('[CHAT] Auth prête');
+                console.log('[CHAT] Auth prête');
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
-                // console.log('[CHAT] Timeout auth');
+                console.log('[CHAT] Timeout auth');
                 resolve();
             }
         }, 100);
@@ -62,7 +62,7 @@ async function isGuildMember() {
 
 // Initialiser le chat
 function initializeChat() {
-    // console.log('[CHAT] Initialisation des événements...');
+    console.log('[CHAT] Initialisation des événements...');
     
     // Afficher le bouton flottant
     const chatBtn = document.getElementById('chat-toggle-btn');
@@ -98,7 +98,7 @@ function initializeChat() {
 
 // Changer d'onglet
 function switchChatTab(tabName) {
-    // console.log('[CHAT] Changement d\'onglet:', tabName);
+    console.log('[CHAT] Changement d\'onglet:', tabName);
     
     // Retirer active de tous les boutons et contenus
     document.querySelectorAll('.chat-tab-btn').forEach(btn => {
@@ -145,7 +145,7 @@ function closeChat() {
 // Charger les messages
 async function loadMessages() {
     try {
-        // console.log('[CHAT] Chargement des messages...');
+        console.log('[CHAT] Chargement des messages...');
         
         // Uniquement les messages publics
         const { data: messages, error } = await supabase
@@ -179,7 +179,7 @@ async function loadMessages() {
         });
         
         displayMessages(messages, profileMap);
-        // console.log('[CHAT] Messages chargés:', messages.length);
+        console.log('[CHAT] Messages chargés:', messages.length);
         
         // Stocker le dernier ID de message
         if (messages.length > 0) {
@@ -314,7 +314,7 @@ async function sendMessage() {
         cancelReply();
         clearImagePreview();
         
-        // console.log('[CHAT] Message envoyé');
+        console.log('[CHAT] Message envoyé');
         
     } catch (error) {
         console.error('[CHAT] Erreur:', error);
@@ -342,7 +342,7 @@ function cancelReply() {
 
 // S'abonner aux nouveaux messages en temps réel
 function subscribeToMessages() {
-    // console.log('[CHAT] Abonnement aux nouveaux messages...');
+    console.log('[CHAT] Abonnement aux nouveaux messages...');
     
     chatSubscription = supabase
         .channel('guild-chat')
@@ -351,7 +351,7 @@ function subscribeToMessages() {
             schema: 'public',
             table: 'guild_chat'
         }, (payload) => {
-            // console.log('[CHAT] Nouveau message reçu:', payload.new);
+            console.log('[CHAT] Nouveau message reçu:', payload.new);
             
             // Recharger les messages si le chat est ouvert
             if (chatOpen) {
@@ -497,4 +497,4 @@ async function uploadChatImage(file) {
     }
 }
 
-// console.log('✅ Module guild-chat.js chargé');
+console.log('✅ Module guild-chat.js chargé');
