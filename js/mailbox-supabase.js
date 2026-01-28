@@ -3,7 +3,7 @@ class MailboxSupabaseManager {
     constructor() {
         this.supabase = null;
         this.initialized = false;
-        console.log('📬 Initialisation MailboxSupabaseManager...');
+        // console.log('📬 Initialisation MailboxSupabaseManager...');
         this.ensureInitialized();
     }
 
@@ -13,7 +13,7 @@ class MailboxSupabaseManager {
             return true;
         }
 
-        console.log('⏳ Attente de Supabase pour messagerie...');
+        // console.log('⏳ Attente de Supabase pour messagerie...');
         
         // Attendre que l'instance globale Supabase soit disponible
         let attempts = 0;
@@ -29,7 +29,7 @@ class MailboxSupabaseManager {
 
         this.supabase = window.globalSupabase;
         this.initialized = true;
-        console.log('✅ Supabase connecté au Mailbox Manager');
+        // console.log('✅ Supabase connecté au Mailbox Manager');
         return true;
     }
 
@@ -65,7 +65,7 @@ class MailboxSupabaseManager {
                 targetUserId = user.id;
             }
             
-            console.log('🔍 Recherche profil utilisateur ID:', targetUserId);
+            // console.log('🔍 Recherche profil utilisateur ID:', targetUserId);
             
             // Utiliser EXPLICITEMENT la table user_profiles
             const { data, error } = await this.supabase
@@ -79,7 +79,7 @@ class MailboxSupabaseManager {
                 return null;
             }
 
-            console.log('✅ Profil utilisateur trouvé:', data);
+            // console.log('✅ Profil utilisateur trouvé:', data);
             return data;
         } catch (error) {
             console.error('❌ Erreur dans getUserProfile:', error);
@@ -95,7 +95,7 @@ class MailboxSupabaseManager {
                 throw new Error('Supabase non disponible');
             }
 
-            console.log('📤 Envoi message:', { recipientUsername, subject, messageType });
+            // console.log('📤 Envoi message:', { recipientUsername, subject, messageType });
 
             // Obtenir l'expéditeur
             const senderProfile = await this.getUserProfile();
@@ -104,18 +104,18 @@ class MailboxSupabaseManager {
             }
 
             // Trouver le destinataire
-            console.log('🔍 Recherche destinataire:', recipientUsername);
+            // console.log('🔍 Recherche destinataire:', recipientUsername);
             let { data: recipientData, error: recipientError } = await this.supabase
                 .from('user_profiles')
                 .select('id, username')
                 .eq('username', recipientUsername)
                 .single();
 
-            console.log('👤 Résultat recherche destinataire:', { recipientData, recipientError });
+            // console.log('👤 Résultat recherche destinataire:', { recipientData, recipientError });
 
             if (recipientError || !recipientData) {
                 // Essayer de créer automatiquement le profil utilisateur si non trouvé
-                console.log('⚠️ Destinataire non trouvé, tentative de création automatique...');
+                // console.log('⚠️ Destinataire non trouvé, tentative de création automatique...');
                 
                 try {
                     const { data: newUser, error: createError } = await this.supabase
@@ -131,13 +131,13 @@ class MailboxSupabaseManager {
                         throw new Error(`Impossible de créer le profil pour "${recipientUsername}": ${createError.message}`);
                     }
                     
-                    console.log('✅ Profil créé automatiquement:', newUser);
+                    // console.log('✅ Profil créé automatiquement:', newUser);
                     recipientData = newUser;
                 } catch (createErr) {
                     throw new Error(`Destinataire "${recipientUsername}" non trouvé et création automatique échouée: ${createErr.message}`);
                 }
             } else {
-                console.log('✅ Destinataire trouvé:', recipientData);
+                // console.log('✅ Destinataire trouvé:', recipientData);
             }
 
             // Préparer les données du message
@@ -164,7 +164,7 @@ class MailboxSupabaseManager {
                 throw error;
             }
 
-            console.log('✅ Message envoyé avec succès:', data.id);
+            // console.log('✅ Message envoyé avec succès:', data.id);
             return data;
 
         } catch (error) {
@@ -182,7 +182,7 @@ class MailboxSupabaseManager {
             const user = await this.getCurrentUser();
             if (!user) return [];
 
-            console.log('📥 Chargement messages reçus...');
+            // console.log('📥 Chargement messages reçus...');
 
             const { data, error } = await this.supabase
                 .from('messages')
@@ -195,7 +195,7 @@ class MailboxSupabaseManager {
                 return [];
             }
 
-            console.log(`✅ ${data.length} messages reçus chargés`);
+            // console.log(`✅ ${data.length} messages reçus chargés`);
             return data;
 
         } catch (error) {
@@ -213,7 +213,7 @@ class MailboxSupabaseManager {
             const user = await this.getCurrentUser();
             if (!user) return [];
 
-            console.log('📤 Chargement messages envoyés...');
+            // console.log('📤 Chargement messages envoyés...');
 
             const { data, error } = await this.supabase
                 .from('messages')
@@ -226,7 +226,7 @@ class MailboxSupabaseManager {
                 return [];
             }
 
-            console.log(`✅ ${data.length} messages envoyés chargés`);
+            // console.log(`✅ ${data.length} messages envoyés chargés`);
             return data;
 
         } catch (error) {
@@ -251,7 +251,7 @@ class MailboxSupabaseManager {
                 return false;
             }
 
-            console.log('✅ Message marqué comme lu:', messageId);
+            // console.log('✅ Message marqué comme lu:', messageId);
             return true;
 
         } catch (error) {
@@ -303,7 +303,7 @@ class MailboxSupabaseManager {
                 return false;
             }
 
-            console.log('🗑️ Tentative suppression message:', messageId, 'par utilisateur:', user.id);
+            // console.log('🗑️ Tentative suppression message:', messageId, 'par utilisateur:', user.id);
 
             // Vérifier que l'utilisateur a le droit de supprimer ce message
             const { data: messageToDelete, error: fetchError } = await this.supabase
@@ -328,7 +328,7 @@ class MailboxSupabaseManager {
                 return false;
             }
 
-            console.log('✅ Autorisation de suppression confirmée pour:', messageToDelete);
+            // console.log('✅ Autorisation de suppression confirmée pour:', messageToDelete);
 
             const { data: deleteResult, error } = await this.supabase
                 .from('messages')
@@ -340,8 +340,8 @@ class MailboxSupabaseManager {
                 return false;
             }
 
-            console.log('🔍 Résultat suppression Supabase:', { deleteResult, error });
-            console.log('✅ Message supprimé avec succès de Supabase:', messageId);
+            // console.log('🔍 Résultat suppression Supabase:', { deleteResult, error });
+            // console.log('✅ Message supprimé avec succès de Supabase:', messageId);
             
             // Vérification supplémentaire - chercher le message pour s'assurer qu'il est supprimé
             const { data: checkMessage, error: checkError } = await this.supabase
@@ -354,7 +354,7 @@ class MailboxSupabaseManager {
                 console.error('❌ PROBLÈME: Le message existe encore après suppression!', checkMessage);
                 return false;
             } else {
-                console.log('✅ Vérification: Message bien supprimé de la base');
+                // console.log('✅ Vérification: Message bien supprimé de la base');
             }
             
             return true;
@@ -420,7 +420,7 @@ class MailboxSupabaseManager {
     // Test de la connectivité et des fonctions
     async testConnectivity() {
         try {
-            console.log('🧪 Test de connectivité mailbox...');
+            // console.log('🧪 Test de connectivité mailbox...');
             
             const ready = await this.ensureInitialized();
             if (!ready) {
@@ -432,32 +432,32 @@ class MailboxSupabaseManager {
             if (!user) {
                 throw new Error('Utilisateur non connecté');
             }
-            console.log('✅ Test 1: Utilisateur connecté -', user.email);
+            // console.log('✅ Test 1: Utilisateur connecté -', user.email);
 
             // Test 2: Récupérer le profil
             const profile = await this.getUserProfile();
             if (!profile) {
                 throw new Error('Profil utilisateur non trouvé');
             }
-            console.log('✅ Test 2: Profil utilisateur -', profile.username);
+            // console.log('✅ Test 2: Profil utilisateur -', profile.username);
 
             // Test 3: Charger les messages reçus
             const receivedMessages = await this.loadReceivedMessages();
-            console.log(`✅ Test 3: ${receivedMessages.length} messages reçus chargés`);
+            // console.log(`✅ Test 3: ${receivedMessages.length} messages reçus chargés`);
 
             // Test 4: Charger les messages envoyés
             const sentMessages = await this.loadSentMessages();
-            console.log(`✅ Test 4: ${sentMessages.length} messages envoyés chargés`);
+            // console.log(`✅ Test 4: ${sentMessages.length} messages envoyés chargés`);
 
             // Test 5: Compter les messages non lus
             const unreadCount = await this.getUnreadCount();
-            console.log(`✅ Test 5: ${unreadCount} messages non lus`);
+            // console.log(`✅ Test 5: ${unreadCount} messages non lus`);
 
             // Test 6: Récupérer tous les utilisateurs
             const allUsers = await this.getAllUsers();
-            console.log(`✅ Test 6: ${allUsers.length} utilisateurs dans la base`);
+            // console.log(`✅ Test 6: ${allUsers.length} utilisateurs dans la base`);
 
-            console.log('🎉 Tous les tests de connectivité réussis !');
+            // console.log('🎉 Tous les tests de connectivité réussis !');
             return true;
 
         } catch (error) {
@@ -473,7 +473,7 @@ class MailboxSupabaseManager {
             if (!ready) return false;
 
             const user = await this.getCurrentUser();
-            console.log('🔍 Test permissions pour utilisateur:', user?.id);
+            // console.log('🔍 Test permissions pour utilisateur:', user?.id);
 
             // Essayer de récupérer le message
             const { data: message, error: fetchError } = await this.supabase
@@ -482,13 +482,13 @@ class MailboxSupabaseManager {
                 .eq('id', messageId)
                 .single();
 
-            console.log('📧 Message trouvé:', message);
-            console.log('❌ Erreur fetch:', fetchError);
+            // console.log('📧 Message trouvé:', message);
+            // console.log('❌ Erreur fetch:', fetchError);
 
             if (message) {
-                console.log('👤 Expéditeur:', message.sender_id);
-                console.log('📥 Destinataire:', message.recipient_id);
-                console.log('🔐 User peut supprimer:', 
+                // console.log('👤 Expéditeur:', message.sender_id);
+                // console.log('📥 Destinataire:', message.recipient_id);
+                // console.log('🔐 User peut supprimer:', 
                     message.sender_id === user?.id || message.recipient_id === user?.id);
             }
 

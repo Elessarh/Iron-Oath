@@ -15,7 +15,7 @@ let currentSortDirection = 'desc'; // 'asc' ou 'desc'
 
 // Fonction de gestion des onglets du dashboard
 function switchDashboardTab(tabName) {
-    console.log('🔄 Changement d\'onglet vers:', tabName);
+    // console.log('🔄 Changement d\'onglet vers:', tabName);
     
     // Retirer la classe active de tous les boutons et contenus
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -43,7 +43,7 @@ function switchDashboardTab(tabName) {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('📊 Initialisation du dashboard admin...');
+    // console.log('📊 Initialisation du dashboard admin...');
     
     // Attendre que auth-supabase.js soit chargé ET que l'utilisateur soit connecté
     await waitForAuthAndUser();
@@ -64,12 +64,12 @@ function waitForAuthAndUser() {
             // Vérifier que Supabase ET window.currentUser sont prêts
             if (typeof supabase !== 'undefined' && supabase !== null && window.currentUser !== null && window.currentUser !== undefined) {
                 clearInterval(checkAuth);
-                console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
+                // console.log('✅ Auth prête et utilisateur connecté:', window.currentUser.email);
                 resolve();
             } else if (attempts >= maxAttempts) {
                 clearInterval(checkAuth);
                 console.error('❌ Timeout: utilisateur non connecté après 10s');
-                console.log('État:', {
+                // console.log('État:', {
                     supabase: typeof supabase !== 'undefined',
                     currentUser: window.currentUser
                 });
@@ -95,7 +95,7 @@ async function checkAdminAccess() {
             }, 2000);
             return;
         }        localCurrentUser = window.currentUser;
-        console.log('✅ Utilisateur connecté:', localCurrentUser.email);
+        // console.log('✅ Utilisateur connecté:', localCurrentUser.email);
         
         // Récupérer le profil et vérifier le rôle
         const { data: profile, error } = await supabase
@@ -122,7 +122,7 @@ async function checkAdminAccess() {
             return;
         }
         
-        console.log('✅ Accès admin confirmé');
+        // console.log('✅ Accès admin confirmé');
         
         // Charger les utilisateurs
         await loadUsers();
@@ -166,7 +166,7 @@ async function loadUsers() {
             filteredUsers = allUsers;
             updateStats();
             displayUsers();
-            console.log(`📦 ${allUsers.length} utilisateurs chargés depuis le cache`);
+            // console.log(`📦 ${allUsers.length} utilisateurs chargés depuis le cache`);
             return;
         }
 
@@ -189,7 +189,7 @@ async function loadUsers() {
             window.cacheManager.set('all_users', allUsers);
         }
         
-        console.log(`✅ ${allUsers.length} utilisateurs chargés`);
+        // console.log(`✅ ${allUsers.length} utilisateurs chargés`);
         
         // Mettre à jour les statistiques
         updateStats();
@@ -541,7 +541,7 @@ async function confirmRoleChange() {
             return;
         }
         
-        console.log('✅ Rôle modifié avec succès');
+        // console.log('✅ Rôle modifié avec succès');
         alert('Rôle modifié avec succès !');
         
         // Invalider le cache des utilisateurs
@@ -586,7 +586,7 @@ async function deleteUser(userId) {
             return;
         }
         
-        console.log('✅ Utilisateur supprimé complètement (auth.users + user_profiles)');
+        // console.log('✅ Utilisateur supprimé complètement (auth.users + user_profiles)');
         alert('Utilisateur supprimé avec succès !');
         
         // Recharger les utilisateurs
@@ -760,7 +760,7 @@ async function loadAdminPresence() {
 // Charger la liste des membres pour le formulaire de présence
 async function loadMembersForPresence() {
     try {
-        console.log('🔄 Chargement des membres pour le select présence...');
+        // console.log('🔄 Chargement des membres pour le select présence...');
         
         const { data, error } = await supabase
             .from('user_profiles')
@@ -770,7 +770,7 @@ async function loadMembersForPresence() {
         
         if (error) throw error;
         
-        console.log('✅ Membres récupérés:', data?.length);
+        // console.log('✅ Membres récupérés:', data?.length);
         
         const select = document.getElementById('presence-user');
         if (!select) {
@@ -781,7 +781,7 @@ async function loadMembersForPresence() {
         select.innerHTML = '<option value="">Sélectionner un membre</option>' +
             data.map(user => `<option value="${user.id}">${escapeHtml(user.username)}</option>`).join('');
         
-        console.log('✅ Select mis à jour avec', data.length, 'membres');
+        // console.log('✅ Select mis à jour avec', data.length, 'membres');
         
     } catch (error) {
         console.error('❌ Erreur chargement membres:', error);
@@ -1071,7 +1071,7 @@ async function loadPresences() {
         document.getElementById('stat-absents').textContent = absents;
         document.getElementById('stat-missions').textContent = enMission;
         
-        console.log('[OK] Presences chargees:', { presents, absents, enMission });
+        // console.log('[OK] Presences chargees:', { presents, absents, enMission });
         
     } catch (error) {
         console.error('[ERREUR] Erreur chargement presences:', error);
@@ -1095,7 +1095,7 @@ let editingActivityId = null;
 // Charger les activités dans l'admin
 async function loadAdminActivities() {
     try {
-        console.log('[ADMIN] Chargement des activités...');
+        // console.log('[ADMIN] Chargement des activités...');
         
         const { data, error } = await supabase
             .from('guild_activity_wall')
@@ -1110,7 +1110,7 @@ async function loadAdminActivities() {
         }
         
         displayAdminActivities(data || []);
-        console.log('[OK] Activités chargées:', (data || []).length);
+        // console.log('[OK] Activités chargées:', (data || []).length);
         
     } catch (error) {
         console.error('[ERREUR]:', error);
@@ -1212,7 +1212,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Soumettre une activité (créer ou modifier)
 window.submitActivity = async function() {
     try {
-        console.log('[ACTIVITY] Début de la soumission...');
+        // console.log('[ACTIVITY] Début de la soumission...');
         const title = document.getElementById('activity-title').value.trim();
         const type = document.getElementById('activity-type').value;
         const content = document.getElementById('activity-content').value.trim();
@@ -1259,13 +1259,13 @@ window.submitActivity = async function() {
             author_name: currentUserProfile?.username || localCurrentUser?.email || 'Admin'
         };
         
-        console.log('[ACTIVITY] Données à publier:', activityData);
-        console.log('[ACTIVITY] User actuel:', window.currentUser);
-        console.log('[ACTIVITY] Profile:', currentUserProfile);
+        // console.log('[ACTIVITY] Données à publier:', activityData);
+        // console.log('[ACTIVITY] User actuel:', window.currentUser);
+        // console.log('[ACTIVITY] Profile:', currentUserProfile);
         
         if (editingActivityId) {
             // Mode édition
-            console.log('[ACTIVITY] Mode édition, ID:', editingActivityId);
+            // console.log('[ACTIVITY] Mode édition, ID:', editingActivityId);
             const { data, error } = await supabase
                 .from('guild_activity_wall')
                 .update(activityData)
@@ -1281,11 +1281,11 @@ window.submitActivity = async function() {
                 return;
             }
             
-            console.log('[SUCCESS] Publication modifiée:', data);
+            // console.log('[SUCCESS] Publication modifiée:', data);
             alert('Publication modifiée avec succès !');
         } else {
             // Mode création
-            console.log('[ACTIVITY] Mode création');
+            // console.log('[ACTIVITY] Mode création');
             const { data, error } = await supabase
                 .from('guild_activity_wall')
                 .insert([activityData])
@@ -1300,7 +1300,7 @@ window.submitActivity = async function() {
                 return;
             }
             
-            console.log('[SUCCESS] Publication créée:', data);
+            // console.log('[SUCCESS] Publication créée:', data);
             
             alert('Publication créée avec succès !');
         }
@@ -1431,6 +1431,6 @@ async function deleteActivity(activityId) {
 window.editActivity = editActivity;
 window.deleteActivity = deleteActivity;
 
-console.log('✅ Module admin-dashboard.js chargé');
+// console.log('✅ Module admin-dashboard.js chargé');
 
 

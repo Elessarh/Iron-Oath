@@ -12,7 +12,7 @@ class QuestSystem {
     }
 
     init() {
-        console.log('🎯 Initialisation du système de quêtes');
+        // console.log('🎯 Initialisation du système de quêtes');
         
         // Attendre que le DOM soit chargé
         if (document.readyState === 'loading') {
@@ -34,7 +34,7 @@ class QuestSystem {
     }
 
     loadQuestsFromDOM() {
-        console.log('📥 Chargement des quêtes depuis le DOM...');
+        // console.log('📥 Chargement des quêtes depuis le DOM...');
         
         const questSections = document.querySelectorAll('.quest-section');
         
@@ -55,7 +55,7 @@ class QuestSystem {
             });
         });
         
-        console.log(`✅ ${this.allQuests.length} quêtes chargées`);
+        // console.log(`✅ ${this.allQuests.length} quêtes chargées`);
         this.filteredQuests = [...this.allQuests];
     }
 
@@ -83,7 +83,7 @@ class QuestSystem {
     }
 
     setFilter(filter) {
-        console.log('🔍 Filtre appliqué:', filter);
+        // console.log('🔍 Filtre appliqué:', filter);
         this.currentFilter = filter;
         this.currentPage = 1;
         this.applyFilters();
@@ -91,7 +91,7 @@ class QuestSystem {
     }
 
     setTier(tier) {
-        console.log('🎚️ Palier sélectionné:', tier);
+        // console.log('🎚️ Palier sélectionné:', tier);
         this.currentTier = tier;
         this.currentPage = 1;
         this.applyFilters();
@@ -105,11 +105,11 @@ class QuestSystem {
             return matchCategory && matchTier;
         });
         
-        console.log(`📊 ${this.filteredQuests.length} quêtes après filtrage`);
+        // console.log(`📊 ${this.filteredQuests.length} quêtes après filtrage`);
     }
 
     displayCurrentPage() {
-        console.log(`📄 Affichage page ${this.currentPage}`);
+        // console.log(`📄 Affichage page ${this.currentPage}`);
         
         // Masquer toutes les sections d'abord pour optimiser
         const allSections = document.querySelectorAll('.quest-section');
