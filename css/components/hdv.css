@@ -265,10 +265,13 @@
 }
 
 .orders-list {
+    min-height: 200px;
+}
+
+.orders-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
-    min-height: 200px;
 }
 
 .order-card {
@@ -985,6 +988,21 @@
         gap: 1rem;
     }
     
+    .filter-group {
+        min-width: 100%;
+    }
+    
+    .search-group {
+        flex-wrap: wrap;
+    }
+    
+    .search-btn,
+    .refresh-btn {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+    }
+    
     .order-type-selection {
         grid-template-columns: 1fr;
     }
@@ -994,7 +1012,7 @@
         gap: 1rem;
     }
     
-    .orders-list {
+    .orders-grid {
         grid-template-columns: 1fr;
     }
     
@@ -1030,6 +1048,38 @@
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+    
+    .filters-section {
+        padding: 1rem;
+    }
+    
+    .filter-row {
+        gap: 0.75rem;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
+    
+    .search-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .search-group input {
+        width: 100%;
+    }
+    
+    .search-btn,
+    .refresh-btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+    
     .submit-btn,
     .cancel-btn {
         padding: 1rem;
@@ -1041,6 +1091,22 @@
         gap: 0.5rem;
         margin-top: 1.5rem;
         padding-top: 1.5rem;
+    }
+    
+    .marketplace-header {
+        padding: 1rem;
+    }
+    
+    .marketplace-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .marketplace-header p {
+        font-size: 0.85rem;
+    }
+    
+    .orders-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1471,11 +1537,7 @@
     font-size: 1rem;
 }
 
-.orders-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
+/* orders-grid défini plus haut avec la grille */
 
 /* === STYLES TRANSACTION FINALISÉE === */
 .order-finalized {
