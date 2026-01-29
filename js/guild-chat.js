@@ -5,6 +5,8 @@ let replyingToMessage = null;
 let lastMessageId = null;
 let chatSubscription = null;
 let selectedImage = null; // Image sélectionnée pour upload
+let userRole = null; // Rôle de l'utilisateur (admin ou membre)
+let guildMembers = []; // Liste des membres de la guilde pour les mentions
 
 // Initialisation du chat
 document.addEventListener('DOMContentLoaded', async function() {
@@ -53,6 +55,7 @@ async function isGuildMember() {
             .single();
         
         const role = (profile?.role || '').trim();
+        userRole = role; // Stocker le rôle
         return role === 'membre' || role === 'admin';
     } catch (error) {
         // console.error('[CHAT] Erreur vérification membre:', error);
@@ -94,6 +97,12 @@ function initializeChat() {
     
     // S'abonner aux nouveaux messages en temps réel
     subscribeToMessages();
+    
+    // Charger les membres de la guilde pour les mentions
+    loadGuildMembers();
+    
+    // Initialiser l'autocomplete pour les mentions
+    initializeMentions();
 }
 
 // Changer d'onglet
@@ -220,6 +229,16 @@ function displayMessages(messages, profileMap) {
             imageHtml = `<img src="${escapeHtml(msg.image_url)}" alt="Image" class="message-image" onclick="window.open('${escapeHtml(msg.image_url)}', '_blank')">`;
         }
         
+        // Bouton de suppression pour les admins
+        const deleteBtn = userRole === 'admin' ? `
+            <button class="action-btn delete-btn" onclick="deleteMessage('${msg.id}')" title="Supprimer le message">
+                🗑️ Supprimer
+            </button>
+        ` : '';
+        
+        // Parser les mentions dans le contenu
+        const parsedContent = msg.content ? parseMentions(msg.content) : '';
+        
         return `
             <div class="chat-message ${isOwnMessage ? 'own-message' : ''} ${msg.reply_to_message_id ? 'reply-message' : ''}" data-message-id="${msg.id}">
                 <div class="message-header">
@@ -227,15 +246,16 @@ function displayMessages(messages, profileMap) {
                     <span class="message-time">${time}</span>
                 </div>
                 ${replyHtml}
-                ${msg.content ? `<div class="message-content">${escapeHtml(msg.content)}</div>` : ''}
+                ${parsedContent ? `<div class="message-content">${parsedContent}</div>` : ''}
                 ${imageHtml}
-                ${!isOwnMessage ? `
-                    <div class="message-actions">
+                <div class="message-actions">
+                    ${!isOwnMessage ? `
                         <button class="action-btn" onclick="replyToMessage('${msg.id}', '${escapeHtml(author)}', '${escapeHtml(msg.content)}')">
                             ↩️ Répondre
                         </button>
-                    </div>
-                ` : ''}
+                    ` : ''}
+                    ${deleteBtn}
+                </div>
             </div>
         `;
     }).join('');
@@ -496,5 +516,174 @@ async function uploadChatImage(file) {
         return null;
     }
 }
+
+// Charger les membres de la guilde
+async function loadGuildMembers() {
+    try {
+        const { data: members, error } = await supabase
+            .from('user_profiles')
+            .select('id, username')
+            .in('role', ['membre', 'admin'])
+            .order('username');
+        
+        if (error) throw error;
+        
+        guildMembers = members || [];
+        // console.log('[CHAT] Membres chargés:', guildMembers.length);
+    } catch (error) {
+        // console.error('[CHAT] Erreur chargement membres:', error);
+    }
+}
+
+// Initialiser l'autocomplete pour les mentions
+function initializeMentions() {
+    const input = document.getElementById('chat-input');
+    const container = document.getElementById('chat-messages-container');
+    
+    // Créer le conteneur d'autocomplete s'il n'existe pas
+    let autocompleteDiv = document.getElementById('mention-autocomplete');
+    if (!autocompleteDiv) {
+        autocompleteDiv = document.createElement('div');
+        autocompleteDiv.id = 'mention-autocomplete';
+        autocompleteDiv.className = 'mention-autocomplete';
+        container.appendChild(autocompleteDiv);
+    }
+    
+    input.addEventListener('input', function(e) {
+        const text = e.target.value;
+        const cursorPos = e.target.selectionStart;
+        
+        // Chercher un @ avant le curseur
+        const beforeCursor = text.substring(0, cursorPos);
+        const match = beforeCursor.match(/@(\w*)$/);
+        
+        if (match) {
+            const search = match[1].toLowerCase();
+            const filtered = guildMembers.filter(m => 
+                m.username.toLowerCase().startsWith(search)
+            ).slice(0, 5);
+            
+            if (filtered.length > 0) {
+                showMentionSuggestions(filtered, match.index);
+            } else {
+                hideMentionSuggestions();
+            }
+        } else {
+            hideMentionSuggestions();
+        }
+    });
+    
+    // Gérer les touches fléchées et entrée pour l'autocomplete
+    input.addEventListener('keydown', function(e) {
+        const autocomplete = document.getElementById('mention-autocomplete');
+        if (!autocomplete || autocomplete.style.display === 'none') return;
+        
+        const items = autocomplete.querySelectorAll('.mention-item');
+        const selected = autocomplete.querySelector('.mention-item.selected');
+        let selectedIndex = -1;
+        
+        if (selected) {
+            selectedIndex = Array.from(items).indexOf(selected);
+        }
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIndex = Math.min(selectedIndex + 1, items.length - 1);
+            items.forEach((item, i) => {
+                item.classList.toggle('selected', i === nextIndex);
+            });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIndex = Math.max(selectedIndex - 1, 0);
+            items.forEach((item, i) => {
+                item.classList.toggle('selected', i === prevIndex);
+            });
+        } else if (e.key === 'Enter' || e.key === 'Tab') {
+            if (selected) {
+                e.preventDefault();
+                selected.click();
+            }
+        } else if (e.key === 'Escape') {
+            hideMentionSuggestions();
+        }
+    });
+}
+
+// Afficher les suggestions de mention
+function showMentionSuggestions(members, atPosition) {
+    const autocomplete = document.getElementById('mention-autocomplete');
+    
+    autocomplete.innerHTML = members.map((member, index) => `
+        <div class="mention-item ${index === 0 ? 'selected' : ''}" onclick="insertMention('${escapeHtml(member.username)}')">
+            👤 ${escapeHtml(member.username)}
+        </div>
+    `).join('');
+    
+    autocomplete.style.display = 'block';
+}
+
+// Masquer les suggestions
+function hideMentionSuggestions() {
+    const autocomplete = document.getElementById('mention-autocomplete');
+    if (autocomplete) {
+        autocomplete.style.display = 'none';
+    }
+}
+
+// Insérer une mention
+window.insertMention = function(username) {
+    const input = document.getElementById('chat-input');
+    const text = input.value;
+    const cursorPos = input.selectionStart;
+    
+    // Trouver le @ avant le curseur
+    const beforeCursor = text.substring(0, cursorPos);
+    const match = beforeCursor.match(/@\w*$/);
+    
+    if (match) {
+        const start = match.index;
+        const newText = text.substring(0, start) + '@' + username + ' ' + text.substring(cursorPos);
+        input.value = newText;
+        input.focus();
+        input.setSelectionRange(start + username.length + 2, start + username.length + 2);
+    }
+    
+    hideMentionSuggestions();
+};
+
+// Parser les mentions dans le texte
+function parseMentions(text) {
+    const escaped = escapeHtml(text);
+    return escaped.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+}
+
+// Supprimer un message (admin uniquement)
+window.deleteMessage = async function(messageId) {
+    if (userRole !== 'admin') {
+        alert('Vous n\'avez pas les droits pour supprimer ce message.');
+        return;
+    }
+    
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce message ?')) {
+        return;
+    }
+    
+    try {
+        const { error } = await supabase
+            .from('guild_chat')
+            .delete()
+            .eq('id', messageId);
+        
+        if (error) throw error;
+        
+        // Recharger les messages
+        loadMessages();
+        
+        // console.log('[CHAT] Message supprimé:', messageId);
+    } catch (error) {
+        // console.error('[CHAT] Erreur suppression message:', error);
+        alert('Erreur lors de la suppression du message.');
+    }
+};
 
 // console.log('✅ Module guild-chat.js chargé');
