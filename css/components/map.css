@@ -2389,6 +2389,49 @@
         padding: 6px 10px !important;
         font-size: 9px !important;
     }
+    
+    /* Réduction de la taille des popups sur tablette */
+    .leaflet-popup-content-wrapper {
+        max-width: 250px !important;
+    }
+    
+    .leaflet-popup-content {
+        font-size: 12px !important;
+        margin: 10px 12px !important;
+    }
+    
+    .quest-popup {
+        min-width: 200px !important;
+    }
+    
+    .location-popup {
+        min-width: 200px !important;
+    }
+    
+    /* Réduction des éléments de popup */
+    .quest-header, .location-header {
+        padding: 8px !important;
+        font-size: 0.95rem !important;
+    }
+    
+    .quest-details, .location-details {
+        padding: 8px !important;
+    }
+    
+    .quest-details p, .location-details p {
+        font-size: 11px !important;
+    }
+    
+    /* Affichage des coordonnées plus compact */
+    .leaflet-control-attribution {
+        font-size: 10px !important;
+        padding: 2px 5px !important;
+    }
+    
+    .coord-display-live {
+        font-size: 11px !important;
+        padding: 6px 10px !important;
+    }
 }
 
 @media (max-width: 480px) {
@@ -2398,6 +2441,114 @@
     
     .zoom-controls-advanced div[style*="font-size: 9px"] {
         display: none; /* Masquer les instructions sur très petits écrans */
+    }
+    
+    /* Popups très compacts sur mobile */
+    .leaflet-popup-content-wrapper {
+        max-width: 200px !important;
+        border-radius: 8px !important;
+    }
+    
+    .leaflet-popup-content {
+        font-size: 11px !important;
+        margin: 8px 10px !important;
+        line-height: 1.3 !important;
+    }
+    
+    .leaflet-popup-close-button {
+        font-size: 14px !important;
+        padding: 2px 6px !important;
+    }
+    
+    /* Quest popups très compacts */
+    .quest-popup {
+        min-width: 180px !important;
+        max-width: 200px !important;
+    }
+    
+    .location-popup {
+        min-width: 180px !important;
+        max-width: 200px !important;
+    }
+    
+    .quest-header, .location-header {
+        padding: 6px !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .quest-details, .location-details {
+        padding: 6px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .quest-details p, .location-details p {
+        font-size: 10px !important;
+        margin: 2px 0 !important;
+    }
+    
+    .quest-description, .location-description {
+        font-size: 10px !important;
+        padding-top: 6px !important;
+        margin-top: 6px !important;
+    }
+    
+    .quest-btn {
+        font-size: 10px !important;
+        padding: 6px 12px !important;
+    }
+    
+    /* Liste de quêtes compacte */
+    .quest-popup.multi-quest .quest-list {
+        max-height: 150px !important;
+        padding: 6px !important;
+    }
+    
+    .quest-item {
+        padding: 4px 6px !important;
+        gap: 6px !important;
+    }
+    
+    .quest-icon {
+        font-size: 12px !important;
+    }
+    
+    .quest-name {
+        font-size: 10px !important;
+    }
+    
+    .quest-step {
+        font-size: 9px !important;
+        padding: 1px 4px !important;
+    }
+    
+    /* Affichage des coordonnées très compact sur mobile */
+    .leaflet-control-attribution {
+        font-size: 8px !important;
+        padding: 1px 4px !important;
+        max-width: 50% !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .coord-display-live {
+        font-size: 9px !important;
+        padding: 4px 8px !important;
+        max-width: 150px !important;
+    }
+    
+    /* Contrôle Leaflet plus petits */
+    .leaflet-control-zoom a {
+        width: 32px !important;
+        height: 32px !important;
+        line-height: 32px !important;
+        font-size: 16px !important;
+    }
+    
+    .leaflet-control-layers {
+        max-width: 200px !important;
+        font-size: 11px !important;
     }
 }
 
