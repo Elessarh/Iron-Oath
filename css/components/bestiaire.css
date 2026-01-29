@@ -687,7 +687,7 @@
     padding: 2rem;
     border: 2px solid rgba(0, 168, 255, 0.3);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    max-height: 400px;
+    max-height: 600px;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -926,6 +926,33 @@
     .section-title-footer {
         font-size: 1.1rem;
     }
+    
+    /* Agrandir massivement la zone des drops sur tablette */
+    .modal-footer-section {
+        padding: 1.5rem;
+        max-height: 60vh;
+        min-height: 300px;
+    }
+    
+    .drop-item-modal {
+        padding: 1.2rem;
+        gap: 1.2rem;
+    }
+    
+    .drop-item-modal .drop-icon,
+    .drop-item-modal .drop-icon-placeholder {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .drop-item-modal .drop-name {
+        font-size: 1.05rem;
+    }
+    
+    .drop-item-modal .drop-rate {
+        font-size: 0.95rem;
+        padding: 4px 10px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -964,12 +991,16 @@
         font-size: 0.9rem;
     }
     
+    /* Agrandir MASSIVEMENT la zone des drops sur mobile */
     .modal-footer-section {
-        padding: 1rem;
+        padding: 1.5rem 1.2rem;
+        max-height: 65vh;
+        min-height: 350px;
     }
     
     .section-title-footer {
-        font-size: 1rem;
+        font-size: 1.15rem;
+        margin-bottom: 1.5rem;
     }
     
     .stat-card-modal .stat-icon {
@@ -978,6 +1009,40 @@
     
     .stat-card-modal .stat-value {
         font-size: 1.6rem;
+    }
+    
+    /* Items de drops beaucoup plus grands */
+    .drops-grid-modal {
+        gap: 1.2rem;
+    }
+    
+    .drop-item-modal {
+        padding: 1.2rem 1.3rem;
+        gap: 1.2rem;
+        border-radius: 10px;
+        min-height: 90px;
+    }
+    
+    .drop-item-modal .drop-icon,
+    .drop-item-modal .drop-icon-placeholder {
+        width: 60px;
+        height: 60px;
+        font-size: 2.2rem;
+    }
+    
+    .drop-item-modal .drop-info {
+        gap: 0.6rem;
+    }
+    
+    .drop-item-modal .drop-name {
+        font-size: 1.05rem;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+    
+    .drop-item-modal .drop-rate {
+        font-size: 0.95rem;
+        padding: 6px 12px;
     }
 }
 
@@ -996,6 +1061,41 @@
 
 .modal-close:hover {
     color: #ff6b35;
+}
+
+/* Optimisation pour très petits écrans */
+@media (max-width: 360px) {
+    .modal-footer-section {
+        padding: 1.2rem 1rem;
+        max-height: 60vh;
+        min-height: 300px;
+    }
+    
+    .section-title-footer {
+        font-size: 1.05rem;
+    }
+    
+    .drop-item-modal {
+        padding: 1rem 1.1rem;
+        gap: 1rem;
+        min-height: 80px;
+    }
+    
+    .drop-item-modal .drop-icon,
+    .drop-item-modal .drop-icon-placeholder {
+        width: 55px;
+        height: 55px;
+        font-size: 2rem;
+    }
+    
+    .drop-item-modal .drop-name {
+        font-size: 1rem;
+    }
+    
+    .drop-item-modal .drop-rate {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+    }
 }
 
 .filter-group select option {
