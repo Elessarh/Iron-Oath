@@ -1554,6 +1554,8 @@
     backdrop-filter: blur(10px) !important;
     box-shadow: 0 0 20px rgba(0, 168, 255, 0.6) !important;
     position: relative !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
 }
 
 .leaflet-popup-content {
@@ -1564,6 +1566,10 @@
     font-size: 14px !important;
     font-weight: 500 !important;
     line-height: 1.4 !important;
+    max-width: 100% !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    box-sizing: border-box !important;
 }
 
 /* Styles spécifiques pour le texte des coordonnées */
@@ -2822,4 +2828,135 @@
     border-radius: 50%;
     opacity: 0.5;
     animation: pulse 2s infinite 0.5s;
+}
+
+/* ==========================================
+   OPTIMISATIONS DE PERFORMANCES MOBILE
+   ========================================== */
+
+/* Réduire les animations sur mobile pour améliorer les performances */
+@media (max-width: 768px) {
+    /* Désactiver les animations complexes sur mobile */
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.3s !important;
+        transition-duration: 0.2s !important;
+    }
+    
+    /* Désactiver les animations d'arrière-plan */
+    .map-container::before,
+    .floor-selector-container::before,
+    .floor-selector-container::after {
+        animation: none !important;
+        opacity: 0.3;
+    }
+    
+    /* Optimiser le rendu des éléments */
+    .leaflet-popup-content-wrapper,
+    .leaflet-control-zoom,
+    .coord-display-live {
+        will-change: auto !important;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* Simplifier les ombres sur mobile */
+    .leaflet-popup-content-wrapper,
+    .map-controls-container,
+    .floor-selector-container {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    /* Réduire le blur sur mobile (coûteux en performances) */
+    .leaflet-popup-content-wrapper,
+    .map-controls-container,
+    .coord-display-live {
+        backdrop-filter: blur(5px) !important;
+        -webkit-backdrop-filter: blur(5px) !important;
+    }
+    
+    /* Empêcher les débordements dans les popups */
+    .quest-popup,
+    .location-popup {
+        max-width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+    
+    .quest-header,
+    .location-header,
+    .quest-details,
+    .location-details {
+        max-width: 100% !important;
+        overflow-wrap: break-word !important;
+        word-wrap: break-word !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Optimiser les images/icônes */
+    .toggle-icon img,
+    .icon-preview {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Performance maximale sur mobile */
+    * {
+        animation: none !important;
+    }
+    
+    .map-title,
+    .floor-display,
+    .zoom-controls-advanced {
+        animation: none !important;
+        text-shadow: 0 0 5px rgba(0, 168, 255, 0.5) !important;
+    }
+    
+    /* Simplifier encore plus les effets visuels */
+    .leaflet-popup-content-wrapper,
+    .map-controls-container {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    /* Forcer le respect des tailles maximales */
+    .leaflet-popup-content-wrapper {
+        max-width: 220px !important;
+        width: auto !important;
+    }
+    
+    .leaflet-popup-content {
+        max-width: 100% !important;
+        width: auto !important;
+    }
+    
+    .quest-popup,
+    .location-popup {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Coordonnées ultra-compactes */
+    .coord-display-live > div {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+}
+
+/* Optimisation pour les très petits écrans */
+@media (max-width: 360px) {
+    .leaflet-popup-content-wrapper {
+        max-width: 180px !important;
+        font-size: 10px !important;
+    }
+    
+    .coord-display-live > div {
+        font-size: 8px !important;
+        padding: 3px 5px !important;
+        max-width: 100px !important;
+    }
 }

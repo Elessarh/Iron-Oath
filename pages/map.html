@@ -6,7 +6,7 @@
     <title>Carte - Iron Oath</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
-    <link rel="stylesheet" href="../css/components/map.css?v=20260128d">
+    <link rel="stylesheet" href="../css/components/map.css?v=20260129a">
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -235,7 +235,36 @@
     <!-- Notre JavaScript -->
     <script src="../js/crypto-keys.js"></script>
     <script src="../js/auth-supabase.js?v=20260128d"></script>
-    <script src="../js/map.js?v=20260128g"></script>
+    <script src="../js/map.js?v=20260129a"></script>
     <script src="../js/navbar-mobile.js"></script>
+    
+    <!-- Optimisation des performances sur mobile -->
+    <script>
+        // Désactiver les animations coûteuses sur mobile
+        if (window.innerWidth <= 768) {
+            document.body.style.setProperty('--animation-duration', '0.2s');
+            
+            // Désactiver les effets d'arrière-plan sur mobile
+            const mapContainer = document.querySelector('.map-container');
+            if (mapContainer) {
+                const bgElements = mapContainer.querySelectorAll('.hexagons, .data-lines, .light-orbs, .scan-lines');
+                bgElements.forEach(el => {
+                    if (el) el.style.display = 'none';
+                });
+            }
+        }
+        
+        // Optimisation du redimensionnement
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                // Recharger les coordonnées si la fenêtre est redimensionnée
+                if (typeof map !== 'undefined' && map) {
+                    map.invalidateSize();
+                }
+            }, 250);
+        });
+    </script>
 </body>
 </html>

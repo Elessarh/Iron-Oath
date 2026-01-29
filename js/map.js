@@ -132,20 +132,46 @@ document.addEventListener('DOMContentLoaded', function() {
         padding: [20, 20] // Padding pour éviter que les bords touchent
     });
 
-    // Affichage des coordonnées en temps réel avec précision pixel
+    // Affichage des coordonnées en temps réel avec précision pixel (responsive)
     const coordController = L.control({position: 'bottomleft'});
     coordController.onAdd = function(map) {
         const div = L.DomUtil.create('div', 'coord-display-live');
-        div.innerHTML = `
-            <div style="background: rgba(0,0,0,0.9); color: #00a8ff; padding: 10px; border-radius: 6px; font-family: 'Orbitron', monospace; font-size: 12px; min-width: 200px;">
-                <div><strong>📍 Coordonnées Pixel:</strong></div>
-                <div style="margin: 4px 0;">X: <span id="mouse-x" style="color: #00ffff; font-weight: bold;">-</span>, Z: <span id="mouse-y" style="color: #00ffff; font-weight: bold;">-</span></div>
-                <div id="precision-indicator" style="font-size: 9px; color: #ff6b00; margin-bottom: 4px;">Précision: Standard</div>
-                <div style="font-size: 10px; color: #888; margin-top: 4px;">
-                    Zone: <span id="zone-info">Exploration</span>
+        // Vérifier si on est sur mobile
+        const isMobile = window.innerWidth <= 480;
+        const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
+        
+        if (isMobile) {
+            // Version ultra-compacte pour mobile
+            div.innerHTML = `
+                <div style="background: rgba(0,0,0,0.85); color: #00a8ff; padding: 4px 6px; border-radius: 4px; font-family: 'Orbitron', monospace; font-size: 9px; max-width: 120px;">
+                    <div style="font-size: 8px;">📍 <span id="mouse-x" style="color: #0ff;">-</span>, <span id="mouse-y" style="color: #0ff;">-</span></div>
+                    <div id="precision-indicator" style="display: none;"></div>
+                    <div id="zone-info" style="display: none;"></div>
                 </div>
-            </div>
-        `;
+            `;
+        } else if (isTablet) {
+            // Version compacte pour tablette
+            div.innerHTML = `
+                <div style="background: rgba(0,0,0,0.9); color: #00a8ff; padding: 6px 8px; border-radius: 5px; font-family: 'Orbitron', monospace; font-size: 10px; max-width: 150px;">
+                    <div style="font-size: 9px;">📍 X: <span id="mouse-x" style="color: #0ff;">-</span></div>
+                    <div style="font-size: 9px;">Z: <span id="mouse-y" style="color: #0ff;">-</span></div>
+                    <div id="precision-indicator" style="display: none;"></div>
+                    <div id="zone-info" style="display: none;"></div>
+                </div>
+            `;
+        } else {
+            // Version complète pour desktop
+            div.innerHTML = `
+                <div style="background: rgba(0,0,0,0.9); color: #00a8ff; padding: 10px; border-radius: 6px; font-family: 'Orbitron', monospace; font-size: 12px; min-width: 200px;">
+                    <div><strong>📍 Coordonnées Pixel:</strong></div>
+                    <div style="margin: 4px 0;">X: <span id="mouse-x" style="color: #00ffff; font-weight: bold;">-</span>, Z: <span id="mouse-y" style="color: #00ffff; font-weight: bold;">-</span></div>
+                    <div id="precision-indicator" style="font-size: 9px; color: #ff6b00; margin-bottom: 4px;">Précision: Standard</div>
+                    <div style="font-size: 10px; color: #888; margin-top: 4px;">
+                        Zone: <span id="zone-info">Exploration</span>
+                    </div>
+                </div>
+            `;
+        }
         return div;
     };
     coordController.addTo(map);
@@ -1302,11 +1328,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
             }
             
-            marker.bindPopup(popupContent, {
-                minWidth: 300,
-                maxWidth: 400,
-                className: 'quest-marker-popup'
-            });
+            // Options responsive pour les popups
+            const isMobile = window.innerWidth <= 480;
+            const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
+            
+            const popupOptions = {
+                className: 'quest-marker-popup',
+                maxWidth: isMobile ? 220 : (isTablet ? 280 : 400),
+                minWidth: isMobile ? 180 : (isTablet ? 220 : 300),
+                autoPan: true,
+                autoPanPadding: [10, 10],
+                closeButton: true
+            };
+            
+            marker.bindPopup(popupContent, popupOptions);
             
             // Ajouter le marqueur au groupe de quêtes
             questLayers.addLayer(marker);
@@ -1339,7 +1374,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
 
-            marker.bindPopup(popupContent);
+            // Options responsive pour les popups
+            const isMobile = window.innerWidth <= 480;
+            const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
+            
+            const popupOptions = {
+                maxWidth: isMobile ? 220 : (isTablet ? 280 : 350),
+                autoPan: true,
+                autoPanPadding: [10, 10]
+            };
+            
+            marker.bindPopup(popupContent, popupOptions);
             layerGroups.villes.addLayer(marker);
         });
     }
@@ -1367,7 +1412,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
 
-            marker.bindPopup(popupContent);
+            // Options responsive pour les popups
+            const isMobile = window.innerWidth <= 480;
+            const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
+            
+            const popupOptions = {
+                maxWidth: isMobile ? 220 : (isTablet ? 280 : 350),
+                autoPan: true,
+                autoPanPadding: [10, 10]
+            };
+            
+            marker.bindPopup(popupContent, popupOptions);
             layerGroups.donjons.addLayer(marker);
         });
     }
@@ -1395,7 +1450,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
 
-            marker.bindPopup(popupContent);
+            // Options responsive pour les popups
+            const isMobile = window.innerWidth <= 480;
+            const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
+            
+            const popupOptions = {
+                maxWidth: isMobile ? 220 : (isTablet ? 280 : 350),
+                autoPan: true,
+                autoPanPadding: [10, 10]
+            };
+            
+            marker.bindPopup(popupContent, popupOptions);
             layerGroups.marchands.addLayer(marker);
         });
     }
@@ -1423,7 +1488,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
 
-            marker.bindPopup(popupContent);
+            // Options responsive pour les popups
+            const isMobile = window.innerWidth <= 480;
+            const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
+            
+            const popupOptions = {
+                maxWidth: isMobile ? 220 : (isTablet ? 280 : 350),
+                autoPan: true,
+                autoPanPadding: [10, 10]
+            };
+            
+            marker.bindPopup(popupContent, popupOptions);
             layerGroups.monstres.addLayer(marker);
         });
     }
