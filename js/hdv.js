@@ -1330,54 +1330,40 @@ class HDVSystem {
         card.setAttribute('data-order-id', order.id);
 
         card.innerHTML = `
-            <!-- Image de l'item -->
-            <img src="../assets/items/${order.item.image}" 
-                 alt="${order.item.name}" 
-                 class="order-item-image"
-                 onerror="this.src='../assets/items/default.png'"
-                 loading="lazy">
-            
-            <!-- Détails de l'ordre -->
-            <div class="order-details">
-                <h3 class="order-item-name">${order.item.name}</h3>
-                <span class="item-category">${this.getItemCategory(order.item)}</span>
-                <span class="item-rarity" style="color: ${this.getRarityColor(order.item)}">${this.getRarityDisplayName(order.item)}</span>
-                
-                <div class="order-meta">
-                    <div class="order-meta-item">
-                        <span>${order.type === 'sell' ? '🔴' : '🔵'}</span>
-                        <span>${order.type === 'sell' ? 'VENTE' : 'ACHAT'}</span>
+            <!-- Header: Image + Nom + Prix -->
+            <div class="order-header">
+                <img src="../assets/items/${order.item.image}" 
+                     alt="${order.item.name}" 
+                     class="order-item-image"
+                     onerror="this.src='../assets/items/default.png'"
+                     loading="lazy">
+                <div class="order-details">
+                    <h3 class="order-item-name">${order.item.name}</h3>
+                    <div class="order-tags">
+                        <span class="item-category">${this.getItemCategory(order.item)}</span>
+                        <span class="item-rarity" style="color: ${this.getRarityColor(order.item)}">${this.getRarityDisplayName(order.item)}</span>
                     </div>
-                    <div class="order-meta-item">
-                        <span>📦</span>
-                        <span>Qté: ${order.quantity}</span>
-                    </div>
-                    <div class="order-meta-item">
-                        <span>👤</span>
-                        <span>${order.creator || order.seller || order.buyer || 'Aventurier Anonyme'}</span>
-                    </div>
-                    ${order.notes ? `
-                    <div class="order-meta-item">
-                        <span>📝</span>
-                        <span>${order.notes}</span>
-                    </div>
-                    ` : ''}
                 </div>
+                <div class="order-price">${order.price} <small>cols</small></div>
             </div>
             
-            <!-- Prix et actions -->
-            <div class="order-price-container">
-                <div class="order-price">${order.price} cols</div>
-                <div class="order-price-unit">/${order.quantity > 1 ? 'lot' : 'unité'}</div>
-                
-                <button class="contact-btn" onclick="hdvSystem.contactTrader('${order.creator || order.seller || order.buyer}', '${order.item.name}')">
-                    💬 Contacter
-                </button>
-                ${this.isMyOrder(order) ? `
-                    <button class="contact-btn" style="background: #e74c3c; margin-top: 0.5rem;" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
-                        🗑️ Supprimer
+            <!-- Footer: Meta + Actions -->
+            <div class="order-footer">
+                <div class="order-meta">
+                    <span class="meta-tag ${order.type}">${order.type === 'sell' ? '🔴 Vente' : '🔵 Achat'}</span>
+                    <span>📦 ${order.quantity}</span>
+                    <span>👤 ${order.creator || order.seller || order.buyer || 'Anonyme'}</span>
+                </div>
+                <div class="order-actions">
+                    <button class="contact-btn" onclick="hdvSystem.contactTrader('${order.creator || order.seller || order.buyer}', '${order.item.name}')">
+                        💬 Contacter
                     </button>
-                ` : ''}
+                    ${this.isMyOrder(order) ? `
+                        <button class="delete-btn" onclick="hdvSystem.deleteOrderFromMarketplace('${order.id}')">
+                            🗑️
+                        </button>
+                    ` : ''}
+                </div>
             </div>
         `;
 
