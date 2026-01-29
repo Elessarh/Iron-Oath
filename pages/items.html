@@ -276,8 +276,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="../js/crypto-keys.js"></script>
-    <script src="../js/auth-supabase.js?v=20260128d"></script>
-    <script src="../js/items-catalog-hdv.js"></script>
+    <script src="../js/auth-supabase.js?v=20260129a"></script>
+    <script src="../js/items-catalog-hdv.js?v=20260129a"></script>
     <script>
         // Système de cartes d'items
         class ItemCardsSystem {
@@ -310,17 +310,22 @@
             // Charger tous les items du catalogue
             loadAllItems() {
                 this.allItems = [];
+                const seenIds = new Set(); // Pour éviter les doublons
                 
                 // Convertir la structure du catalogue HDV vers notre structure
                 Object.keys(itemsCatalog).forEach(categoryKey => {
                     const category = itemsCatalog[categoryKey];
                     category.items.forEach(item => {
-                        this.allItems.push({
-                            ...item,
-                            category: category.name,
-                            image: `../assets/items/${item.image}`,
-                            description: this.generateDescription(item)
-                        });
+                        // Vérifier si l'item n'a pas déjà été ajouté
+                        if (!seenIds.has(item.id)) {
+                            seenIds.add(item.id);
+                            this.allItems.push({
+                                ...item,
+                                category: category.name,
+                                image: `../assets/items/${item.image}`,
+                                description: this.generateDescription(item)
+                            });
+                        }
                     });
                 });
                 
@@ -554,7 +559,7 @@
                     '⚔️ Armes': 'Armes',
                     '🧪 Consommables': 'Consommables', 
                     '🔧 Ressources': 'Ressources',
-                    '� Outils': 'Outils',
+                    '🔧 Outils': 'Outils',
                     '🐾 Familiers': 'Familiers',
                     '🐴 Montures': 'Montures',
                     '🔮 Runes': 'Runes',

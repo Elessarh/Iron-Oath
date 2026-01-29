@@ -1,5 +1,17 @@
 /* auth-supabase.js - Système d'authentification Supabase pour Iron Oath */
 
+/*
+ * POLITIQUE DE SÉCURITÉ DES RÔLES:
+ * ================================
+ * - Nouveaux utilisateurs: Rôle 'joueur' uniquement (défaut à l'inscription)
+ * - Promotion en 'membre' ou 'admin': UNIQUEMENT par un administrateur via le Dashboard
+ * - Les joueurs n'ont PAS accès à l'Espace Iron Oath ni au Dashboard Admin
+ * 
+ * IMPORTANT: Les politiques RLS (Row Level Security) dans Supabase doivent être configurées
+ * pour empêcher un utilisateur de modifier son propre champ 'role' via la console ou API directe.
+ * Seuls les admins peuvent modifier le rôle des autres utilisateurs.
+ */
+
 // Utiliser var au lieu de let pour éviter les erreurs de re-déclaration lors des navigations
 var supabase = supabase || null;
 

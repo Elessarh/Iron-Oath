@@ -506,10 +506,19 @@ function closeRoleModal() {
 }
 
 // Confirmer le changement de rôle
+// SÉCURITÉ: Seul un admin peut modifier les rôles (vérifié via checkAdminAccess au chargement)
+// Les utilisateurs ne peuvent PAS modifier leur propre rôle - seule cette fonction le permet
 async function confirmRoleChange() {
     if (!editingUserId) return;
     
     const newRole = document.getElementById('modal-role-select').value;
+    
+    // Vérification de sécurité supplémentaire: s'assurer que les rôles sont valides
+    const validRoles = ['joueur', 'membre', 'admin'];
+    if (!validRoles.includes(newRole)) {
+        alert('Rôle invalide.');
+        return;
+    }
     
     try {
         const { error } = await supabase
