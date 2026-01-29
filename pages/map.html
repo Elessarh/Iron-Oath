@@ -6,7 +6,7 @@
     <title>Carte - Iron Oath</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
-    <link rel="stylesheet" href="../css/components/map.css?v=20260129b">
+    <link rel="stylesheet" href="../css/components/map.css?v=20260129a">
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -235,60 +235,26 @@
     <!-- Notre JavaScript -->
     <script src="../js/crypto-keys.js"></script>
     <script src="../js/auth-supabase.js?v=20260128d"></script>
-    <script src="../js/map.js?v=20260129b"></script>
+    <script src="../js/map.js?v=20260129a"></script>
     <script src="../js/navbar-mobile.js"></script>
     
     <!-- Optimisation des performances sur mobile -->
     <script>
-        // Désactiver les animations coûteuses sur mobile et masquer les éléments problématiques
+        // Désactiver les animations coûteuses sur mobile
         if (window.innerWidth <= 768) {
             document.body.style.setProperty('--animation-duration', '0.2s');
             
-            // Attendre que le DOM soit complètement chargé
-            document.addEventListener('DOMContentLoaded', function() {
-                // Désactiver TOUS les effets d'arrière-plan sur mobile pour éviter les tremblements
-                const bgSelectors = [
-                    '.hexagons', '.hexagon',
-                    '.data-lines', '.data-line', 
-                    '.light-orbs', '.orb',
-                    '.scan-lines', '.scan-line',
-                    '.particles', '.particle',
-                    '.hologram-ui', '.holo-corner',
-                    '.central-logo'
-                ];
-                
-                bgSelectors.forEach(selector => {
-                    const elements = document.querySelectorAll(selector);
-                    elements.forEach(el => {
-                        if (el) {
-                            el.style.display = 'none';
-                            el.style.visibility = 'hidden';
-                            el.style.opacity = '0';
-                        }
-                    });
+            // Désactiver les effets d'arrière-plan sur mobile
+            const mapContainer = document.querySelector('.map-container');
+            if (mapContainer) {
+                const bgElements = mapContainer.querySelectorAll('.hexagons, .data-lines, .light-orbs, .scan-lines');
+                bgElements.forEach(el => {
+                    if (el) el.style.display = 'none';
                 });
-                
-                // Optimiser la carte Leaflet pour mobile
-                const gameMap = document.getElementById('game-map');
-                if (gameMap) {
-                    gameMap.style.transform = 'translateZ(0)';
-                    gameMap.style.webkitTransform = 'translateZ(0)';
-                    gameMap.style.backfaceVisibility = 'hidden';
-                    gameMap.style.webkitBackfaceVisibility = 'hidden';
-                }
-                
-                // Optimiser le wrapper de la carte
-                const mapWrapper = document.querySelector('.map-wrapper');
-                if (mapWrapper) {
-                    mapWrapper.style.transform = 'translateZ(0)';
-                    mapWrapper.style.webkitTransform = 'translateZ(0)';
-                    mapWrapper.style.backfaceVisibility = 'hidden';
-                    mapWrapper.style.webkitBackfaceVisibility = 'hidden';
-                }
-            });
+            }
         }
         
-        // Optimisation du redimensionnement avec debounce
+        // Optimisation du redimensionnement
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
@@ -299,23 +265,6 @@
                 }
             }, 250);
         });
-        
-        // Désactiver le comportement de scroll par défaut sur la carte mobile
-        if (window.innerWidth <= 768) {
-            document.addEventListener('DOMContentLoaded', function() {
-                const gameMap = document.getElementById('game-map');
-                if (gameMap) {
-                    // Empêcher le scroll de la page lors de l'interaction avec la carte
-                    gameMap.addEventListener('touchstart', function(e) {
-                        e.stopPropagation();
-                    }, { passive: true });
-                    
-                    gameMap.addEventListener('touchmove', function(e) {
-                        e.stopPropagation();
-                    }, { passive: true });
-                }
-            });
-        }
     </script>
 </body>
 </html>

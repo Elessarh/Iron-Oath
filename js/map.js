@@ -34,10 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const centerLat = 5121 - 2560; // 2561 dans Leaflet pour Z=2560 du jeu
     const centerLng = 2560;        // X=2560 du jeu
     
-    // Détection mobile pour optimisations
-    const isMobile = window.innerWidth <= 768;
-    const isTouch = 'ontouchstart' in window;
-    
     // Initialisation de la carte Leaflet avec zoom ultra-précis
     map = L.map('game-map', {
         crs: L.CRS.Simple,
@@ -51,27 +47,18 @@ document.addEventListener('DOMContentLoaded', function() {
         maxBounds: [[-1000, -1000], [6120, 6120]], // Marge très élargie pour le zoom extrême
         maxBoundsViscosity: 0.5, // Résistance réduite pour plus de liberté
         // Améliorer les performances pour le zoom extrême
-        preferCanvas: isMobile, // Utiliser canvas sur mobile pour meilleures performances
+        preferCanvas: false, // Désactiver canvas pour zoom pixel-parfait
         // Contrôle ultra-fin du déplacement et zoom
-        zoomSnap: isMobile ? 0.25 : 0.05, // Incréments moins fins sur mobile
-        zoomDelta: isMobile ? 0.5 : 0.3, // Sensibilité adaptée au mobile
-        wheelPxPerZoomLevel: isMobile ? 60 : 120, // Contrôle adapté au mobile
+        zoomSnap: 0.05, // Incréments de zoom ultra-fins
+        zoomDelta: 0.3, // Sensibilité molette plus fine
+        wheelPxPerZoomLevel: 120, // Contrôle précis de la molette
         // Options avancées pour zoom élevé
         bounceAtZoomLimits: false,
         doubleClickZoom: 'center', // Double-clic pour centrer et zoomer
-        boxZoom: !isMobile,  // Désactiver zoom par sélection sur mobile
-        keyboard: !isMobile, // Désactiver contrôles clavier sur mobile
-        scrollWheelZoom: !isMobile, // Désactiver molette sur mobile
-        touchZoom: isTouch, // Support tactile amélioré
-        tap: isTouch,
-        tapTolerance: 15, // Tolérance au tap sur mobile
-        zoomAnimation: !isMobile, // Désactiver animation zoom sur mobile pour fluidité
-        fadeAnimation: !isMobile, // Désactiver fade sur mobile
-        markerZoomAnimation: !isMobile, // Désactiver animation markers sur mobile
-        inertia: !isMobile, // Désactiver inertie sur mobile pour éviter tremblements
-        inertiaDeceleration: 3000,
-        worldCopyJump: false,
-        maxBoundsViscosity: isMobile ? 1.0 : 0.5 // Plus strict sur mobile
+        boxZoom: true,  // Zoom par sélection rectangulaire
+        keyboard: true, // Contrôles clavier
+        scrollWheelZoom: true,
+        touchZoom: true // Support tactile amélioré
     });
     
     // Charger l'image de la carte
