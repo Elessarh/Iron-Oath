@@ -926,6 +926,32 @@
     .section-title-footer {
         font-size: 1.1rem;
     }
+    
+    /* Agrandir la zone des drops sur tablette */
+    .modal-footer-section {
+        padding: 1.5rem;
+        max-height: 500px;
+    }
+    
+    .drop-item-modal {
+        padding: 1.2rem;
+        gap: 1.2rem;
+    }
+    
+    .drop-item-modal .drop-icon,
+    .drop-item-modal .drop-icon-placeholder {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .drop-item-modal .drop-name {
+        font-size: 1.05rem;
+    }
+    
+    .drop-item-modal .drop-rate {
+        font-size: 0.95rem;
+        padding: 4px 10px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -965,11 +991,13 @@
     }
     
     .modal-footer-section {
-        padding: 1rem;
+        padding: 1.2rem;
+        max-height: 450px;
     }
     
     .section-title-footer {
-        font-size: 1rem;
+        font-size: 1.1rem;
+        margin-bottom: 1.2rem;
     }
     
     .stat-card-modal .stat-icon {
@@ -978,6 +1006,68 @@
     
     .stat-card-modal .stat-value {
         font-size: 1.6rem;
+    }
+    
+    /* Agrandir considérablement les drops sur mobile */
+    .drops-grid-modal {
+        gap: 1rem;
+    }
+    
+    .drop-item-modal {
+        padding: 1rem 1.2rem;
+        gap: 1rem;
+        border-radius: 10px;
+    }
+    
+    .drop-item-modal .drop-icon,
+    .drop-item-modal .drop-icon-placeholder {
+        width: 55px;
+        height: 55px;
+        font-size: 2rem;
+    }
+    
+    .drop-item-modal .drop-info {
+        gap: 0.5rem;
+    }
+    
+    .drop-item-modal .drop-name {
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+    
+    .drop-item-modal .drop-rate {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+    }
+}
+
+/* Optimisation pour très petits écrans */
+@media (max-width: 360px) {
+    .modal-footer-section {
+        padding: 1rem;
+        max-height: 400px;
+    }
+    
+    .drop-item-modal {
+        padding: 0.9rem 1rem;
+        gap: 0.9rem;
+    }
+    
+    .drop-item-modal .drop-icon,
+    .drop-item-modal .drop-icon-placeholder {
+        width: 50px;
+        height: 50px;
+        font-size: 1.8rem;
+    }
+    
+    .drop-item-modal .drop-name {
+        font-size: 0.95rem;
+    }
+    
+    .drop-item-modal .drop-rate {
+        font-size: 0.85rem;
+        padding: 4px 8px;
     }
 }
 
