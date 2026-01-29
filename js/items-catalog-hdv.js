@@ -129,14 +129,14 @@ const itemsCatalog = {
     'familiers': {
         name: '🐾 Familiers',
         items: [
-            { id: 'krynn_fleau', name: 'Krynn Le Fléau Multicolore', image: 'Familiers/KrynnLeFléauMuticolore.png', rarity: 'legendary' }
+            { id: 'krynn_fleau', name: 'Krynn Le Fléau Multicolore', image: 'Familiers/KrynnLeFléauMuticolore.png', rarity: 'legendary' },
+            { id: 'pet_frankenstein', name: 'Pet Frankenstein', image: 'Familiers/PetFrankenstein.png', rarity: 'epic' }
         ]
     },
     'montures': {
         name: '🐴 Montures',
         items: [
-            { id: 'balais_volant', name: 'Monture Balais Volant', image: 'Montures/MontureBalaisVolant.png', rarity: 'epic' },
-            { id: 'pet_frankenstein', name: 'Pet Frankenstein', image: 'Montures/PetFrankenstein.png', rarity: 'epic' }
+            { id: 'balais_volant', name: 'Monture Balais Volant', image: 'Montures/MontureBalaisVolant.png', rarity: 'epic' }
         ]
     },
     'runes': {
