@@ -110,6 +110,9 @@
 /* Panneau de toggles */
 .element-toggles {
     flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
 }
 
 .toggles-title {
