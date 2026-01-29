@@ -4,53 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bestiaire - Iron Oath</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
-    <link rel="stylesheet" href="../css/components/bestiaire.css?v=20260129b">
     
-    <!-- Script anti-flash immédiat -->
-    <script>
-        // Masquage immédiat des éléments de connexion pour éviter le flash
-        document.addEventListener('DOMContentLoaded', function() {
-            const userInfo = document.getElementById('user-info');
-            
-            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
-            if (userInfo) {
-                userInfo.style.display = 'none';
-                userInfo.classList.remove('show');
-                userInfo.classList.remove('js-visible');
-            }
-            
-            // Le bouton de connexion reste visible par défaut
-            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
-        });
-    </script>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Consultez le bestiaire complet d'Iron Oath. Découvrez les statistiques, faiblesses et stratégies pour vaincre toutes les créatures et boss.">
+    <meta name="keywords" content="bestiaire, monstres, boss, créatures, Iron Oath, Minecraft, stratégies">
+    <link rel="canonical" href="https://iron-oath.github.io/pages/bestiaire.html">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Bestiaire - Iron Oath">
+    <meta property="og:description" content="Consultez le bestiaire complet avec stats et stratégies pour vaincre toutes les créatures.">
+    <meta property="og:image" content="https://iron-oath.github.io/assets/Logo_3.png">
+    
+    <!-- Theme & Favicon -->
+    <meta name="theme-color" content="#0a0a1a">
+    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    
+    <!-- Fonts & Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-007">
+    <link rel="stylesheet" href="../css/components/bestiaire.css?v=20260129b">
 </head>
 <body>
-    <!-- Écran de chargement supprimé -->
+    <!-- Skip link pour l'accessibilité -->
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
 
     <!-- Header et Navigation -->
-    <header class="header">
-        <nav class="nav-container">
+    <header class="header" role="banner">
+        <nav class="nav-container" role="navigation" aria-label="Navigation principale">
             <div class="nav-logo-container">
-                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+                <a href="../index.html" aria-label="Iron Oath - Accueil">
+                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe" width="50" height="50" loading="eager">
+                </a>
             </div>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="../index.html" class="nav-link">Accueil</a></li>
-                <li><a href="map.html" class="nav-link">Carte</a></li>
-                <li><a href="bestiaire.html" class="nav-link active">Bestiaire</a></li>
-                <li><a href="items.html" class="nav-link">Items</a></li>
-                <li><a href="hdv.html" class="nav-link">HDV</a></li>
-                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
+            <ul class="nav-menu" id="nav-menu" role="menubar">
+                <li role="none"><a href="../index.html" class="nav-link" role="menuitem">Accueil</a></li>
+                <li role="none"><a href="map.html" class="nav-link" role="menuitem">Carte</a></li>
+                <li role="none"><a href="bestiaire.html" class="nav-link active" role="menuitem" aria-current="page">Bestiaire</a></li>
+                <li role="none"><a href="items.html" class="nav-link" role="menuitem">Items</a></li>
+                <li role="none"><a href="hdv.html" class="nav-link" role="menuitem">HDV</a></li>
+                <li role="none"><a href="quetes.html" class="nav-link" role="menuitem">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn" aria-label="Se déconnecter">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
-            <button class="hamburger" id="hamburger">
+            <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -59,25 +66,29 @@
     </header>
 
     <!-- Contenu principal -->
-    <main class="bestiaire-container">
+    <main id="main-content" class="bestiaire-container" role="main">
         <h1 style="text-align: center; margin-bottom: 2rem; color: var(--color-accent);">Bestiaire</h1>
         
-        <div class="filters">
-            <input type="text" id="search" placeholder="Rechercher une créature...">
+        <section class="filters" aria-label="Filtres de recherche">
+            <label for="search" class="visually-hidden">Rechercher une créature</label>
+            <input type="text" id="search" placeholder="Rechercher une créature..." aria-label="Rechercher une créature">
             <div class="filter-group">
-                <select id="palier-filter">
+                <label for="palier-filter" class="visually-hidden">Filtrer par palier</label>
+                <select id="palier-filter" aria-label="Filtrer par palier">
                     <option value="">Tous les paliers</option>
                     <option value="1">Palier 1</option>
                     <option value="2">Palier 2</option>
                     <option value="3">Palier 3</option>
                 </select>
-                <select id="category-filter">
+                <label for="category-filter" class="visually-hidden">Filtrer par catégorie</label>
+                <select id="category-filter" aria-label="Filtrer par catégorie">
                     <option value="">Toutes les catégories</option>
                     <option value="boss">Boss</option>
                     <option value="elite">Elite</option>
                     <option value="creature">Créature</option>
                 </select>
-                <select id="level-filter">
+                <label for="level-filter" class="visually-hidden">Filtrer par niveau</label>
+                <select id="level-filter" aria-label="Filtrer par niveau">
                     <option value="">Niveau</option>
                     <option value="1-10">1-10</option>
                     <option value="11-20">11-20</option>
@@ -85,7 +96,8 @@
                     <option value="31-40">31-40</option>
                     <option value="41-50">41-50</option>
                 </select>
-                <select id="type-filter">
+                <label for="type-filter" class="visually-hidden">Filtrer par type</label>
+                <select id="type-filter" aria-label="Filtrer par type">
                     <option value="">Type</option>
                     <option value="humanoide">Humanoïde</option>
                     <option value="bête">Bête</option>
@@ -97,26 +109,26 @@
                     <option value="dragon">Dragon</option>
                 </select>
             </div>
-        </div>
+        </section>
 
-        <div class="creatures-grid" id="creatures-grid">
+        <section class="creatures-grid" id="creatures-grid" aria-label="Liste des créatures" aria-live="polite">
             <!-- Les créatures seront chargées dynamiquement par JavaScript -->
-        </div>
+        </section>
 
         <!-- Contrôles de pagination -->
-        <div class="pagination-container" id="pagination-container" style="display: none;">
+        <nav class="pagination-container" id="pagination-container" style="display: none;" aria-label="Pagination">
             <div class="pagination-info">
-                <span id="pagination-info-text">Affichage de 1-12 sur 45 créatures</span>
+                <span id="pagination-info-text" aria-live="polite">Affichage de 1-12 sur 45 créatures</span>
             </div>
             <div class="pagination-controls">
-                <button class="pagination-btn" id="prev-page" disabled>
-                    <i class="fas fa-chevron-left"></i> Précédent
+                <button class="pagination-btn" id="prev-page" disabled aria-label="Page précédente">
+                    Précédent
                 </button>
-                <div class="pagination-numbers" id="pagination-numbers">
+                <div class="pagination-numbers" id="pagination-numbers" role="list">
                     <!-- Numéros de pages générés dynamiquement -->
                 </div>
-                <button class="pagination-btn" id="next-page">
-                    Suivant <i class="fas fa-chevron-right"></i>
+                <button class="pagination-btn" id="next-page" aria-label="Page suivante">
+                    Suivant
                 </button>
             </div>
             <div class="pagination-settings">
@@ -128,16 +140,14 @@
                     <option value="48">48</option>
                 </select>
             </div>
-        </div>
+        </nav>
     </main>
 
-    <!-- Script du bestiaire -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="../js/crypto-keys.js"></script>
-    <script src="../js/auth-supabase.js?v=20260128d"></script>
-    <script src="../js/bestiaire.js?v=20260128d"></script>
-    
-    <script src="../js/navbar-mobile.js"></script>
-
+    <!-- Scripts - Chargement optimisé -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
+    <script src="../js/crypto-keys.js" defer></script>
+    <script src="../js/auth-supabase.js?v=20260129b" defer></script>
+    <script src="../js/bestiaire.js?v=20260129b" defer></script>
+    <script src="../js/navbar-mobile.js" defer></script>
 </body>
 </html>

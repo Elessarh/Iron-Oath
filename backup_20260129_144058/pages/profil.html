@@ -4,60 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Profil - Iron Oath</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Gérez votre profil Iron Oath. Consultez vos statistiques, modifiez vos informations et suivez votre progression.">
-    <meta name="keywords" content="profil, compte, statistiques, Iron Oath, joueur">
-    <link rel="canonical" href="https://iron-oath.github.io/pages/profil.html">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Mon Profil - Iron Oath">
-    <meta property="og:description" content="Gérez votre profil et suivez votre progression dans Iron Oath.">
-    <meta property="og:image" content="https://iron-oath.github.io/assets/Logo_3.png">
-    
-    <!-- Theme & Favicon -->
-    <meta name="theme-color" content="#0a0a1a">
-    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
-    
-    <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    
-    <!-- Fonts & Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-007">
-    <link rel="stylesheet" href="../css/components/profil.css?v=20260129b">
+    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
+    <link rel="stylesheet" href="../css/components/profil.css">
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfo = document.getElementById('user-info');
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+                userInfo.classList.remove('js-visible');
+            }
+        });
+    </script>
 </head>
 <body class="profil-page">
-    <!-- Skip link pour l'accessibilité -->
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-
     <!-- Header et Navigation -->
-    <header class="header" role="banner">
-        <nav class="nav-container" role="navigation" aria-label="Navigation principale">
+    <header class="header">
+        <nav class="nav-container">
             <div class="nav-logo-container">
-                <a href="../index.html" aria-label="Iron Oath - Accueil">
-                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe" width="50" height="50" loading="eager">
-                </a>
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
             </div>
-            <ul class="nav-menu" id="nav-menu" role="menubar">
-                <li role="none"><a href="../index.html" class="nav-link" role="menuitem">Accueil</a></li>
-                <li role="none"><a href="map.html" class="nav-link" role="menuitem">Carte</a></li>
-                <li role="none"><a href="bestiaire.html" class="nav-link" role="menuitem">Bestiaire</a></li>
-                <li role="none"><a href="items.html" class="nav-link" role="menuitem">Items</a></li>
-                <li role="none"><a href="hdv.html" class="nav-link" role="menuitem">HDV</a></li>
-                <li role="none"><a href="quetes.html" class="nav-link" role="menuitem">Quêtes</a></li>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn" aria-label="Se déconnecter">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
-            <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
+            <button class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -66,8 +53,8 @@
     </header>
 
     <!-- Contenu principal -->
-    <main id="main-content" class="profil-container" role="main">
-        <div id="loading" class="loading-spinner" role="status" aria-live="polite">
+    <main class="profil-container">
+        <div id="loading" class="loading-spinner">
             <p>⏳ Chargement de votre profil...</p>
         </div>
         
@@ -84,7 +71,7 @@
                 </a>
             </div>
             
-            <section class="profil-info" aria-label="Informations du profil">
+            <div class="profil-info">
                 <div class="info-row">
                     <span class="info-label">👤 Pseudo Joueur</span>
                     <span class="info-value" id="profile-username">-</span>
@@ -103,7 +90,7 @@
                 </div>
                 
                 <div class="info-row">
-                    <label class="info-label" for="profile-classe">⚔️ Classe</label>
+                    <span class="info-label">⚔️ Classe</span>
                     <span class="info-value">
                         <select id="profile-classe" class="profile-select">
                             <option value="Shaman">Shaman</option>
@@ -116,7 +103,7 @@
                 </div>
                 
                 <div class="info-row">
-                    <label class="info-label" for="profile-niveau">🔢 Niveau</label>
+                    <span class="info-label">🔢 Niveau</span>
                     <span class="info-value">
                         <input type="number" id="profile-niveau" class="profile-input" min="1" max="100" value="1">
                     </span>
@@ -130,9 +117,9 @@
                 <div class="info-row" style="justify-content: center; margin-top: 20px;">
                     <button id="save-profile-btn" class="save-profile-btn">💾 Sauvegarder les modifications</button>
                 </div>
-            </section>
+            </div>
             
-            <section class="profil-stats" aria-label="Statistiques du joueur">
+            <div class="profil-stats">
                 <div class="stat-card">
                     <div class="stat-label">Messages Envoyés</div>
                     <div class="stat-value" id="stat-messages">0</div>
@@ -147,27 +134,29 @@
                     <div class="stat-label">Niveau</div>
                     <div class="stat-value" id="stat-level">1</div>
                 </div>
-            </section>
+            </div>
         </div>
         
-        <div id="error-content" class="error-message" role="alert" style="display: none;">
+        <div id="error-content" class="error-message" style="display: none;">
             <h2>⚠️ Erreur</h2>
             <p id="error-text">Une erreur est survenue lors du chargement du profil.</p>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="footer" role="contentinfo">
+    <footer class="footer">
         <p>&copy; 2024 Iron Oath. Tous droits réservés.</p>
     </footer>
 
-    <!-- Scripts - Chargement optimisé -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
-    <script src="../js/performance-monitor.js" defer></script>
+    <!-- Scripts -->
+    <!-- Chargement Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    
+    <script src="../js/performance-monitor.js"></script>
     <script src="../js/cache-manager.js" defer></script>
     <script src="../js/navbar-mobile.js" defer></script>
-    <script src="../js/crypto-keys.js" defer></script>
-    <script src="../js/auth-supabase.js?v=20260129b" defer></script>
-    <script src="../js/profil.js?v=20260129b" defer></script>
+    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/auth-supabase.js"></script>
+    <script src="../js/profil.js" defer></script>
 </body>
 </html>

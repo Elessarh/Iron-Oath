@@ -1,0 +1,816 @@
+/* Styles pour la page Quêtes - Style SAO amélioré */
+.quetes-container {
+    padding: 100px 2rem 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.quetes-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(ellipse 600px 400px at 20% 30%, rgba(0, 168, 255, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 700px 500px at 80% 70%, rgba(138, 43, 226, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 600px at 50% 90%, rgba(0, 255, 255, 0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 450px 350px at 70% 20%, rgba(0, 168, 255, 0.03) 0%, transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+    animation: backgroundFloat 15s ease-in-out infinite;
+}
+
+/* Filtres des quêtes */
+.quest-filters {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.quest-type-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Sélecteur de palier */
+.quest-tier-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 8px;
+    padding: 12px 20px;
+    backdrop-filter: blur(10px);
+}
+
+.quest-tier-selector label {
+    color: #00ffff;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#tier-select {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(0, 255, 255, 0.6);
+    border-radius: 6px;
+    color: #00ffff;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#tier-select:hover, #tier-select:focus {
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    background: rgba(0, 255, 255, 0.1);
+}
+
+#tier-select option {
+    background: rgba(0, 0, 0, 0.9);
+    color: #00ffff;
+    padding: 8px;
+}
+
+.quest-filter-btn {
+    padding: 14px 28px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    color: #00ffff;
+    border-radius: 6px;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 13px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.quest-filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.quest-filter-btn:hover::before {
+    left: 100%;
+}
+
+.quest-filter-btn:hover {
+    background: rgba(0, 255, 255, 0.1);
+    border-color: #00ffff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    transform: translateY(-2px);
+    color: #ffffff;
+}
+
+.quest-filter-btn.active {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: #00ffff;
+    color: #ffffff;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+}
+
+/* Styles pour les quêtes principales */
+.quest-section {
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, 
+        rgba(0, 168, 255, 0.05) 0%, 
+        rgba(138, 43, 226, 0.03) 50%, 
+        rgba(0, 255, 255, 0.05) 100%);
+    border: 2px solid rgba(0, 168, 255, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.quest-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(0, 168, 255, 0.1) 50%, 
+        transparent 100%);
+    animation: questScanLine 4s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes questScanLine {
+    0%, 100% { left: -100%; }
+    50% { left: 100%; }
+}
+
+.quest-section h2 {
+    color: #00a8ff;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    text-shadow: 0 0 15px rgba(0, 168, 255, 0.8);
+    position: relative;
+    z-index: 2;
+}
+
+.quest-main-container {
+    position: relative;
+    z-index: 2;
+}
+
+.quest-step-group {
+    margin-bottom: 2.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.quest-step-group h3 {
+    color: #8a2be2;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 10px rgba(138, 43, 226, 0.8);
+    border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+    padding-bottom: 0.5rem;
+}
+
+.quest-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 168, 255, 0.05);
+    border-radius: 8px;
+    border-left: 4px solid #00ffff;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.quest-step:hover {
+    background: rgba(0, 168, 255, 0.1);
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0, 168, 255, 0.3);
+}
+
+.step-number {
+    background: linear-gradient(135deg, #00a8ff, #0078d4);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: 'Orbitron', monospace;
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.5);
+    border: 2px solid rgba(0, 255, 255, 0.6);
+}
+
+.step-content h4 {
+    color: #00ffff;
+    font-family: 'Orbitron', monospace;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+}
+
+.step-content p {
+    color: #e0e0e0;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.step-content p strong {
+    color: #00a8ff;
+    font-weight: 600;
+}
+
+.step-content ul {
+    color: #e0e0e0;
+    margin-left: 1rem;
+}
+
+.step-content ul li {
+    margin-bottom: 0.3rem;
+    position: relative;
+}
+
+.step-content ul li::before {
+    content: '▶';
+    color: #00ffff;
+    margin-right: 0.5rem;
+}
+
+.quest-filter-btn.active {
+    background: var(--color-accent);
+    color: white;
+    box-shadow: 0 0 20px rgba(0, 168, 255, 0.7);
+}
+
+.quest-count {
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-left: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.quest-filter-btn.active .quest-count {
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 1;
+}
+
+/* Container des quêtes */
+.quests-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.quest-section {
+    position: relative;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.quest-section h2 {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    color: var(--color-accent);
+    margin-bottom: 2rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Quêtes principales - Timeline */
+.main-quests {
+    position: relative;
+}
+
+.quest-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.quest-timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--color-accent), var(--color-cyan));
+    border-radius: 2px;
+}
+
+.quest-item {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 168, 255, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.quest-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 25px rgba(0, 168, 255, 0.4);
+    transform: translateX(10px);
+}
+
+.quest-item::before {
+    content: '';
+    position: absolute;
+    left: -48px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background: var(--color-accent);
+    border: 3px solid var(--color-bg);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.7);
+}
+
+.quest-item.completed::before {
+    background: #00ff00;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+}
+
+.quest-item.locked::before {
+    background: #666;
+    box-shadow: 0 0 15px rgba(102, 102, 102, 0.5);
+}
+
+/* Quêtes secondaires - Grid */
+.side-quests {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.side-quest-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(138, 43, 226, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.side-quest-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-purple);
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.4);
+    transform: translateY(-5px);
+}
+
+/* Contenu des quêtes */
+.quest-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.quest-title {
+    font-family: var(--font-title);
+    font-size: 1.4rem;
+    color: var(--color-accent);
+    margin: 0;
+}
+
+.side-quest-item .quest-title {
+    color: var(--color-purple);
+}
+
+.quest-status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.quest-status.available {
+    background: rgba(0, 168, 255, 0.2);
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+}
+
+.quest-status.completed {
+    background: rgba(0, 255, 0, 0.2);
+    color: #00ff00;
+    border: 1px solid #00ff00;
+}
+
+.quest-status.locked {
+    background: rgba(102, 102, 102, 0.2);
+    color: #999;
+    border: 1px solid #666;
+}
+
+.quest-description {
+    color: var(--color-white);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.quest-objectives {
+    margin-bottom: 1rem;
+}
+
+.quest-objectives h4 {
+    color: var(--color-cyan);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-title);
+}
+
+.quest-objectives ul {
+    list-style: none;
+    padding-left: 1rem;
+}
+
+.quest-objectives li {
+    color: var(--color-white);
+    margin-bottom: 0.3rem;
+    position: relative;
+}
+
+.quest-objectives li::before {
+    content: '▶';
+    color: var(--color-accent);
+    position: absolute;
+    left: -1rem;
+}
+
+.quest-objectives li.completed::before {
+    content: '✓';
+    color: #00ff00;
+}
+
+.quest-rewards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.quest-reward {
+    background: rgba(0, 168, 255, 0.1);
+    color: var(--color-cyan);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+/* Styles pour les groupes de quêtes secondaires */
+.secondary-quest-group {
+    margin-bottom: 3rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 2px solid rgba(138, 43, 226, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.secondary-quest-group::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        rgba(138, 43, 226, 0.8) 0%, 
+        rgba(0, 255, 255, 0.8) 50%, 
+        rgba(138, 43, 226, 0.8) 100%);
+}
+
+.secondary-quest-group h3 {
+    color: #8a2be2;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+    border-bottom: 2px solid rgba(138, 43, 226, 0.4);
+    padding-bottom: 0.8rem;
+    position: relative;
+    z-index: 2;
+}
+
+.secondary-quest-group .quest-step {
+    background: rgba(138, 43, 226, 0.08);
+    border-left: 4px solid #8a2be2;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.secondary-quest-group .quest-step:hover {
+    background: rgba(138, 43, 226, 0.15);
+    transform: translateX(5px);
+    box-shadow: 0 5px 20px rgba(138, 43, 226, 0.3);
+}
+
+.secondary-quest-group .step-content h4 {
+    color: #ba55d3;
+    text-shadow: 0 0 10px rgba(186, 85, 211, 0.6);
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+}
+
+.secondary-quest-group .step-content p {
+    color: #e8e8e8;
+    line-height: 1.7;
+    margin-bottom: 0.6rem;
+}
+
+.secondary-quest-group .step-content p strong {
+    color: #8a2be2;
+    font-weight: 700;
+}
+
+/* Animation pour les groupes de quêtes secondaires */
+.secondary-quest-group {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styles pour le message de palier non disponible */
+#no-content-message {
+    background: linear-gradient(135deg, 
+        rgba(255, 193, 7, 0.1) 0%, 
+        rgba(255, 152, 0, 0.1) 100%);
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    color: #ffc107;
+}
+
+#no-content-message h3 {
+    color: #ffc107;
+    font-family: 'Orbitron', monospace;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.6);
+}
+
+#no-content-message p {
+    color: #ffe082;
+    margin-bottom: 0.5rem;
+}
+
+#no-content-message strong {
+    color: #00ffff;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .quetes-container {
+        padding: 80px 1rem 1rem;
+    }
+    
+    .quest-type-filters {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .quest-filter-btn {
+        width: 100%;
+        max-width: 250px;
+        text-align: center;
+    }
+    
+    .quest-timeline {
+        padding-left: 1rem;
+    }
+    
+    .quest-item::before {
+        left: -33px;
+        width: 15px;
+        height: 15px;
+    }
+    
+    .quest-timeline::before {
+        left: 7px;
+        width: 2px;
+    }
+    
+    .side-quests {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================
+   COORDONNÉES CLIQUABLES
+   ========================================== */
+
+.coordinates {
+    color: var(--color-accent) !important;
+    cursor: pointer !important;
+    text-decoration: underline !important;
+    font-weight: bold !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    display: inline-block !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    background: rgba(0, 168, 255, 0.1) !important;
+    border: 1px solid rgba(0, 168, 255, 0.3) !important;
+}
+
+.coordinates:hover {
+    color: #00ffff !important;
+    background: rgba(0, 168, 255, 0.2) !important;
+    border-color: rgba(0, 255, 255, 0.5) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 168, 255, 0.3) !important;
+}
+
+.coordinates:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(0, 168, 255, 0.4) !important;
+}
+
+.coordinates::before {
+    content: '🗺️ ';
+    opacity: 0.7;
+}
+
+.coordinates:hover::before {
+    opacity: 1;
+}
+
+/* ==========================================
+   PAGINATION DES QUÊTES
+   ========================================== */
+
+.quest-pagination {
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(0, 168, 255, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.pagination-info {
+    color: var(--color-accent);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination-btn {
+    background: linear-gradient(135deg, rgba(0, 168, 255, 0.15) 0%, rgba(138, 43, 226, 0.15) 100%);
+    border: 2px solid rgba(0, 168, 255, 0.4);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-width: 50px;
+}
+
+.pagination-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    background: linear-gradient(135deg, rgba(0, 168, 255, 0.25) 0%, rgba(138, 43, 226, 0.25) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 168, 255, 0.3);
+}
+
+.pagination-btn:hover:not(:disabled)::before {
+    left: 100%;
+}
+
+.pagination-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(0, 168, 255, 0.2);
+}
+
+.pagination-btn.active {
+    background: linear-gradient(135deg, rgba(0, 168, 255, 0.4) 0%, rgba(138, 43, 226, 0.4) 100%);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
+    font-weight: 700;
+    color: var(--color-accent);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 168, 255, 0.2);
+}
+
+.pagination-ellipsis {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+    user-select: none;
+}
+
+@media (max-width: 480px) {
+    .quest-item {
+        padding: 1.5rem;
+    }
+    
+    .quest-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .quest-title {
+        font-size: 1.2rem;
+    }
+
+    .pagination-controls {
+        gap: 0.3rem;
+    }
+
+    .pagination-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+        min-width: 40px;
+    }
+
+    .quest-pagination {
+        padding: 1rem;
+    }
+}

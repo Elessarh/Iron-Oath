@@ -7,7 +7,6 @@
     --color-cyan: #00ffff;
     --font-title: 'Orbitron', sans-serif;
     --font-text: 'Exo 2', sans-serif;
-    --focus-ring: 0 0 0 3px rgba(0, 168, 255, 0.5);
 }
 
 /* Reset et styles de base */
@@ -17,22 +16,8 @@
     box-sizing: border-box;
 }
 
-/* Amélioration du scroll pour les performances */
 html {
     overflow-x: hidden;
-    scroll-behavior: smooth;
-}
-
-/* Respect du mode préférence de mouvement réduit */
-@media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
 }
 
 body {
@@ -43,64 +28,7 @@ body {
     overflow-x: hidden;
     padding-top: 70px !important; /* Espace fixe pour la navbar */
     max-width: 100vw;
-    line-height: 1.6;
 }
-
-/* ========== ACCESSIBILITÉ ========== */
-
-/* Skip link pour navigation au clavier */
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    background: var(--color-accent);
-    color: var(--color-bg);
-    padding: 8px 16px;
-    z-index: 10000;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 0 0 4px 0;
-    transition: top 0.3s ease;
-}
-
-.skip-link:focus {
-    top: 0;
-    outline: none;
-}
-
-/* Classe pour masquer visuellement mais garder accessible aux lecteurs d'écran */
-.visually-hidden {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-}
-
-/* États de focus améliorés pour l'accessibilité */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-[tabindex]:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-}
-
-/* Supprimer l'outline par défaut uniquement si focus-visible est supporté */
-@supports selector(:focus-visible) {
-    a:focus:not(:focus-visible),
-    button:focus:not(:focus-visible) {
-        outline: none;
-    }
-}
-
-/* ========== FIN ACCESSIBILITÉ ========== */
 
 @media (max-width: 768px) {
     body {
@@ -1321,51 +1249,4 @@ body .nav-connexion .logout-btn {
     .logout-btn {
         padding: 0.3rem 0.6rem;
     }
-}
-
-/* ========== FOOTER ========== */
-.site-footer {
-    background: linear-gradient(135deg, rgba(10, 10, 26, 0.95), rgba(30, 30, 50, 0.95));
-    border-top: 1px solid rgba(0, 168, 255, 0.3);
-    padding: 2rem 0;
-    margin-top: 4rem;
-    text-align: center;
-}
-
-.site-footer p {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-}
-
-/* ========== OPTIMISATIONS IMAGES ========== */
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Images lazy load transition */
-img[loading="lazy"] {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-img[loading="lazy"].loaded,
-img:not([loading="lazy"]) {
-    opacity: 1;
-}
-
-/* ========== OPTIMISATIONS PERFORMANCES ========== */
-/* Utiliser will-change avec parcimonie */
-.nav-menu,
-.hamburger span,
-.feature-card,
-.stat-card {
-    will-change: transform;
-}
-
-/* GPU acceleration pour les animations */
-.hero-content,
-.feature-card:hover {
-    transform: translateZ(0);
-    backface-visibility: hidden;
 }

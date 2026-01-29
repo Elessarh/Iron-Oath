@@ -3,67 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte Interactive d'Aincrad - Iron Oath</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Explorez la carte interactive d'Aincrad. Découvrez les zones, donjons, quêtes, marchands et points d'intérêt d'Iron Oath.">
-    <meta name="keywords" content="carte, Aincrad, map, donjons, quêtes, zones, Iron Oath, Minecraft">
-    <link rel="canonical" href="https://iron-oath.github.io/pages/map.html">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Carte Interactive - Iron Oath">
-    <meta property="og:description" content="Explorez la carte interactive d'Aincrad avec tous les points d'intérêt.">
-    <meta property="og:image" content="https://iron-oath.github.io/assets/Logo_3.png">
-    
-    <!-- Theme & Favicon -->
-    <meta name="theme-color" content="#0a0a1a">
-    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
-    
-    <!-- Fonts & Styles -->
+    <title>Carte - Iron Oath</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-007">
+    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
     <link rel="stylesheet" href="../css/components/map.css?v=20260129c">
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        // Masquage immédiat des éléments de connexion pour éviter le flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfo = document.getElementById('user-info');
+            
+            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+                userInfo.classList.remove('js-visible');
+            }
+            
+            // Le bouton de connexion reste visible par défaut
+            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
+        });
+    </script>
+    
+    <!-- Suppression du supabase-loader - géré par auth-supabase.js?v=20260128d -->
 </head>
 <body>
-    <!-- Skip link pour l'accessibilité -->
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <!-- Écran de chargement supprimé -->
 
     <!-- Header et Navigation -->
-    <header class="header" role="banner">
-        <nav class="nav-container" role="navigation" aria-label="Navigation principale">
+    <header class="header">
+        <nav class="nav-container">
             <div class="nav-logo-container">
-                <a href="../index.html" aria-label="Iron Oath - Accueil">
-                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe" width="50" height="50" loading="eager">
-                </a>
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
             </div>
-            <ul class="nav-menu" id="nav-menu" role="menubar">
-                <li role="none"><a href="../index.html" class="nav-link" role="menuitem">Accueil</a></li>
-                <li role="none"><a href="map.html" class="nav-link active" role="menuitem" aria-current="page">Carte</a></li>
-                <li role="none"><a href="bestiaire.html" class="nav-link" role="menuitem">Bestiaire</a></li>
-                <li role="none"><a href="items.html" class="nav-link" role="menuitem">Items</a></li>
-                <li role="none"><a href="hdv.html" class="nav-link" role="menuitem">HDV</a></li>
-                <li role="none"><a href="quetes.html" class="nav-link" role="menuitem">Quêtes</a></li>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link active">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn" aria-label="Se déconnecter">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
-            <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
+            <button class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -72,14 +66,14 @@
     </header>
 
     <!-- Contenu principal -->
-    <main id="main-content" class="map-container" role="main">
+    <main class="map-container">
         <div class="map-header">
             <h1 class="map-title">🗺️ Aincrad</h1>
             <p class="map-subtitle">Découvrez les territoires de votre guilde</p>
         </div>
         
         <!-- Contrôles de la carte modernisés -->
-        <section class="map-controls-container" aria-label="Contrôles de la carte">
+        <div class="map-controls-container">
             <!-- Sélecteur de palier -->
             <div class="palier-selector">
                 <label for="floor-select" class="palier-label">🏰 Palier</label>
@@ -93,14 +87,14 @@
             </div>
             
             <!-- Panneau de contrôle des éléments -->
-            <fieldset class="element-toggles">
-                <legend class="toggles-title">🎛️ Affichage des Éléments</legend>
+            <div class="element-toggles">
+                <h3 class="toggles-title">🎛️ Affichage des Éléments</h3>
                 <div class="toggles-grid">
                     <div class="toggle-item">
                         <input type="checkbox" id="toggle-quetes-principales" checked>
                         <label for="toggle-quetes-principales" class="toggle-label" title="Quêtes Principales">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Quetes-Principales.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Quetes-Principales.png" alt="Quêtes Principales" loading="lazy">
                             </div>
                             <span class="toggle-text">Quêtes Principales</span>
                         </label>
@@ -110,7 +104,7 @@
                         <input type="checkbox" id="toggle-quetes-secondaires" checked>
                         <label for="toggle-quetes-secondaires" class="toggle-label" title="Quêtes Secondaires">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Quetes-Secondaires.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Quetes-Secondaires.png" alt="Quêtes Secondaires" loading="lazy">
                             </div>
                             <span class="toggle-text">Quêtes Secondaires</span>
                         </label>
@@ -120,7 +114,7 @@
                         <input type="checkbox" id="toggle-donjons" checked>
                         <label for="toggle-donjons" class="toggle-label" title="Donjons">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Donjon.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Donjon.png" alt="Donjons" loading="lazy">
                             </div>
                             <span class="toggle-text">Donjons</span>
                         </label>
@@ -130,7 +124,7 @@
                         <input type="checkbox" id="toggle-villes" checked>
                         <label for="toggle-villes" class="toggle-label" title="Villes">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Ville.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Ville.png" alt="Villes" loading="lazy">
                             </div>
                             <span class="toggle-text">Villes</span>
                         </label>
@@ -140,7 +134,7 @@
                         <input type="checkbox" id="toggle-monstres" checked>
                         <label for="toggle-monstres" class="toggle-label" title="Monstres">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Monstre.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Monstre.png" alt="Monstres" loading="lazy">
                             </div>
                             <span class="toggle-text">Monstres</span>
                         </label>
@@ -150,26 +144,26 @@
                         <input type="checkbox" id="toggle-marchands" checked>
                         <label for="toggle-marchands" class="toggle-label" title="Marchands">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Marchand.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Marchand.png" alt="Marchands" loading="lazy">
                             </div>
                             <span class="toggle-text">Marchands</span>
                         </label>
-                </div>
-                
-                <!-- Mode édition (admin) -->
-                <div class="toggle-item admin-only" style="display: none;">
-                    <button id="place-mode-btn" class="admin-toggle-btn" aria-label="Activer le mode édition">
-                        <div class="toggle-icon">✏️</div>
-                        <span class="toggle-text">Mode Édition</span>
-                    </button>
+                    </div>
+                    
+                    <!-- Mode édition (admin) -->
+                    <div class="toggle-item admin-only" style="display: none;">
+                        <button id="place-mode-btn" class="admin-toggle-btn">
+                            <div class="toggle-icon">✏️</div>
+                            <span class="toggle-text">Mode Édition</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </fieldset>
-    </section>
+        </div>
 
-        <div class="map-wrapper" role="application" aria-label="Carte interactive d'Aincrad">
+        <div class="map-wrapper">
             <!-- Animation SAO Style -->
-            <div class="sao-effects" aria-hidden="true">
+            <div class="sao-effects">
                 <!-- Particules flottantes -->
                 <div class="particles">
                     <div class="particle particle-1"></div>
@@ -226,7 +220,7 @@
                     <div class="logo-subtitle">SYSTEM ONLINE</div>
                 </div>
             </div>
-            <div id="game-map" role="img" aria-label="Carte du monde d'Aincrad"></div>
+            <div id="game-map"></div>
         </div>
     </main>
 
@@ -235,12 +229,14 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
     
-    <!-- Scripts - Chargement optimisé -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
-    <script src="../js/crypto-keys.js" defer></script>
-    <script src="../js/auth-supabase.js?v=20260129b" defer></script>
-    <script src="../js/map.js?v=20260129b" defer></script>
-    <script src="../js/navbar-mobile.js" defer></script>
+    <!-- Chargement Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    
+    <!-- Notre JavaScript -->
+    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/auth-supabase.js?v=20260128d"></script>
+    <script src="../js/map.js?v=20260129a"></script>
+    <script src="../js/navbar-mobile.js"></script>
     
     <!-- Optimisation des performances sur mobile -->
     <script>

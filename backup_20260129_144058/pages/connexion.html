@@ -4,60 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Iron Oath</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Connectez-vous ou créez un compte pour rejoindre Iron Oath et accéder à toutes les fonctionnalités de la guilde.">
-    <meta name="keywords" content="connexion, inscription, compte, Iron Oath, guilde, Minecraft">
-    <link rel="canonical" href="https://iron-oath.github.io/pages/connexion.html">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Connexion - Iron Oath">
-    <meta property="og:description" content="Rejoignez la guilde Iron Oath en créant votre compte.">
-    <meta property="og:image" content="https://iron-oath.github.io/assets/Logo_3.png">
-    
-    <!-- Theme & Favicon -->
-    <meta name="theme-color" content="#0a0a1a">
-    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    
-    <!-- Fonts & Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-007">
-    <link rel="stylesheet" href="../css/components/connexion.css?v=20260129b">
+    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
+    <link rel="stylesheet" href="../css/components/connexion.css">
 </head>
 <body>
-    <!-- Skip link pour l'accessibilité -->
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-
     <!-- Header et Navigation -->
-    <header class="header" role="banner">
-        <nav class="nav-container" role="navigation" aria-label="Navigation principale">
+    <header class="header">
+        <nav class="nav-container">
             <div class="nav-logo-container">
-                <a href="../index.html" aria-label="Iron Oath - Accueil">
-                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe" width="50" height="50" loading="eager">
-                </a>
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
             </div>
-            <ul class="nav-menu" id="nav-menu" role="menubar">
-                <li role="none"><a href="../index.html" class="nav-link" role="menuitem">Accueil</a></li>
-                <li role="none"><a href="map.html" class="nav-link" role="menuitem">Carte</a></li>
-                <li role="none"><a href="bestiaire.html" class="nav-link" role="menuitem">Bestiaire</a></li>
-                <li role="none"><a href="items.html" class="nav-link" role="menuitem">Items</a></li>
-                <li role="none"><a href="hdv.html" class="nav-link" role="menuitem">HDV</a></li>
-                <li role="none"><a href="quetes.html" class="nav-link" role="menuitem">Quêtes</a></li>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn" aria-label="Se déconnecter">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="nav-link connexion-link" id="login-link">Connexion</a>
             </div>
-            <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
+            <button class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -66,7 +39,7 @@
     </header>
 
     <!-- Contenu principal -->
-    <main id="main-content" class="main-content" role="main">
+    <main class="main-content">
         <div class="auth-container">
             <div class="auth-wrapper">
                 <div class="auth-card">
@@ -76,14 +49,14 @@
                 <!-- Formulaire de connexion -->
                 <div id="login-form" class="auth-form">
                     <h2>Connexion</h2>
-                    <form aria-label="Formulaire de connexion">
+                    <form>
                         <div class="input-group">
                             <label for="login-email">Email</label>
-                            <input type="email" id="login-email" autocomplete="email" required>
+                            <input type="email" id="login-email" required>
                         </div>
                         <div class="input-group">
                             <label for="login-password">Mot de passe</label>
-                            <input type="password" id="login-password" autocomplete="current-password" required>
+                            <input type="password" id="login-password" required>
                         </div>
                         <button type="submit" class="auth-btn">Se connecter</button>
                     </form>
@@ -96,22 +69,22 @@
                 <!-- Formulaire d'inscription -->
                 <div id="register-form" class="auth-form" style="display: none;">
                     <h2>Inscription</h2>
-                    <form aria-label="Formulaire d'inscription">
+                    <form>
                         <div class="input-group">
                             <label for="register-username">Pseudo joueur</label>
-                            <input type="text" id="register-username" placeholder="Votre pseudo dans le jeu" autocomplete="username" required>
+                            <input type="text" id="register-username" placeholder="Votre pseudo dans le jeu" required>
                         </div>
                         <div class="input-group">
                             <label for="register-email">Email</label>
-                            <input type="email" id="register-email" autocomplete="email" required>
+                            <input type="email" id="register-email" required>
                         </div>
                         <div class="input-group">
                             <label for="register-password">Mot de passe</label>
-                            <input type="password" id="register-password" autocomplete="new-password" required>
+                            <input type="password" id="register-password" required>
                         </div>
                         <div class="input-group">
                             <label for="register-confirm">Confirmer le mot de passe</label>
-                            <input type="password" id="register-confirm" autocomplete="new-password" required>
+                            <input type="password" id="register-confirm" required>
                         </div>
                         <button type="submit" class="auth-btn">Créer le compte</button>
                     </form>
@@ -122,11 +95,11 @@
                 </div>
                 
                     <!-- Message d'erreur/succès -->
-                    <div id="auth-message" class="auth-message" role="alert" aria-live="polite" style="display: none;"></div>
+                    <div id="auth-message" class="auth-message" style="display: none;"></div>
                 </div>
                 
                 <!-- Section guilde Iron Oath -->
-                <aside class="guild-info">
+                <div class="guild-info">
                     <h2 class="guild-title">Iron Oath</h2>
                     <div class="guild-description">
                         <p>Bienvenue dans <strong>Iron Oath</strong>, une guilde d'élite dédiée à l'exploration des mondes virtuels les plus dangereux et fascinants.</p>
@@ -144,11 +117,11 @@
                         <p>Rejoignez-nous dès maintenant et forgez votre légende aux côtés des meilleurs !</p>
                     </div>
                     
-                    <a href="https://discord.gg/ZMFttfjfBJ" target="_blank" rel="noopener noreferrer" class="discord-link">
-                        <span aria-hidden="true">🎮</span>
+                    <a href="https://discord.gg/ZMFttfjfBJ" target="_blank" class="discord-link">
+                        <span>🎮</span>
                         Rejoindre notre Discord
                     </a>
-                </aside>
+                </div>
             </div>
         </div>
     </main>
@@ -172,10 +145,12 @@
         });
     </script>
     
-    <!-- Scripts - Chargement optimisé -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
-    <script src="../js/crypto-keys.js" defer></script>
-    <script src="../js/auth-supabase.js?v=20260129b" defer></script>
+    <!-- Chargement Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    
+    <!-- Système d'authentification Supabase -->
+    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/auth-supabase.js?v=20260128d"></script>
     <script src="../js/navbar-mobile.js" defer></script>
 </body>
 </html>

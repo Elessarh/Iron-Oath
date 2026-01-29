@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron Oath - Guilde Minecraft & Carte Interactive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=mobile-fix-006">
+</head>
+<body class="home-page">
+    <!-- Écran de chargement supprimé -->
+
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo-container">
+                <img src="assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="index.html" class="nav-link active">Accueil</a></li>
+                <li><a href="pages/map.html" class="nav-link">Carte</a></li>
+                <li><a href="pages/bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="pages/items.html" class="nav-link">Items</a></li>
+                <li><a href="pages/hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="pages/quetes.html" class="nav-link">Quêtes</a></li>
+            </ul>
+            <div class="nav-connexion">
+                <span id="user-info" class="user-info" style="display: none;">
+                    <a href="pages/profil.html" id="username" class="username-link"></a>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
+                </span>
+                <a href="pages/connexion.html" class="connexion-link" id="login-link">Connexion</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Section Héros -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Iron Oath</h1>
+            <p class="hero-subtitle">Explorez, Combattez, Triomphez</p>
+            <p class="hero-description">Plongez dans un univers Minecraft épique où chaque aventure devient légende</p>
+            <div class="hero-buttons">
+                <a href="pages/connexion.html" class="hero-button primary">Rejoindre l'aventure</a>
+                <a href="pages/map.html" class="hero-button secondary">Explorer le monde</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Statistiques -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">1000+</span>
+                    <div class="stat-label">Heures de Jeu</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">30+</span>
+                    <div class="stat-label">Membres Actifs</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">50+</span>
+                    <div class="stat-label">Quêtes</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">500+</span>
+                    <div class="stat-label">Items Uniques</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Vidéo -->
+    <section class="video-section">
+        <div class="container">
+            <h2 class="section-title">Découvrez Notre Univers</h2>
+            <div class="video-container">
+                <div class="video-wrapper">
+                    <iframe 
+                        src="https://www.youtube.com/embed/WVRGykLETx0?si=yEludtm8lecWBisg" 
+                        title="Iron Oath - Nos Aventures"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Fonctionnalités -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Nos Fonctionnalités</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Carte Interactive</h3>
+                    <p>Explorez notre monde avec une carte détaillée et des points d'intérêt</p>
+                    <a href="pages/map.html" class="feature-link">Découvrir →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚔️</div>
+                    <h3>Bestiaire Complet</h3>
+                    <p>Consultez les stats et stratégies pour vaincre tous les mobs</p>
+                    <a href="pages/bestiaire.html" class="feature-link">Explorer →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💎</div>
+                    <h3>Catalogue d'Items</h3>
+                    <p>Découvrez tous les items disponibles avec leurs statistiques</p>
+                    <a href="pages/items.html" class="feature-link">Parcourir →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏪</div>
+                    <h3>Hôtel des Ventes</h3>
+                    <p>Achetez et vendez des items avec notre système d'échange</p>
+                    <a href="pages/hdv.html" class="feature-link">Accéder →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📜</div>
+                    <h3>Système de Quêtes</h3>
+                    <p>Accomplissez des quêtes épiques et gagnez des récompenses</p>
+                    <a href="pages/quetes.html" class="feature-link">Voir →</a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Communauté Active</h3>
+                    <p>Rejoignez une guilde soudée et participez à des projets collectifs</p>
+                    <a href="pages/connexion.html" class="feature-link">Rejoindre →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Call-to-Action -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Prêt à Forger Votre Légende ?</h2>
+            <p>Rejoignez Iron Oath et participez à des aventures épiques</p>
+            <a href="pages/connexion.html" class="cta-button">Créer un Compte</a>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <!-- Chargement Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    
+    <script src="js/crypto-keys.js"></script>
+    <script src="js/auth-supabase.js?v=20260128d"></script>
+    <script src="js/navbar-mobile.js" defer></script>
+</body>
+</html>

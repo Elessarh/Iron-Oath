@@ -4,60 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalogue d'Items - Iron Oath</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Découvrez le catalogue complet des items d'Iron Oath. Armes, armures, accessoires, consommables et ressources pour votre aventure dans Aincrad.">
-    <meta name="keywords" content="items, catalogue, armes, armures, accessoires, consommables, Iron Oath, Minecraft">
-    <link rel="canonical" href="https://iron-oath.github.io/pages/items.html">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Catalogue d'Items - Iron Oath">
-    <meta property="og:description" content="Découvrez tous les équipements et trésors disponibles dans Aincrad.">
-    <meta property="og:image" content="https://iron-oath.github.io/assets/Logo_3.png">
-    
-    <!-- Theme & Favicon -->
-    <meta name="theme-color" content="#0a0a1a">
-    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    
-    <!-- Fonts & Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-007">
-    <link rel="stylesheet" href="../css/components/items.css?v=20260129b">
+    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
+    <link rel="stylesheet" href="../css/components/items.css">
+
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        // Masquage immédiat des éléments de connexion pour éviter le flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfo = document.getElementById('user-info');
+            
+            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+                userInfo.classList.remove('js-visible');
+            }
+            
+            // Le bouton de connexion reste visible par défaut
+            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
+        });
+    </script>
 </head>
 <body>
-    <!-- Skip link pour l'accessibilité -->
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-
     <!-- Header et Navigation -->
-    <header class="header" role="banner">
-        <nav class="nav-container" role="navigation" aria-label="Navigation principale">
+    <header class="header">
+        <nav class="nav-container">
             <div class="nav-logo-container">
-                <a href="../index.html" aria-label="Iron Oath - Accueil">
-                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe" width="50" height="50" loading="eager">
-                </a>
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
             </div>
-            <ul class="nav-menu" id="nav-menu" role="menubar">
-                <li role="none"><a href="../index.html" class="nav-link" role="menuitem">Accueil</a></li>
-                <li role="none"><a href="map.html" class="nav-link" role="menuitem">Carte</a></li>
-                <li role="none"><a href="bestiaire.html" class="nav-link" role="menuitem">Bestiaire</a></li>
-                <li role="none"><a href="items.html" class="nav-link active" role="menuitem" aria-current="page">Items</a></li>
-                <li role="none"><a href="hdv.html" class="nav-link" role="menuitem">HDV</a></li>
-                <li role="none"><a href="quetes.html" class="nav-link" role="menuitem">Quêtes</a></li>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link active">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn" aria-label="Se déconnecter">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
-            <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
+            <button class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -66,9 +58,9 @@
     </header>
 
     <!-- Contenu principal -->
-    <main id="main-content" class="main-content" role="main">
+    <main class="main-content">
         <!-- Hero Section -->
-        <section class="hero-section" aria-label="En-tête du catalogue">
+        <section class="hero-section">
             <div class="hero-content">
                 <h1 class="hero-title">Catalogue d'Items</h1>
                 <p class="hero-subtitle">Découvrez tous les trésors et équipements d'Aincrad</p>
@@ -90,7 +82,7 @@
         </section>
 
         <!-- Section Filtres -->
-        <section class="filters-section" aria-label="Filtres de recherche">
+        <section class="filters-section">
             <div class="container">
                 <div class="filters-header">
                     <h2>Filtrer les items</h2>
@@ -98,9 +90,8 @@
                 <div class="filters-content">
                     <div class="search-container">
                         <div class="search-wrapper">
-                            <label for="search-input" class="visually-hidden">Rechercher un item</label>
-                            <input type="text" id="search-input" placeholder="Rechercher un item..." class="search-input" aria-label="Rechercher un item">
-                            <span class="search-icon" aria-hidden="true">🔍</span>
+                            <input type="text" id="search-input" placeholder="Rechercher un item..." class="search-input">
+                            <i class="search-icon">🔍</i>
                         </div>
                     </div>
                     <div class="filter-controls">
@@ -138,36 +129,36 @@
         </section>
 
         <!-- Section Catalogue -->
-        <section class="catalog-section" aria-label="Catalogue des items">
+        <section class="catalog-section">
             <div class="container">
                 <div class="catalog-header">
                     <h2>Catalogue des items</h2>
                     <div class="results-info">
-                        <span id="items-count" aria-live="polite">25 items trouvés</span>
+                        <span id="items-count">25 items trouvés</span>
                     </div>
                 </div>
-                <div class="items-grid" id="items-grid" role="list" aria-live="polite">
+                <div class="items-grid" id="items-grid">
                     <!-- Les cartes d'items seront générées ici par JavaScript -->
-                    <div id="items-loader" class="items-loader" style="display: none;" role="status">
+                    <div id="items-loader" class="items-loader" style="display: none;">
                         <div class="spinner"></div>
                         <p>Chargement des items...</p>
                     </div>
                 </div>
 
                 <!-- Contrôles de pagination pour les items -->
-                <nav class="pagination-container" id="items-pagination-container" style="display: none;" aria-label="Pagination des items">
+                <div class="pagination-container" id="items-pagination-container" style="display: none;">
                     <div class="pagination-info">
-                        <span id="items-pagination-info-text" aria-live="polite">Affichage de 1-12 sur 45 items</span>
+                        <span id="items-pagination-info-text">Affichage de 1-12 sur 45 items</span>
                     </div>
                     <div class="pagination-controls">
-                        <button class="pagination-btn" id="items-prev-page" disabled aria-label="Page précédente">
-                            Précédent
+                        <button class="pagination-btn" id="items-prev-page" disabled>
+                            <i class="fas fa-chevron-left"></i> Précédent
                         </button>
-                        <div class="pagination-numbers" id="items-pagination-numbers" role="list">
+                        <div class="pagination-numbers" id="items-pagination-numbers">
                             <!-- Numéros de pages générés dynamiquement -->
                         </div>
-                        <button class="pagination-btn" id="items-next-page" aria-label="Page suivante">
-                            Suivant
+                        <button class="pagination-btn" id="items-next-page">
+                            Suivant <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                     <div class="pagination-settings">
@@ -179,7 +170,7 @@
                             <option value="48">48</option>
                         </select>
                     </div>
-                </nav>
+                </div>
             </div>
         </section>
     </main>
@@ -283,11 +274,10 @@
         </div>
     </div>
 
-    <!-- Scripts - Chargement optimisé -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
-    <script src="../js/crypto-keys.js" defer></script>
-    <script src="../js/auth-supabase.js?v=20260129b" defer></script>
-    <script src="../js/items-catalog-hdv.js?v=20260129b" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/auth-supabase.js?v=20260129a"></script>
+    <script src="../js/items-catalog-hdv.js?v=20260129a"></script>
     <script>
         // Système de cartes d'items
         class ItemCardsSystem {

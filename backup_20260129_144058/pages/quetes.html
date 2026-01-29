@@ -3,61 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quêtes d'Aincrad - Iron Oath</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Guide complet des quêtes d'Iron Oath. Découvrez toutes les quêtes principales et secondaires d'Aincrad avec les coordonnées et objectifs détaillés.">
-    <meta name="keywords" content="quêtes, missions, guide, walkthrough, Iron Oath, Aincrad, Minecraft">
-    <link rel="canonical" href="https://iron-oath.github.io/pages/quetes.html">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Quêtes d'Aincrad - Iron Oath">
-    <meta property="og:description" content="Guide complet des quêtes avec coordonnées et objectifs détaillés.">
-    <meta property="og:image" content="https://iron-oath.github.io/assets/Logo_3.png">
-    
-    <!-- Theme & Favicon -->
-    <meta name="theme-color" content="#0a0a1a">
-    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    
-    <!-- Fonts & Styles -->
+    <title>Quêtes - Iron Oath</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-007">
-    <link rel="stylesheet" href="../css/components/quetes.css?v=20260129b">
+    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
+    <link rel="stylesheet" href="../css/components/quetes.css">
+    
+    <!-- Script anti-flash immédiat -->
+    <script>
+        // Masquage immédiat des éléments de connexion pour éviter le flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfo = document.getElementById('user-info');
+            
+            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+                userInfo.classList.remove('js-visible');
+            }
+            
+            // Le bouton de connexion reste visible par défaut
+            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
+        });
+    </script>
 </head>
 <body>
-    <!-- Skip link pour l'accessibilité -->
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <!-- Écran de chargement supprimé -->
 
     <!-- Header et Navigation -->
-    <header class="header" role="banner">
-        <nav class="nav-container" role="navigation" aria-label="Navigation principale">
+    <header class="header">
+        <nav class="nav-container">
             <div class="nav-logo-container">
-                <a href="../index.html" aria-label="Iron Oath - Accueil">
-                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe" width="50" height="50" loading="eager">
-                </a>
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
             </div>
-            <ul class="nav-menu" id="nav-menu" role="menubar">
-                <li role="none"><a href="../index.html" class="nav-link" role="menuitem">Accueil</a></li>
-                <li role="none"><a href="map.html" class="nav-link" role="menuitem">Carte</a></li>
-                <li role="none"><a href="bestiaire.html" class="nav-link" role="menuitem">Bestiaire</a></li>
-                <li role="none"><a href="items.html" class="nav-link" role="menuitem">Items</a></li>
-                <li role="none"><a href="hdv.html" class="nav-link" role="menuitem">HDV</a></li>
-                <li role="none"><a href="quetes.html" class="nav-link active" role="menuitem" aria-current="page">Quêtes</a></li>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link active">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn" aria-label="Se déconnecter">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="nav-link connexion-link" id="login-link">Connexion</a>
             </div>
-            <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
+            <button class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -66,12 +59,12 @@
     </header>
 
     <!-- Contenu principal -->
-    <main id="main-content" class="quetes-container" role="main">
+    <main class="quetes-container">
         <h1 style="text-align: center; margin-bottom: 2rem; color: var(--color-accent); font-family: var(--font-title);">Quêtes d'Aincrad</h1>
         
         <!-- Filtres -->
-        <section class="quest-filters" aria-label="Filtres de quêtes">
-            <div class="quest-type-filters" role="group" aria-label="Type de quête">
+        <div class="quest-filters">
+            <div class="quest-type-filters">
                 <button class="quest-filter-btn active" data-filter="all">Toutes les Quêtes</button>
                 <button class="quest-filter-btn" data-filter="principale">Quête Principale</button>
                 <button class="quest-filter-btn" data-filter="secondaire">Quêtes Secondaires</button>
@@ -86,10 +79,10 @@
                     <option value="5">Palier 5</option>
                 </select>
             </div>
-        </section>
+        </div>
 
         <!-- Conteneur pour la pagination (injecté dynamiquement par quetes.js) -->
-        <nav class="quest-pagination" aria-label="Pagination des quêtes"></nav>
+        <div class="quest-pagination"></div>
 
         <!-- Quête Principale du Palier 1 -->
         <section class="quest-section" data-category="principale" data-tier="1">
@@ -980,10 +973,9 @@
         </section>
     </main>
 
-    <!-- Scripts - Chargement optimisé -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
-    <script src="../js/crypto-keys.js" defer></script>
-    <script src="../js/auth-supabase.js?v=20260129b" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/auth-supabase.js?v=20260128d"></script>
     <script>
         // Système de gestion des paliers
         function changeTier(tier) {
@@ -1114,8 +1106,8 @@
         });
     </script>
 
-    <!-- Scripts de quêtes et navigation -->
-    <script src="../js/quetes.js?v=20260129b" defer></script>
+    <!-- Script optimisé pour les quêtes avec pagination -->
+    <script src="../js/quetes.js"></script>
     <script src="../js/navbar-mobile.js" defer></script>
 </body>
 </html>

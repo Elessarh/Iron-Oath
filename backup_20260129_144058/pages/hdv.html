@@ -4,62 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hôtel des Ventes - Iron Oath</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Marché central d'Aincrad. Achetez, vendez et échangez vos items avec d'autres joueurs sur l'Hôtel des Ventes d'Iron Oath.">
-    <meta name="keywords" content="hôtel des ventes, HDV, marché, échange, achat, vente, Iron Oath, Minecraft">
-    <link rel="canonical" href="https://iron-oath.github.io/pages/hdv.html">
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Hôtel des Ventes - Iron Oath">
-    <meta property="og:description" content="Échangez vos trésors avec d'autres aventuriers sur le marché d'Aincrad.">
-    <meta property="og:image" content="https://iron-oath.github.io/assets/Logo_3.png">
-    
-    <!-- Theme & Favicon -->
-    <meta name="theme-color" content="#0a0a1a">
-    <link rel="icon" type="image/png" href="../assets/Logo_3.png">
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    
-    <!-- Fonts & Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-007">
-    <link rel="stylesheet" href="../css/components/hdv.css?v=20260129b">
-    <link rel="stylesheet" href="../css/components/item-selector-new.css?v=20260129b">
-    <link rel="stylesheet" href="../css/components/mailbox-improved.css?v=20260129b">
+    <link rel="stylesheet" href="../css/style.css?v=mobile-fix-006">
+    <link rel="stylesheet" href="../css/components/hdv.css">
+    <link rel="stylesheet" href="../css/components/item-selector-new.css?v=20260128i">
+    <link rel="stylesheet" href="../css/components/mailbox-improved.css">
+
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfo = document.getElementById('user-info');
+            
+            // Masquer les infos utilisateur par défaut - elles ne s'affichent que si connecté
+            if (userInfo) {
+                userInfo.style.display = 'none';
+                userInfo.classList.remove('show');
+                userInfo.classList.remove('js-visible');
+            }
+            
+            // Le bouton de connexion reste visible par défaut
+            // Il sera masqué par checkAuthState() si l'utilisateur est connecté
+        });
+    </script>
 </head>
 <body>
-    <!-- Skip link pour l'accessibilité -->
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-
     <!-- Header et Navigation -->
-    <header class="header" role="banner">
-        <nav class="nav-container" role="navigation" aria-label="Navigation principale">
+    <header class="header">
+        <nav class="nav-container">
             <div class="nav-logo-container">
-                <a href="../index.html" aria-label="Iron Oath - Accueil">
-                    <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe" width="50" height="50" loading="eager">
-                </a>
+                <img src="../assets/Logo_3.png" alt="Iron Oath Logo" class="nav-logo-safe">
             </div>
-            <ul class="nav-menu" id="nav-menu" role="menubar">
-                <li role="none"><a href="../index.html" class="nav-link" role="menuitem">Accueil</a></li>
-                <li role="none"><a href="map.html" class="nav-link" role="menuitem">Carte</a></li>
-                <li role="none"><a href="bestiaire.html" class="nav-link" role="menuitem">Bestiaire</a></li>
-                <li role="none"><a href="items.html" class="nav-link" role="menuitem">Items</a></li>
-                <li role="none"><a href="hdv.html" class="nav-link active" role="menuitem" aria-current="page">HDV</a></li>
-                <li role="none"><a href="quetes.html" class="nav-link" role="menuitem">Quêtes</a></li>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html" class="nav-link">Accueil</a></li>
+                <li><a href="map.html" class="nav-link">Carte</a></li>
+                <li><a href="bestiaire.html" class="nav-link">Bestiaire</a></li>
+                <li><a href="items.html" class="nav-link">Items</a></li>
+                <li><a href="hdv.html" class="nav-link active">HDV</a></li>
+                <li><a href="quetes.html" class="nav-link">Quêtes</a></li>
             </ul>
             <div class="nav-connexion">
                 <span id="user-info" class="user-info" style="display: none;">
                     <a href="profil.html" id="username" class="username-link"></a>
-                    <button id="logout-btn" class="logout-btn" aria-label="Se déconnecter">Déconnexion</button>
+                    <button id="logout-btn" class="logout-btn">Déconnexion</button>
                 </span>
                 <a href="connexion.html" class="connexion-link" id="login-link">Connexion</a>
             </div>
-            <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
+            <button class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -68,9 +58,9 @@
     </header>
 
     <!-- Contenu principal -->
-    <main id="main-content" class="main-content" role="main">
+    <main class="main-content">
         <!-- Section Hero -->
-        <section class="hero-section" aria-label="En-tête de l'hôtel des ventes">
+        <section class="hero-section">
             <div class="hero-content">
                 <h1 class="hero-title">🏪 Hôtel des Ventes</h1>
                 <p class="hero-subtitle">Marché central d'Aincrad - Échangez vos trésors entre aventuriers</p>
@@ -78,28 +68,28 @@
         </section>
 
         <!-- Interface HDV -->
-        <section class="hdv-interface" aria-label="Interface de l'hôtel des ventes">
+        <section class="hdv-interface">
             <div class="container">
                 <!-- Onglets -->
-                <div class="hdv-tabs" role="tablist" aria-label="Sections de l'hôtel des ventes">
-                    <button class="hdv-tab active" data-tab="marketplace" role="tab" aria-selected="true" aria-controls="marketplace">💰 Place du Marché</button>
-                    <button class="hdv-tab" data-tab="my-orders" role="tab" aria-selected="false" aria-controls="my-orders">📋 Mes Ordres</button>
-                    <button class="hdv-tab" data-tab="history" role="tab" aria-selected="false" aria-controls="history">📜 Historique</button>
-                    <button class="hdv-tab" data-tab="create-order" role="tab" aria-selected="false" aria-controls="create-order">💎 Créer un Ordre</button>
-                    <button class="hdv-tab mailbox-tab" onclick="if(window.mailboxSystem && window.mailboxSystem.openMailbox) { window.mailboxSystem.openMailbox(); } else { alert('Système de messagerie en cours de chargement...'); }" aria-label="Ouvrir la boîte mail">
+                <div class="hdv-tabs">
+                    <button class="hdv-tab active" data-tab="marketplace">💰 Place du Marché</button>
+                    <button class="hdv-tab" data-tab="my-orders">📋 Mes Ordres</button>
+                    <button class="hdv-tab" data-tab="history">📜 Historique</button>
+                    <button class="hdv-tab" data-tab="create-order">💎 Créer un Ordre</button>
+                    <button class="hdv-tab mailbox-tab" onclick="if(window.mailboxSystem && window.mailboxSystem.openMailbox) { window.mailboxSystem.openMailbox(); } else { alert('Système de messagerie en cours de chargement...'); }">
                         📬 Boîte Mail
-                        <span id="unread-count" class="unread-count" style="display: none;" aria-live="polite"></span>
+                        <span id="unread-count" class="unread-count" style="display: none;"></span>
                     </button>
                 </div>
 
                 <!-- Contenu des onglets -->
                 <div class="hdv-content">
                     <!-- Place du Marché -->
-                    <div id="marketplace" class="hdv-panel active" role="tabpanel" aria-labelledby="marketplace-tab">
+                    <div id="marketplace" class="hdv-panel active">
                         <div class="hdv-filters">
                             <div class="filter-row">
                                 <div class="filter-group">
-                                    <label for="type-filter">Type d'ordre :</label>
+                                    <label>Type d'ordre :</label>
                                     <select id="type-filter">
                                         <option value="all">Tous les ordres</option>
                                         <option value="sell">🔴 Ventes</option>
@@ -108,7 +98,7 @@
                                 </div>
                                 
                                 <div class="filter-group">
-                                    <label for="category-filter">Catégorie :</label>
+                                    <label>Catégorie :</label>
                                     <select id="category-filter">
                                         <option value="all">Toutes catégories</option>
                                         <option value="Armes">⚔️ Armes</option>
@@ -123,13 +113,13 @@
                                 </div>
                                 
                                 <div class="filter-group">
-                                    <label for="rarity-filter">Rareté :</label>
+                                    <label>Rareté :</label>
                                     <select id="rarity-filter">
                                         <option value="all">Toutes raretés</option>
                                         <option value="commun">⚪ Commun</option>
-                                        <option value="peu_commun">🟢 Peu commun</option>
-                                        <option value="rare">🔵 Rare</option>
-                                        <option value="epique">🟣 Épique</option>
+                                        <option value="peu_commun">� Peu commun</option>
+                                        <option value="rare">� Rare</option>
+                                        <option value="epique">� Épique</option>
                                         <option value="legendaire">🌟 Légendaire</option>
                                     </select>
                                 </div>
@@ -137,26 +127,25 @@
                             
                             <div class="filter-row">
                                 <div class="search-group">
-                                    <label for="search-input" class="visually-hidden">Rechercher un item</label>
-                                    <input type="text" id="search-input" placeholder="🔍 Rechercher un item..." aria-label="Rechercher un item">
+                                    <input type="text" id="search-input" placeholder="🔍 Rechercher un item...">
                                     <button id="search-btn" class="search-btn">Rechercher</button>
                                 </div>
                                 
                                 <div class="action-group">
-                                    <button id="refresh-btn" class="refresh-btn" aria-label="Actualiser la liste">🔄 Actualiser</button>
-                                    <span id="orders-count" class="orders-count" aria-live="polite">0 ordres</span>
+                                    <button id="refresh-btn" class="refresh-btn">🔄 Actualiser</button>
+                                    <span id="orders-count" class="orders-count">0 ordres</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Liste des ordres -->
-                        <div id="orders-list" class="orders-list" role="list" aria-live="polite">
+                        <div id="orders-list" class="orders-list">
                             <!-- Le contenu sera chargé dynamiquement -->
                         </div>
                     </div>
 
                     <!-- Mes Ordres -->
-                    <div id="my-orders" class="hdv-panel" role="tabpanel" aria-labelledby="my-orders-tab">
+                    <div id="my-orders" class="hdv-panel">
                         <div class="my-orders-header">
                             <h3>📋 Mes Ordres Actifs</h3>
                             <button class="refresh-btn">🔄 Actualiser</button>
@@ -265,17 +254,18 @@
         </section>
     </main>
 
-    <!-- Scripts - Chargement optimisé -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
-    <script src="../js/crypto-keys.js" defer></script>
-    <script src="../js/auth-supabase.js?v=20260129b" defer></script>
-    <script src="../js/hdv-supabase.js?v=20260129b" defer></script>
-    <script src="../js/mailbox-supabase.js?v=20260129b" defer></script>
-    <script src="../js/mailbox.js?v=20260129b" defer></script>
-    <script src="../js/item-selector.js?v=20260129b" defer></script>
-    <script src="../js/items-catalog-hdv.js?v=20260129b" defer></script>
-    <script src="../js/hdv.js?v=20260129b" defer></script>
-    <script src="../js/navbar-mobile.js" defer></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/crypto-keys.js"></script>
+    <script src="../js/auth-supabase.js?v=20260128d"></script>
+    <script src="../js/hdv-supabase.js?v=20260128d"></script>
+    <script src="../js/mailbox-supabase.js?v=20260128d"></script>
+    <script src="../js/mailbox.js?v=20260128d"></script>
+
+    <script src="../js/item-selector.js?v=20260128j"></script>
+    <script src="../js/items-catalog-hdv.js?v=20260128j"></script>
+    <script src="../js/hdv.js?v=20260128i"></script>
+    <script src="../js/navbar-mobile.js"></script>
     
     <script>
         // Initialisation du système HDV
