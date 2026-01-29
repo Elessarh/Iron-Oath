@@ -294,6 +294,10 @@
                 this.itemsPerPage = 12;
                 this.totalPages = 1;
                 
+                // Pour éviter les affichages multiples (race conditions)
+                this.displayTimeout = null;
+                this.currentRenderID = null;
+                
                 this.init();
             }
 
@@ -325,10 +329,13 @@
                                 image: `../assets/items/${item.image}`,
                                 description: this.generateDescription(item)
                             });
+                        } else {
+                            console.warn('Doublon détecté et ignoré:', item.id, item.name);
                         }
                     });
                 });
                 
+                console.log('Items chargés:', this.allItems.length, 'items uniques');
                 this.filteredItems = [...this.allItems];
             }
             
@@ -585,13 +592,30 @@
                 
                 if (!grid) return;
 
+                // Annuler tout affichage précédent en cours
+                if (this.displayTimeout) {
+                    clearTimeout(this.displayTimeout);
+                    this.displayTimeout = null;
+                }
+
                 // Afficher le loader s'il existe
                 if (loader) {
                     loader.style.display = 'block';
                 }
-                grid.innerHTML = '';
 
-                setTimeout(() => {
+                // Générer un ID unique pour ce rendu
+                const renderID = Date.now();
+                this.currentRenderID = renderID;
+
+                this.displayTimeout = setTimeout(() => {
+                    // Vérifier que c'est toujours le rendu actuel
+                    if (this.currentRenderID !== renderID) {
+                        return; // Un autre rendu a été demandé, abandonner celui-ci
+                    }
+                    
+                    // Vider la grille DANS le setTimeout pour éviter les race conditions
+                    grid.innerHTML = '';
+                    
                     if (loader) {
                         loader.style.display = 'none';
                     }
@@ -607,6 +631,9 @@
                     const endIndex = startIndex + this.itemsPerPage;
                     const itemsToShow = this.filteredItems.slice(startIndex, endIndex);
 
+                    // Debug: vérifier qu'on n'a pas de doublons
+                    console.log('Affichage de', itemsToShow.length, 'items sur', this.filteredItems.length, 'filtrés');
+
                     itemsToShow.forEach(item => {
                         const card = this.createItemCard(item);
                         grid.appendChild(card);
@@ -614,6 +641,8 @@
                     
                     // Mettre à jour l'interface de pagination après l'affichage
                     this.updatePaginationUI();
+                    
+                    this.displayTimeout = null;
                 }, 300);
             }
 
@@ -846,6 +875,12 @@
 
         // Initialiser le système quand le DOM est chargé
         document.addEventListener('DOMContentLoaded', () => {
+            // Protection contre la double initialisation
+            if (window.itemCards) {
+                console.log('ItemCardsSystem déjà initialisé, skip');
+                return;
+            }
+            
             console.log('Initialisation ItemCardsSystem...'); // Debug
             window.itemCards = new ItemCardsSystem();
             // Aussi assigner à une variable globale pour compatibilité
