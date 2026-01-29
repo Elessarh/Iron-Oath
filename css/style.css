@@ -1343,16 +1343,8 @@ img {
     height: auto;
 }
 
-/* Images lazy load transition */
-img[loading="lazy"] {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-img[loading="lazy"].loaded,
-img:not([loading="lazy"]) {
-    opacity: 1;
-}
+/* Les images lazy sont gérées nativement par le navigateur */
+/* Pas besoin de masquer/afficher via CSS */
 
 /* ========== OPTIMISATIONS PERFORMANCES ========== */
 /* Utiliser will-change avec parcimonie */

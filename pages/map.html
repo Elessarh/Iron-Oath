@@ -93,14 +93,14 @@
             </div>
             
             <!-- Panneau de contrôle des éléments -->
-            <fieldset class="element-toggles">
-                <legend class="toggles-title">🎛️ Affichage des Éléments</legend>
+            <div class="element-toggles" role="group" aria-labelledby="toggles-title">
+                <h3 class="toggles-title" id="toggles-title">🎛️ Affichage des Éléments</h3>
                 <div class="toggles-grid">
                     <div class="toggle-item">
                         <input type="checkbox" id="toggle-quetes-principales" checked>
                         <label for="toggle-quetes-principales" class="toggle-label" title="Quêtes Principales">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Quetes-Principales.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Quetes-Principales.png" alt="Quêtes Principales" loading="lazy">
                             </div>
                             <span class="toggle-text">Quêtes Principales</span>
                         </label>
@@ -110,7 +110,7 @@
                         <input type="checkbox" id="toggle-quetes-secondaires" checked>
                         <label for="toggle-quetes-secondaires" class="toggle-label" title="Quêtes Secondaires">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Quetes-Secondaires.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Quetes-Secondaires.png" alt="Quêtes Secondaires" loading="lazy">
                             </div>
                             <span class="toggle-text">Quêtes Secondaires</span>
                         </label>
@@ -120,7 +120,7 @@
                         <input type="checkbox" id="toggle-donjons" checked>
                         <label for="toggle-donjons" class="toggle-label" title="Donjons">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Donjon.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Donjon.png" alt="Donjons" loading="lazy">
                             </div>
                             <span class="toggle-text">Donjons</span>
                         </label>
@@ -130,7 +130,7 @@
                         <input type="checkbox" id="toggle-villes" checked>
                         <label for="toggle-villes" class="toggle-label" title="Villes">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Ville.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Ville.png" alt="Villes" loading="lazy">
                             </div>
                             <span class="toggle-text">Villes</span>
                         </label>
@@ -140,7 +140,7 @@
                         <input type="checkbox" id="toggle-monstres" checked>
                         <label for="toggle-monstres" class="toggle-label" title="Monstres">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Monstre.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Monstre.png" alt="Monstres" loading="lazy">
                             </div>
                             <span class="toggle-text">Monstres</span>
                         </label>
@@ -150,22 +150,22 @@
                         <input type="checkbox" id="toggle-marchands" checked>
                         <label for="toggle-marchands" class="toggle-label" title="Marchands">
                             <div class="toggle-icon">
-                                <img src="../assets/map_assets/Marchand.png" alt="" width="32" height="32" loading="lazy">
+                                <img src="../assets/map_assets/Marchand.png" alt="Marchands" loading="lazy">
                             </div>
                             <span class="toggle-text">Marchands</span>
                         </label>
-                </div>
-                
-                <!-- Mode édition (admin) -->
-                <div class="toggle-item admin-only" style="display: none;">
-                    <button id="place-mode-btn" class="admin-toggle-btn" aria-label="Activer le mode édition">
-                        <div class="toggle-icon">✏️</div>
-                        <span class="toggle-text">Mode Édition</span>
-                    </button>
+                    </div>
+                    
+                    <!-- Mode édition (admin) -->
+                    <div class="toggle-item admin-only" style="display: none;">
+                        <button id="place-mode-btn" class="admin-toggle-btn" aria-label="Activer le mode édition">
+                            <div class="toggle-icon">✏️</div>
+                            <span class="toggle-text">Mode Édition</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </fieldset>
-    </section>
+        </section>
 
         <div class="map-wrapper" role="application" aria-label="Carte interactive d'Aincrad">
             <!-- Animation SAO Style -->
